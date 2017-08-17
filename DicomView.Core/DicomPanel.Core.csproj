@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="DicomPanelModel.EventHandling.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="fo-dicom.NetCore" Version="3.0.2" />
+  </ItemGroup>
+
+</Project>

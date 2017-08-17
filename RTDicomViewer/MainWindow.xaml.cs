@@ -24,5 +24,6 @@ namespace RTDicomViewer
         {
             InitializeComponent();
         }
+
     }
 }

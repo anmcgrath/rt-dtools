@@ -4,9 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RTDicomViewer"
+        xmlns:vm="clr-namespace:RTDicomViewer.ViewModel"
+        xmlns:dcm="clr-namespace:DicomPanel.Wpf;assembly=DicomPanel.Wpf"
+        xmlns:mv="clr-namespace:RTDicomViewer.View.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="Radiotherapy research Monte Carlo tools" Height="350" Width="525" DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Style="{StaticResource {x:Type Window}}" x:Name="mainWindow"
+        VisualTextRenderingMode="ClearType">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open DICOM Image(s)..." Command="{Binding OpenImageCommand}"/>
+                <Separator/>
+                <MenuItem Header="Open DICOM Dose..." Command="{Binding OpenDicomDoseCommand}"/>
+                <MenuItem Header="Open 3ddose File..." Command="{Binding OpenEgsDoseCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Edit"/>
+            <MenuItem Header="View"/>
+            <MenuItem Header="Help"/>
+        </Menu>
+
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="22"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <GroupBox Grid.Column="0" Header="Data" MinHeight="200">
+                    <StackPanel>
+                        <mv:DoseObjectDisplayView Grid.Column="0"/>
+                        <mv:DoseObjectDisplayView Grid.Column="0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Column="0" Header="Images" MinHeight="200">
+                
+                </GroupBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Grid.Column="1">
+                <Button Width="16" Height="16" Margin="3 3 3 0"/>
+                <Button Width="16" Height="16" Margin="3 3 3 0"/>
+                <Button Width="16" Height="16" Margin="3 3 3 0"/>
+                <Button Width="16" Height="16" Margin="3 3 3 0"/>
+            </StackPanel>
+
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="0" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="1" Grid.Row="0" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="1" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="1" Grid.Row="1" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+            </Grid>
+            
+        </Grid>
+    </DockPanel>
 </Window>
