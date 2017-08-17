@@ -48,14 +48,28 @@ namespace DicomPanel.Wpf
             Model?.Invalidate();
         }
 
-        private void createRenderTargets(int width, int height)
+        private void createRenderTargets(double width, double height)
         {
-            int imgWidth = Math.Min(width, 512);
-            int imgHeight = Math.Min(height, 512);
-            ImageBase = new WriteableBitmap(imgWidth, imgHeight, 96, 96, PixelFormats.Bgr32, null);
-            ImageTop = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr32, null);
-            ImageBaseRenderContext.Resize(ImageBase, imgWidth, imgHeight);
-            ImageTopRenderContext.Resize(ImageTop, width, height);
+            if (width <= 0 || height <= 0)
+                return;
+
+            double imgWidth = width, imgHeight = height;
+            if (width >= 512)
+            {
+                imgWidth = 512;
+                imgHeight *= (512/width);
+            }
+            if (height >= 512)
+            {
+                imgHeight = 512;
+                imgWidth *= (512/height);
+            }
+
+            ImageBase = new WriteableBitmap((int)Math.Round(imgWidth), (int)Math.Round(imgHeight), 96, 96, PixelFormats.Bgr32, null);
+            ImageTop = new WriteableBitmap((int)Math.Round(width), (int)Math.Round(height), 96, 96, PixelFormats.Bgr32, null);
+            ImageBaseRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
+
+            ImageTopRenderContext.Resize(ImageTop, (int)Math.Round(width), (int)Math.Round(height));
         }
     }
 }
