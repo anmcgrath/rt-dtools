@@ -146,7 +146,7 @@ namespace DicomPanel.Core.Utilities.RTMath
         {
             Point3d result = new Point3d();
             p1.CopyTo(result);
-            result.Add(p2);
+            result.Subtract(p2);
             return result;
         }
 

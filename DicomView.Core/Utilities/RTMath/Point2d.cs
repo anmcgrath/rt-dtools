@@ -117,7 +117,7 @@ namespace DicomPanel.Core.Utilities.RTMath
         {
             Point2d result = new Point2d();
             p1.CopyTo(result);
-            result.Add(p2);
+            result.Subtract(p2);
             return result;
         }
 
