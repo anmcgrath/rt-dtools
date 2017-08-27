@@ -64,8 +64,8 @@ namespace DicomPanel.Core.Utilities.RTMath
         {
             int x1 = X + Width;
             int x2 = rect.X + rect.Width;
-            int y1 = Y - Height;
-            int y2 = rect.Y - Height;
+            int y1 = Y + Height;
+            int y2 = rect.Y + rect.Height;
 
             int xL = Math.Max(X, rect.X);
             int xR = Math.Min(x1, x2);
@@ -73,12 +73,12 @@ namespace DicomPanel.Core.Utilities.RTMath
                 return null;
             else
             {
-                int yT = Math.Max(y1, y2);
-                int yB = Math.Min(Y, rect.Y);
+                int yT = Math.Max(Y, rect.Y);
+                int yB = Math.Min(y1, y2);
                 if (yB <= yT)
                     return null;
                 else
-                    return new Recti(xL, yB, xR - xL, yB - yT);
+                    return new Recti(xL, yT, xR - xL, yB - yT);
             }
         }
 
@@ -100,12 +100,12 @@ namespace DicomPanel.Core.Utilities.RTMath
                 return null;
             else
             {
-                int yT = Math.Max(y1, y2);
-                int yB = (int)Math.Round(Math.Min(Y, rect.Y));
+                int yT = (int)Math.Max(Y, rect.Y);
+                int yB = (int)Math.Round((double)Math.Min(y1, y2));
                 if (yB <= yT)
                     return null;
                 else
-                    return new Recti(xL, yB, xR - xL, yB - yT);
+                    return new Recti(xL, yT, xR - xL, yB - yT);
             }
         }
 

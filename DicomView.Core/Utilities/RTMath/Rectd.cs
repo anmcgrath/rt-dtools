@@ -64,8 +64,8 @@ namespace DicomPanel.Core.Utilities.RTMath
         {
             double x1 = X + Width;
             double x2 = rect.X + rect.Width;
-            double y1 = Y - Height;
-            double y2 = rect.Y - Height;
+            double y1 = Y + Height;
+            double y2 = rect.Y + rect.Height;
 
             double xL = Math.Max(X, rect.X);
             double xR = Math.Min(x1, x2);
@@ -73,12 +73,12 @@ namespace DicomPanel.Core.Utilities.RTMath
                 return null;
             else
             {
-                double yT = Math.Max(y1, y2);
-                double yB = Math.Min(Y, rect.Y);
+                double yB = Math.Min(y1, y2);
+                double yT = Math.Max(Y, rect.Y);
                 if (yB <= yT)
                     return null;
                 else
-                    return new Rectd(xL, yB, xR - xL, yB - yT);
+                    return new Rectd(xL, yT, xR - xL, yB - yT);
             }
         }
 
@@ -86,8 +86,8 @@ namespace DicomPanel.Core.Utilities.RTMath
         {
             double x1 = X + Width;
             double x2 = rect.X + rect.Width;
-            double y1 = Y - Height;
-            double y2 = rect.Y - Height;
+            double y1 = Y + Height;
+            double y2 = rect.Y + rect.Height;
 
             double xL = Math.Max(X, rect.X);
             double xR = Math.Min(x1, x2);
@@ -95,12 +95,12 @@ namespace DicomPanel.Core.Utilities.RTMath
                 return null;
             else
             {
-                double yT = Math.Max(y1, y2);
-                double yB = Math.Min(Y, rect.Y);
+                double yB = Math.Min(y1, y2);
+                double yT = Math.Max(Y, rect.Y);
                 if (yB <= yT)
                     return null;
                 else
-                    return new Rectd(xL, yB, xR - xL, yB - yT);
+                    return new Rectd(xL, yT, xR - xL, yB - yT);
             }
         }
 
