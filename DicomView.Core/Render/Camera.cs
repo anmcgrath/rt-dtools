@@ -12,7 +12,7 @@ namespace DicomPanel.Core.Render
 {
     /// The camera represents a plane inside a 3D grid with ColDir and RowDir running on the plane. The posiiton is supposed to represent the "center" of the collimated view plane.
     /// </summary>
-    public class Camera
+    public partial class Camera
     {
         public Point3d Position { get; set; }
         public Point3d ColDir { get; private set; }
@@ -20,6 +20,14 @@ namespace DicomPanel.Core.Render
         public Point3d RowDir { get; private set; }
         private double rowDirLength { get; set; }
         public Point3d Normal { get; private set; }
+
+        private Point3d _screenCoordsCache { get; set; }
+        private Point3d _worldCoordsCache { get; set; }
+
+        /// <summary>
+        /// The camera's x and y FOV in mm
+        /// </summary>
+        private Point2d FOV { get; set; }
        
         public double Scale { get; set; }
         public double MMPerPixel { get; set; }
@@ -32,9 +40,34 @@ namespace DicomPanel.Core.Render
             RowDir = new Point3d();
             Normal = new Point3d();
             Position = new Point3d();
+            _screenCoordsCache = new Point3d();
+            _worldCoordsCache = new Point3d();
+            _screenToWorldMatrix = new Matrix3d();
+            FOV = new Point2d(0, 0);
             Scale = 1;
             MMPerPixel = 1;
             SetAxial();
+        }
+        
+        private void onUpdateView()
+        {
+            Normal = ColDir.Cross(RowDir);
+            createScreenToWorldMatrix();
+            cacheWorldToScreenVariables();
+            colDirLength = ColDir.Length();
+            rowDirLength = RowDir.Length();
+        }
+
+        public void SetFOV(double width, double height)
+        {
+            FOV.X = width;
+            FOV.Y = height;
+            onUpdateView();
+        }
+
+        public Point2d GetFOV()
+        {
+            return FOV;
         }
 
         /// <summary>
@@ -45,9 +78,7 @@ namespace DicomPanel.Core.Render
         /// <param name="z"></param>
         public void Move(double x, double y, double z)
         {
-            Position.X += x;
-            Position.Y += y;
-            Position.Z += z;
+            MoveTo(Position.X + x, Position.Y + y, Position.Z + z);
         }
 
         /// <summary>
@@ -58,22 +89,13 @@ namespace DicomPanel.Core.Render
         /// <param name="z"></param>
         public void Move(Point3d amount)
         {
-            Position.Add(amount);
+            Move(amount.X, amount.Y, amount.Z);
         }
 
         public void Zoom(double amount)
         {
             Scale *= amount;
-        }
-
-        public void ZoomIn()
-        {
-            Scale += .05;
-        }
-
-        public void ZoomOut()
-        {
-            Scale -= .05;
+            this.onUpdateView();
         }
 
         /// <summary>
@@ -87,37 +109,32 @@ namespace DicomPanel.Core.Render
             Position.X = x;
             Position.Y = y;
             Position.Z = z;
+            this.onUpdateView();
+        }
+
+        public void SetDirections(double colDirx, double colDiry, double colDirz,
+            double rowDirx, double rowDiry, double rowDirz)
+        {
+            ColDir.X = colDirx;
+            ColDir.Y = colDiry;
+            ColDir.Z = colDirz;
+            RowDir.X = rowDirx;
+            RowDir.Y = rowDiry;
+            RowDir.Z = rowDirz;
+            this.onUpdateView();
         }
 
         public void SetAxial()
         {
-            ColDir.X = 1;
-            ColDir.Y = 0;
-            ColDir.Z = 0;
-            RowDir.X = 0;
-            RowDir.Y = 1;
-            RowDir.Z = 0;
-            Normal = ColDir.Cross(RowDir);
+            SetDirections(1, 0, 0, 0, 1, 0);
         }
         public void SetSagittal()
         {
-            ColDir.X = 0;
-            ColDir.Y = -1;
-            ColDir.Z = 0;
-            RowDir.X = 0;
-            RowDir.Y = 0;
-            RowDir.Z = -1;
-            Normal = ColDir.Cross(RowDir);
+            SetDirections(0, -1, 0, 0, 0, -1);
         }
         public void SetCoronal()
         {
-            ColDir.X = 1;
-            ColDir.Y = 0;
-            ColDir.Z = 0;
-            RowDir.X = 0;
-            RowDir.Y = 0;
-            RowDir.Z = -1;
-            Normal = ColDir.Cross(RowDir);
+            SetDirections(1, 0, 0, 0, 0, - 1);
         }
 
         /// <summary>
@@ -133,7 +150,8 @@ namespace DicomPanel.Core.Render
             Normal.CopyTo(movDir);
             movDir *= (direction / Math.Abs(direction));
             Position += movDir * amount;
-            Normal = ColDir.Cross(RowDir);
+
+            this.onUpdateView();
         }
 
 
@@ -156,11 +174,10 @@ namespace DicomPanel.Core.Render
             colDirLength = ColDir.Length();
             rowDirLength = RowDir.Length();
             Normal = ColDir.Cross(RowDir);
+
+            this.onUpdateView();
         }
 
-        public WorldPointTranslator CreateTranslator(IRenderContext context)
-        {
-            return WorldPointTranslator.Create(this, context);
-        }
+
     }
 }

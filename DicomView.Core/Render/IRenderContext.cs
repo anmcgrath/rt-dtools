@@ -13,8 +13,12 @@ namespace DicomPanel.Core.Render
         int Width { get; set; }
         int Height { get; set; }
         double RelativeScale { get; set; }
-        void FillPixels(byte[] byteArray, Recti destRect);
+
+        void BeginRender();
         void DrawRect(double x0, double y0, double x1, double y1, DicomColor color);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color);
+        void DrawString(string text, double x, double y, double size);
+        void EndRender();
+        void FillPixels(byte[] byteArray, Rectd destRect);
     }
 }

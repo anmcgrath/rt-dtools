@@ -25,7 +25,7 @@ namespace DicomPanel.Core.Render.Contouring
             Color = color;
         }
 
-        public PlanarPolygon ToPlanarPolygon(WorldPointTranslator translator)
+        public PlanarPolygon ToPlanarPolygon(Camera camera)
         {
             double[] vertices = new double[(int)(Vertices.Length * 0.75)];
             Point2d screenPoint = new Point2d();
@@ -36,7 +36,7 @@ namespace DicomPanel.Core.Render.Contouring
             double ymax = double.MinValue;
             for(int i = 0; i < Vertices.Length; i+=3, verticesIndex+=2)
             {
-                translator.ConvertWorldToScreenCoords(Vertices[i + 0], Vertices[i + 1], Vertices[i + 1], screenPoint);
+                camera.ConvertWorldToScreenCoords(Vertices[i + 0], Vertices[i + 1], Vertices[i + 1], screenPoint);
                 vertices[verticesIndex + 0] = screenPoint.X;
                 vertices[verticesIndex + 1] = screenPoint.Y;
                 xmin = Math.Min(xmin, screenPoint.X);

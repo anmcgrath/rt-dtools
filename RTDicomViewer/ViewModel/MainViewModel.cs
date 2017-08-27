@@ -13,61 +13,68 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using RTDicomViewer.Message;
 using System;
+using System.Threading.Tasks;
+using System.Threading;
+using RTDicomViewer.IO;
 
 namespace RTDicomViewer.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private DicomPanelModel _mainPanelModel;
-        public DicomPanelModel MainPanelModel
-        {
-            get { return _mainPanelModel; }
-            set
-            {
-                _mainPanelModel = value;
-                RaisePropertyChanged(() => MainPanelModel);
-            }
-        }
+        private DicomPanelModel _axialPanelModel;
+        public DicomPanelModel AxialPanelModel { get; set; }
+        public DicomPanelModel CoronalPanelModel { get; set; }
+        public DicomPanelModel SagittalPanelModel { get; set; }
 
-        public RelayCommand OpenImageCommand => new RelayCommand(()=> { OpenFile<DicomImageObject>(true, "Open DICOM Images");});
-        public RelayCommand OpenDicomDoseCommand => new RelayCommand(() => OpenFile<DicomDoseObject>(false, "Open DICOM Dose"));
-        public RelayCommand OpenEgsDoseCommand => new RelayCommand(() => OpenFile<DicomDoseObject>(false, "Open 3DDose Dose"));
+        public RelayCommand OpenImageCommand => new RelayCommand(
+            ()=> { FileOpener.BeginOpenAsync<DicomImageObject>(true, "Open DICOM Images");});
+
+        public RelayCommand OpenDicomDoseCommand => new RelayCommand(
+            () => FileOpener.BeginOpenAsync<DicomDoseObject>(false, "Open DICOM Dose"));
+
+        public RelayCommand OpenEgsDoseCommand => new RelayCommand(
+            () => FileOpener.BeginOpenAsync<DicomDoseObject>(false, "Open 3DDose Dose"));
+
+        public RelayCommand OpenStructureSetCommand => new RelayCommand(
+            () => FileOpener.BeginOpenAsync<StructureSet>(false, "Open Structure Set"));
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
-            MainPanelModel = new DicomPanelModel();
-            MainPanelModel.Camera.SetSagittal();
+            AxialPanelModel = new DicomPanelModel();
+            AxialPanelModel.Camera.SetAxial();
+
+            SagittalPanelModel = new DicomPanelModel();
+            SagittalPanelModel.Camera.SetSagittal();
+
+            CoronalPanelModel = new DicomPanelModel();
+            CoronalPanelModel.Camera.SetCoronal();
 
             //When we load a new image, render it
             MessengerInstance.Register<RTObjectLoadedMessage<DicomImageObject>>(this, x => {
-                MainPanelModel.SetImage(x.Value);
+                AxialPanelModel.SetImage(x.Value);
+                SagittalPanelModel.SetImage(x.Value);
+                CoronalPanelModel.SetImage(x.Value);
             });
             //When a dose is selected, render it
             MessengerInstance.Register<DoseObjectRenderMessage>(this, x =>
             {
-                MainPanelModel.SetDose(x.DoseObject);
+                AxialPanelModel.SetDose(x.DoseObject);
+                SagittalPanelModel.SetDose(x.DoseObject);
+                CoronalPanelModel.SetDose(x.DoseObject);
+            });
+            MessengerInstance.Register<ROIsObjectRenderMessage>(this, x =>
+            {
+                AxialPanelModel.AddROIs(x.AddedRois);
+                AxialPanelModel.RemoveROIs(x.RemovedRois);
+                SagittalPanelModel.AddROIs(x.AddedRois);
+                SagittalPanelModel.RemoveROIs(x.RemovedRois);
+                CoronalPanelModel.AddROIs(x.AddedRois);
+                CoronalPanelModel.RemoveROIs(x.RemovedRois);
             });
         }
-
-        public async void OpenFile<T>(bool multipleFiles, string dialogTitle)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = multipleFiles;
-            dialog.Title = dialogTitle;
-            if(dialog.ShowDialog() == true)
-            {
-                try
-                {
-                    var obj = await DicomLoader.LoadAsync<T>(dialog.FileNames);
-                    MessengerInstance.Send(new RTObjectLoadedMessage<T>(obj));
-                }catch(Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
-            }
-        }
     }
+
 }

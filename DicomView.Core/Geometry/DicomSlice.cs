@@ -75,7 +75,7 @@ namespace DicomPanel.Core.Geometry
         public float Get(int row, int column)
         {
             if (row < 0 || column < 0 || row > Rows - 1 || column > Columns - 1)
-                return 0;
+                return -1000;
             else
                 return Data[row * (Columns) + column];
         }

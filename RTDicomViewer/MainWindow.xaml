@@ -8,7 +8,7 @@
         xmlns:dcm="clr-namespace:DicomPanel.Wpf;assembly=DicomPanel.Wpf"
         xmlns:mv="clr-namespace:RTDicomViewer.View.MainWindow"
         mc:Ignorable="d"
-        Title="Radiotherapy research Monte Carlo tools" Height="350" Width="525" DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Title="Radiotherapy research Monte Carlo tools" Height="600" Width="800" DataContext="{Binding Main, Source={StaticResource Locator}}"
         Style="{StaticResource {x:Type Window}}" x:Name="mainWindow"
         VisualTextRenderingMode="ClearType">
     <DockPanel>
@@ -16,8 +16,10 @@
             <MenuItem Header="File">
                 <MenuItem Header="Open DICOM Image(s)..." Command="{Binding OpenImageCommand}"/>
                 <Separator/>
-                <MenuItem Header="Open DICOM Dose..." Command="{Binding OpenDicomDoseCommand}"/>
-                <MenuItem Header="Open 3ddose File..." Command="{Binding OpenEgsDoseCommand}"/>
+                <MenuItem Header="Import DICOM Dose..." Command="{Binding OpenDicomDoseCommand}"/>
+                <MenuItem Header="Import 3ddose File..." Command="{Binding OpenEgsDoseCommand}"/>
+                <Separator/>
+                <MenuItem Header="Import RT Structure Set..." Command="{Binding OpenStructureSetCommand}"/>
             </MenuItem>
             <MenuItem Header="Edit"/>
             <MenuItem Header="View"/>
@@ -26,23 +28,19 @@
 
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="22"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0">
-                <GroupBox Grid.Column="0" Header="Data" MinHeight="200">
-                    <StackPanel>
-                        <mv:DoseObjectDisplayView Grid.Column="0"/>
-                        <mv:DoseObjectDisplayView Grid.Column="0"/>
-                    </StackPanel>
-                </GroupBox>
-
-                <GroupBox Grid.Column="0" Header="Images" MinHeight="200">
-                
-                </GroupBox>
-            </StackPanel>
+            <TabControl Grid.Column="0">
+                <TabItem Header="Data">
+                    <TreeView>
+                        <mv:DoseObjectDisplayView/>
+                        <mv:ROIObjectDisplayView/>
+                    </TreeView>
+                </TabItem>
+            </TabControl>
 
             <StackPanel Orientation="Vertical" Grid.Column="1">
                 <Button Width="16" Height="16" Margin="3 3 3 0"/>
@@ -60,10 +58,9 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="0" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                <dcm:DicomPanelView Margin="2" Grid.Column="1" Grid.Row="0" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="1" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                <dcm:DicomPanelView Margin="2" Grid.Column="1" Grid.Row="1" Model="{Binding Path=DataContext.MainPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="0" Model="{Binding Path=DataContext.AxialPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="1" Grid.Row="0" Model="{Binding Path=DataContext.SagittalPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
+                <dcm:DicomPanelView Margin="2" Grid.Column="0" Grid.Row="1" Model="{Binding Path=DataContext.CoronalPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
             </Grid>
             
         </Grid>

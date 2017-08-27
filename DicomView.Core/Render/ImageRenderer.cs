@@ -11,19 +11,16 @@ namespace DicomPanel.Core.Render
 {
     public class ImageRenderer
     {
-        public void Render(DicomImageObject image, Camera camera, IRenderContext context, Recti screenRect)
+        public void Render(DicomImageObject image, Camera camera, IRenderContext context, Rectd screenRect)
         {
             if (image == null || image.Grid == null || context == null)
                 return;
 
-            //Translates screen to world points and vice versa
-            var t = camera.CreateTranslator(context);
-
             // This render function loops through each pixel in the camera's FOV,
             // converts the location to a location in the patient coordinate system,
             // then store in a byte array to render to the image layer.
-            int rows = screenRect.Height;
-            int cols = screenRect.Width;
+            int rows = (int)(screenRect.Height * context.Height);
+            int cols = (int)(screenRect.Width * context.Width);
 
             Point3d worldCoords = new Point3d();
 
@@ -31,8 +28,8 @@ namespace DicomPanel.Core.Render
             byte[] bytearray = new byte[rows * cols * bytespp];
             int k = 0;
 
-            Point3d initPosn = t.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
-            Point3d posn = t.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
+            Point3d initPosn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
+            Point3d posn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
             // Get the direction we move in each iteration from the top left of the camera
             // Use doubles rather than Vector<doubles> because the addition is faster.
             double ix = initPosn.X;
@@ -41,12 +38,12 @@ namespace DicomPanel.Core.Render
             double px = initPosn.X;
             double py = initPosn.Y;
             double pz = initPosn.Z;
-            double cx = camera.ColDir.X / camera.Scale * camera.MMPerPixel;
-            double cy = camera.ColDir.Y / camera.Scale * camera.MMPerPixel;
-            double cz = camera.ColDir.Z / camera.Scale * camera.MMPerPixel;
-            double rx = camera.RowDir.X / camera.Scale * camera.MMPerPixel;
-            double ry = camera.RowDir.Y / camera.Scale * camera.MMPerPixel;
-            double rz = camera.RowDir.Z / camera.Scale * camera.MMPerPixel;
+            double cx = camera.ColDir.X * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double cy = camera.ColDir.Y * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double cz = camera.ColDir.Z * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double rx = camera.RowDir.X * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            double ry = camera.RowDir.Y * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            double rz = camera.RowDir.Z * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
             int maxImagePixel = 255;
             for (int r = 0; r < rows; r += 1)
             {
@@ -58,7 +55,7 @@ namespace DicomPanel.Core.Render
                     bytearray[k] = (byte)(value);
                     bytearray[k + 1] = (byte)value;
                     bytearray[k + 2] = (byte)value;
-                    //bytearray[k + 3] = 128;
+                    bytearray[k + 3] = (byte)value;
                     k += bytespp;
                     px += cx; py += cy; pz += cz;
                 }
@@ -73,10 +70,6 @@ namespace DicomPanel.Core.Render
 
         private float ComputePixel(float gray, float maxPixel, int Window, int Level)
         {
-            if(gray > 0)
-            {
-
-            }
             if (gray < (Level - Window / 2))
                 gray = 0;
             else if (gray > Level + Window / 2)

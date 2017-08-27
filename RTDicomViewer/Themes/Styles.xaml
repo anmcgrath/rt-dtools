@@ -1811,7 +1811,7 @@
     <!-- TreeView -->
 
     <Style TargetType="{x:Type TreeView}">
-        <Setter Property="Background" Value="{StaticResource TreeViewBackground}"/>
+        <Setter Property="Background" Value="#222222"/>
         <Setter Property="Padding" Value="1"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>

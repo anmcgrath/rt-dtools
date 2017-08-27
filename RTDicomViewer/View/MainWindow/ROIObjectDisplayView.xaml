@@ -1,21 +1,20 @@
-﻿<TreeViewItem x:Class="RTDicomViewer.View.MainWindow.DoseObjectDisplayView"
+﻿<TreeViewItem x:Class="RTDicomViewer.View.MainWindow.ROIObjectDisplayView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
-             xmlns:ex="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             DataContext="{Binding DoseObjectDisplay, Source={StaticResource Locator}}"
-              ItemsSource="{Binding DoseObjects}" Header="Dose grids"
+             d:DesignHeight="300" d:DesignWidth="300"
+              DataContext="{Binding ROIDisplay, Source={StaticResource Locator}}"
+              ItemsSource="{Binding StructureSets}" Header="Structure sets"
               Style="{StaticResource {x:Type TreeViewItem}}">
     <TreeViewItem.ItemTemplate>
-            <DataTemplate>
-                <WrapPanel>
-                    <CheckBox Margin="0" Content="{Binding Value.Name}" IsChecked="{Binding IsSelected}"  BorderThickness="1"/>
-                </WrapPanel>
-            </DataTemplate>
-        </TreeViewItem.ItemTemplate>
+        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+            <CheckBox Margin="0" Content="{Binding Value.Name}" CommandParameter="{Binding .}" IsChecked="{Binding IsSelected}"  BorderThickness="1">
+            </CheckBox>
+        </HierarchicalDataTemplate>
+    </TreeViewItem.ItemTemplate>
     <TreeViewItem.ItemContainerStyle>
         <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
             <!--<Setter Property="ContextMenu" Value="{StaticResource DoseContextMenu}"/>-->

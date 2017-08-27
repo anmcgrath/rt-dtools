@@ -23,34 +23,46 @@ namespace DicomPanel.Core.Render
                 new Contouring.ContourInfo(DicomColor.FromRgb(255,0,0),90),
                 new Contouring.ContourInfo(DicomColor.FromRgb(128,0,0),80),
                 new Contouring.ContourInfo(DicomColor.FromRgb(0,0,255),80),
+                new Contouring.ContourInfo(DicomColor.FromRgb(128,128,0),70),
+                new Contouring.ContourInfo(DicomColor.FromRgb(255,0,255),60),
             };
         }
 
-        public void Render(IDoseObject doseObject, Camera camera, IRenderContext context, Recti screenRect)
+        public void Render(IDoseObject doseObject, Camera camera, IRenderContext context, Rectd screenRect)
         {
             if (doseObject == null || doseObject.Grid == null)
                 return;
 
             //Translates screen to world points and vice versa
-            var t = camera.CreateTranslator(context);
             var ms = new MarchingSquares();
             List<PlanarPolygon> polygons = new List<PlanarPolygon>();
 
             foreach(ContourInfo contourInfo in ContourInfo)
             {
-                var interpolatedDoseGrid = new InterpolatedDoseGrid(doseObject, MaxNumberOfGridPoints, t, screenRect);
+                var interpolatedDoseGrid = new InterpolatedDoseGrid(doseObject, MaxNumberOfGridPoints, camera, screenRect);
                 var contour = ms.GetContour(interpolatedDoseGrid.Data, interpolatedDoseGrid.Rows, interpolatedDoseGrid.Columns, interpolatedDoseGrid.Coords, contourInfo.Threshold, contourInfo.Color);
-                var polygon = contour.ToPlanarPolygon(t);
-                for (int i = 0; i < polygon.Vertices.Length - 4; i += 4)
+                //var polygon = contour.ToPlanarPolygon(camera);
+
+                Point2d screenPoint1 = new Point2d();
+                Point2d screenPoint2 = new Point2d();
+                Point3d worldPoint1 = new Point3d();
+                Point3d worldPoint2 = new Point3d();
+
+                for(int i = 0; i < contour.Vertices.Length; i+= 6)
                 {
-                    context.DrawLine(
-                        polygon.Vertices[i + 0],
-                        polygon.Vertices[i + 1],
-                        polygon.Vertices[i + 2],
-                        polygon.Vertices[i + 3],
-                        contour.Color
-                        );
+                    worldPoint1.X = contour.Vertices[i];
+                    worldPoint1.Y = contour.Vertices[i + 1];
+                    worldPoint1.Z = contour.Vertices[i + 2];
+                    worldPoint2.X = contour.Vertices[i + 3];
+                    worldPoint2.Y = contour.Vertices[i + 4];
+                    worldPoint2.Z = contour.Vertices[i + 5];
+
+                    camera.ConvertWorldToScreenCoords(worldPoint1, screenPoint1);
+                    camera.ConvertWorldToScreenCoords(worldPoint2, screenPoint2);
+
+                    context.DrawLine(screenPoint1.X, screenPoint1.Y, screenPoint2.X, screenPoint2.Y, contour.Color);
                 }
+                
             }
         }
     }

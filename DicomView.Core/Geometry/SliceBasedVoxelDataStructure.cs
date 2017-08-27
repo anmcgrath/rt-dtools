@@ -63,11 +63,13 @@ namespace DicomPanel.Core.Geometry
             int iz = (int)Math.Round(_indexCache.Z);
 
             if (iz > _slices.Count - 1 || iz < 0)
-                voxel.Value = 0;
+                voxel.Value = -1000;
             else
             {
                 if (ic < _slices[iz].Columns && ir < _slices[iz].Columns && ic > -1 && ir > -1)
                     voxel.Value = _slices[iz].Get(ic, ir);
+                else
+                    voxel.Value = -1000;
             }
         }
 

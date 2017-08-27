@@ -18,7 +18,7 @@ namespace DicomPanel.Core.Render.Contouring
 
         }
 
-        public Contour GetContour(float[,] grid, int rows, int columns, double[][][] coords, double thresholds, DicomColor color)
+        public Contour GetContour(float[][] grid, int rows, int columns, double[][][] coords, double thresholds, DicomColor color)
         {
             Contour contour = new Contour(GetVertices(grid, rows, columns, coords, thresholds), color);
             return contour;
@@ -31,7 +31,7 @@ namespace DicomPanel.Core.Render.Contouring
         /// <param name="grid">The data grid</param>
         /// <param name="coords">Coordinates corresponding 1:1 to the data grid</param>
         /// <returns></returns>
-        public double[] GetVertices(float[,] grid, int rows, int columns, double[][][] coords, double threshold)
+        public double[] GetVertices(float[][] grid, int rows, int columns, double[][][] coords, double threshold)
         {
             List<double> vertices = new List<double>();
             float A, B, C, D;
@@ -39,10 +39,10 @@ namespace DicomPanel.Core.Render.Contouring
             {
                 for (int col = 1; col < columns; col++)
                 {
-                    A = grid[row - 1, col - 1];
-                    B = grid[row - 1, col];
-                    C = grid[row, col - 1];
-                    D = grid[row, col];
+                    A = grid[row - 1][col - 1];
+                    B = grid[row - 1][col];
+                    C = grid[row][col - 1];
+                    D = grid[row][col];
                     checkSquare(A, B, C, D, row, col, threshold, vertices, coords);
                 }
             }

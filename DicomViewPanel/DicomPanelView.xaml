@@ -9,9 +9,18 @@
     <UserControl.DataContext>
         <local:DicomPanelViewModel/>
     </UserControl.DataContext>
-    <Grid Background="GhostWhite">
+    <Grid Background="Black"
+          x:Name="Grid"
+          Mouse.MouseWheel="DicomPanelView_MouseWheel"
+          Mouse.MouseDown="DicomPanelView_MouseDown"
+          Mouse.MouseMove="DicomPanelView_MouseMove"
+          Mouse.MouseUp="DicomPanelView_MouseUp"
+          Mouse.MouseLeave="Grid_MouseLeave"
+          Mouse.MouseEnter="Grid_MouseEnter">
+
         <!-- The DICOM Image -->
         <Image Source="{Binding ImageBase}" RenderOptions.BitmapScalingMode="Fant"/>
+        <Canvas x:Name="OverlayCanvas"/>
         <!-- Everything else -->
         <!--<Image Source="{Binding ImageTop}"/>-->
     </Grid>

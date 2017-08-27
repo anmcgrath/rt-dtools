@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace RTDicomViewer.View.MainWindow
 {
     /// <summary>
-    /// Interaction logic for DoseObjectDisplayView.xaml
+    /// Interaction logic for ROIObjectDisplayView.xaml
     /// </summary>
-    public partial class DoseObjectDisplayView : TreeViewItem
+    public partial class ROIObjectDisplayView : TreeViewItem
     {
-        public DoseObjectDisplayView()
+        public ROIObjectDisplayView()
         {
             InitializeComponent();
         }

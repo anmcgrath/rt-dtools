@@ -88,17 +88,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IO\FileOpener.cs" />
     <Compile Include="Message\DoseObjectRenderMessage.cs" />
+    <Compile Include="Message\ROIsObjectRenderMessage.cs" />
     <Compile Include="Message\RTObjectLoadedMessage.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
+    <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DoseObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\MainWindow\DoseObjectDisplayView.xaml.cs">
       <DependentUpon>DoseObjectDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\ROIObjectDisplayView.xaml.cs">
+      <DependentUpon>ROIObjectDisplayView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -117,6 +124,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\MainWindow\DoseObjectDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\ROIObjectDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

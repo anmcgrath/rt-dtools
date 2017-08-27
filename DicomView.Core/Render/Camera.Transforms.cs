@@ -6,15 +6,8 @@ using System.Text;
 
 namespace DicomPanel.Core.Render
 {
-    public class WorldPointTranslator
+    public partial class Camera
     {
-        private IRenderContext _context;
-        private Camera _camera;
-        private Point3d _screenCoordsCache { get; set; }
-        private Point3d _worldCoordsCache { get; set; }
-        private double _colDirLength { get; set; }
-        private double _rowDirLength { get; set; }
-
         /// <summary>
         /// Some cached doubles for computing world to screen points
         /// </summary>
@@ -22,53 +15,36 @@ namespace DicomPanel.Core.Render
         private double tly;
         private double tlz;
 
+        CoordinateTransform t = new CoordinateTransform();
+
         private Matrix3d _screenToWorldMatrix { get; set; }
-
-        private WorldPointTranslator()
-        {
-            _screenToWorldMatrix = new Matrix3d();
-            _screenCoordsCache = new Point3d(0, 0, 1);
-            _worldCoordsCache = new Point3d();
-        }
-
-        public static WorldPointTranslator Create(Camera camera, IRenderContext context)
-        {
-            WorldPointTranslator translator = new WorldPointTranslator();
-            translator._camera = camera;
-            translator._context = context;
-            translator.createScreenToWorldMatrix();
-            translator.cacheWorldToScreenVariables();
-            translator._colDirLength = camera.ColDir.Length();
-            translator._rowDirLength = camera.RowDir.Length();
-            return translator;
-        }
 
         private void cacheWorldToScreenVariables()
         {
-            tlx = _camera.Position.X - (_camera.ColDir.X * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.X * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
-            tly = _camera.Position.Y - (_camera.ColDir.Y * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.Y * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
-            tlz = _camera.Position.Z - (_camera.ColDir.Z * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.Z * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
+            tlx = Position.X - (ColDir.X * FOV.X * MMPerPixel / Scale + RowDir.X * FOV.Y * MMPerPixel / Scale) / 2;
+            tly = Position.Y - (ColDir.Y * FOV.X * MMPerPixel / Scale + RowDir.Y * FOV.Y * MMPerPixel / Scale) / 2;
+            tlz = Position.Z - (ColDir.Z * FOV.X * MMPerPixel / Scale + RowDir.Z * FOV.Y * MMPerPixel / Scale) / 2;
         }
 
         private void createScreenToWorldMatrix()
         {
-            _screenToWorldMatrix.A00 = _camera.ColDir.X / _camera.Scale;
-            _screenToWorldMatrix.A01 = _camera.RowDir.X / _camera.Scale;
-            _screenToWorldMatrix.A02 = _camera.Position.X - (_camera.ColDir.X * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.X * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
+            _screenToWorldMatrix.A00 = ColDir.X / Scale;
+            _screenToWorldMatrix.A01 = RowDir.X / Scale;
+            _screenToWorldMatrix.A02 = Position.X - (ColDir.X * FOV.X * MMPerPixel / Scale + RowDir.X * FOV.Y * MMPerPixel / Scale) / 2;
 
-            _screenToWorldMatrix.A10 = _camera.ColDir.Y / _camera.Scale;
-            _screenToWorldMatrix.A11 = _camera.RowDir.Y / _camera.Scale;
-            _screenToWorldMatrix.A12 = _camera.Position.Y - (_camera.ColDir.Y * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.Y * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
+            _screenToWorldMatrix.A10 = ColDir.Y / Scale;
+            _screenToWorldMatrix.A11 = RowDir.Y / Scale;
+            _screenToWorldMatrix.A12 = Position.Y - (ColDir.Y * FOV.X * MMPerPixel / Scale + RowDir.Y * FOV.Y * MMPerPixel / Scale) / 2;
 
-            _screenToWorldMatrix.A20 = _camera.ColDir.Z / _camera.Scale;
-            _screenToWorldMatrix.A21 = _camera.RowDir.Z / _camera.Scale;
-            _screenToWorldMatrix.A22 = _camera.Position.Z - (_camera.ColDir.Z * _context.Width * _camera.MMPerPixel / _camera.Scale + _camera.RowDir.Z * _context.Height * _camera.MMPerPixel / _camera.Scale) / 2;
+            _screenToWorldMatrix.A20 = ColDir.Z / Scale;
+            _screenToWorldMatrix.A21 = RowDir.Z / Scale;
+            _screenToWorldMatrix.A22 = Position.Z - (ColDir.Z * FOV.X * MMPerPixel / Scale + RowDir.Z * FOV.Y * MMPerPixel / Scale) / 2;
         }
 
-        public void ConvertScreenToWorldCoords(double row, double column, Point3d screenCoords)
+        public void ConvertScreenToWorldCoords(double y, double x, Point3d screenCoords)
         {
-            _screenCoordsCache.X = column;
-            _screenCoordsCache.Y = row;
+            _screenCoordsCache.X = x;
+            _screenCoordsCache.Y = y;
             _screenCoordsCache.Z = 1;
             ConvertScreenToWorldCoords(_screenCoordsCache, screenCoords);
         }
@@ -76,13 +52,13 @@ namespace DicomPanel.Core.Render
         /// <summary>
         /// Converts screen coordinates (i.e pixel coordinates) to patient position
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
+        /// <param name="y"></param>
+        /// <param name="x"></param>
         /// <returns></returns>
-        public Point3d ConvertScreenToWorldCoords(double row, double column)
+        public Point3d ConvertScreenToWorldCoords(double y, double x)
         {
-            _screenCoordsCache.X = column;
-            _screenCoordsCache.Y = row;
+            _screenCoordsCache.X = x;
+            _screenCoordsCache.Y = y;
             Point3d worldCoords = new Point3d();
             ConvertScreenToWorldCoords(_screenCoordsCache, worldCoords);
             return worldCoords;
@@ -101,6 +77,9 @@ namespace DicomPanel.Core.Render
         public void ConvertScreenToWorldCoords(Point3d screenCoords, Point3d worldCoords)
         {
             screenCoords.Z = 1;
+            //Convert normalised device coordinates where x:[-1,1] and y:[-1,1] to camera coords (mm) where x:[cx-FOV.X/2,cx+FOV.X/2]
+            screenCoords.X = t.Ndc2x(screenCoords.X, FOV.X);
+            screenCoords.Y = t.Ndc2y(screenCoords.Y, FOV.Y); 
             _screenToWorldMatrix.LeftMultiply(screenCoords, worldCoords);
         }
 
@@ -137,7 +116,7 @@ namespace DicomPanel.Core.Render
         /// <param name="yrange">The yrange of the object</param>
         /// <param name="zrange">The zrange of the object</param>
         /// <returns></returns>
-        public Rectd GetBoundingScreenRect(Range xrange, Range yrange, Range zrange, Recti screenRect)
+        public Rectd GetBoundingScreenRect(Range xrange, Range yrange, Range zrange, Rectd normDeviceRect)
         {
             Point2d minPoint = new Point2d(double.MaxValue, double.MaxValue);
             Point2d maxPoint = new Point2d(double.MinValue, double.MinValue);
@@ -165,7 +144,7 @@ namespace DicomPanel.Core.Render
                     maxPoint.Y = projectedVertex.Y;
             }
             Rectd boundingRect = new Rectd(minPoint, maxPoint);
-            boundingRect.Intersect(screenRect);
+            boundingRect = boundingRect.Intersect(normDeviceRect);
             return boundingRect;
         }
 
@@ -173,12 +152,13 @@ namespace DicomPanel.Core.Render
         {
             //get w1 and w2 in screen coordinates (including z) from the top left
             //s1 = (w1 - tl) * Scale * MMPerPixel;
-            double s1x = (x - tlx) * _camera.Scale * _camera.MMPerPixel;
-            double s1y = (y - tly) * _camera.Scale * _camera.MMPerPixel;
-            double s1z = (z - tlz) * _camera.Scale * _camera.MMPerPixel;
-            screenCoords.X = _colDirLength * (s1x * _camera.ColDir.X + s1y * _camera.ColDir.Y + s1z * _camera.ColDir.Z);
-            screenCoords.Y = _rowDirLength * (s1x * _camera.RowDir.X + s1y * _camera.RowDir.Y + s1z * _camera.RowDir.Z);
+            double s1x = (x - tlx) * Scale * MMPerPixel;
+            double s1y = (y - tly) * Scale * MMPerPixel;
+            double s1z = (z - tlz) * Scale * MMPerPixel;
+            screenCoords.X = colDirLength * (s1x * ColDir.X + s1y * ColDir.Y + s1z * ColDir.Z);
+            screenCoords.Y = rowDirLength * (s1x * RowDir.X + s1y * RowDir.Y + s1z * RowDir.Z);
+            screenCoords.X = t.X2Ndc(screenCoords.X, FOV.X);
+            screenCoords.Y = t.Y2Ndc(screenCoords.Y, FOV.Y);
         }
-
     }
 }

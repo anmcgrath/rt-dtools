@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -26,10 +27,14 @@ namespace DicomPanel.Wpf
         public WriteableBitmapRenderContext ImageBaseRenderContext { get; set; }
         public WriteableBitmapRenderContext ImageTopRenderContext { get; set; }
 
+        public Canvas Canvas { set { OverlayRenderContext.Canvas = value; } }
+        public CanvasRenderContext OverlayRenderContext { get; set; }
+
         public DicomPanelViewModel()
         {
             ImageBaseRenderContext = new WriteableBitmapRenderContext(ImageBase);
             ImageTopRenderContext = new WriteableBitmapRenderContext(ImageTop);
+            OverlayRenderContext = new CanvasRenderContext(null);
         }
 
         public void SetModel(DicomPanelModel model)
@@ -38,13 +43,14 @@ namespace DicomPanel.Wpf
             Model.SetImageRenderContext(ImageBaseRenderContext);
             Model.SetDoseRenderContext(ImageTopRenderContext);
             Model.SetRoiRenderContext(ImageTopRenderContext);
-            Model.SetOverlayContext(ImageTopRenderContext);
+            Model.SetOverlayContext(OverlayRenderContext);
             Model?.Invalidate();
         }
 
         public void OnSizeChanged(double newWidth, double newHeight)
         {
             createRenderTargets((int)Math.Round(newWidth), (int)Math.Round(newHeight));
+            Model?.OnResize(newWidth, newHeight);
             Model?.Invalidate();
         }
 
