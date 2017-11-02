@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autodesk.Maya;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,9 @@ namespace RTDicomViewer
     /// </summary>
     public partial class App : Application
     {
+        public void App_Startup(object sender, StartupEventArgs args)
+        {
+            MayaTheme.Initialize(this);
+        }
     }
 }

@@ -24,6 +24,15 @@ namespace DicomPanel.Core.Render
             B = b;
         }
 
+        public static DicomColor FromUInt32(uint color)
+        {
+            var a = (byte)(color >> 24);
+            var r = (byte)(color >> 16);
+            var g = (byte)(color >> 8);
+            var b = (byte)(color >> 0);
+            return FromArgb(a, r, g, b);
+        }
+
         public static DicomColor FromArgb(int a, int r, int g, int b)
         {
             return new DicomColor(a, r, g, b);

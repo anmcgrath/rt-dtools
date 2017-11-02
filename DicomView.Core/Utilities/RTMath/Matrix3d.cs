@@ -68,7 +68,7 @@ namespace DicomPanel.Core.Utilities.RTMath
             return result;
         }
 
-        
+
         /// <summary>
         /// Left multiply a point by this matrix and return a new point as the result
         /// </summary>
@@ -146,6 +146,38 @@ namespace DicomPanel.Core.Utilities.RTMath
             Rz.A10 = Math.Sin(r_thetaz); Rz.A11 = Math.Cos(r_thetaz); Rz.A12 = 0;
             Rz.A20 = 0; Rz.A21 = 0; Rz.A22 = 1;
             return Rz;
+        }
+
+        /// <summary>
+        /// Get the rotation Matrix to rotate a vector theta degrees around the vector u
+        /// </summary>
+        /// <param name="theta"></param>
+        /// <param name="uvec"></param>
+        /// <returns></returns>
+        public static Matrix3d GetRotation(double theta, Point3d uvec)
+        {
+            theta = theta * Math.PI / 180;
+            var u = new Point3d();
+            uvec.CopyTo(u);
+            u /= u.Length();
+            var cost = Math.Cos(theta);
+            var sint = Math.Sin(theta);
+
+            Matrix3d mat = new Matrix3d(new double[]
+            {
+
+                cost + u.X*u.X*(1-cost),
+                u.Y*u.X*(1-cost)+u.Z*sint,
+                u.Z*u.X*(1-cost)-u.Y*sint,
+                u.X*u.Y*(1-cost)-u.Z*sint,
+                cost+u.Y*u.Y*(1-cost),
+                u.Z*u.Y*(1-cost)+u.X*sint,
+                u.X*u.Z*(1-cost)+u.Y*sint,
+                u.Y*u.Z*(1-cost)-u.X*sint,
+                cost+u.Z*u.Z*(1-cost)
+
+            });
+            return mat;
         }
     }
 }

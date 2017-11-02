@@ -8,7 +8,7 @@ using DicomPanel.Core.Utilities.RTMath;
 
 namespace DicomPanel.Core.Geometry
 {
-    public class GridBasedVoxelDataStructure : VoxelDataStructureBase, IVoxelDataStructure
+    public partial class GridBasedVoxelDataStructure : VoxelDataStructureBase, IVoxelDataStructure
     {
         /// <summary>
         /// X Coordinates (LR orientation)
@@ -35,9 +35,13 @@ namespace DicomPanel.Core.Geometry
         /// </summary>
         public Point3d GridSpacing { get; set; }
 
+        /// <summary>
+        /// Returned when the interpolation cannot find a value at the point
+        /// </summary>
+        public float DefaultPhysicalValue { get; set; }
+
         public GridBasedVoxelDataStructure()
         {
-            Voxels = new Voxels(this);
         }
 
 
@@ -49,7 +53,7 @@ namespace DicomPanel.Core.Geometry
 
             if (!XRange.Contains(position.X) || !YRange.Contains(position.Y) || !ZRange.Contains(position.Z))
             {
-                voxel.Value = 0;
+                voxel.Value = DefaultPhysicalValue;
             }
             else
             {
@@ -98,30 +102,19 @@ namespace DicomPanel.Core.Geometry
                     iz0 = zt.Item3;
                     iz1 = zt.Item4;
                 }
-                float xd;
-                if (x1 == x0)
-                    xd = 0;
-                else
-                    xd = (float)(position.X - x0) / (x1 - x0);
-                double yd;
-                if (y1 == y0)
-                    yd = 0;
-                else
-                    yd = (position.Y - y0) / (y1 - y0);
-                double zd;
-                if (z1 == z0)
-                    zd = 0;
-                else
-                    zd = (position.Z - z0) / (z1 - z0);
-                float c00 = Data[ix0, iy0, iz0] * (1 - xd) + Data[ix1, iy0, iz0] * xd;
-                float c01 = Data[ix0, iy0, iz1] * (1 - xd) + Data[ix1, iy0, iz1] * xd;
-                float c10 = Data[ix0, iy1, iz0] * (1 - xd) + Data[ix1, iy1, iz0] * xd;
-                float c11 = Data[ix0, iy1, iz1] * (1 - xd) + Data[ix1, iy1, iz1] * xd;
-                float c0 = (float)(c00 * (1 - yd) + c10 * yd);
-                float c1 = (float)(c01 * (1 - yd) + c11 * yd);
-                float c = (float)(c0 * (1 - zd) + c1 * zd);
 
-                voxel.Value = c;
+                voxel.Value = Interpolation.TrilinearInterpolate(
+                    (float)position.X, (float)position.Y, (float)position.Z,
+                    x0, y0, z0,
+                    x1, y1, z1,
+                    Data[ix0, iy0, iz0],
+                    Data[ix1, iy0, iz0],
+                    Data[ix0, iy0, iz1],
+                    Data[ix1, iy0, iz1],
+                    Data[ix0, iy1, iz0],
+                    Data[ix1, iy1, iz0],
+                    Data[ix0, iy1, iz1],
+                    Data[ix1, iy1, iz1]);
             }
         }
 
@@ -163,68 +156,27 @@ namespace DicomPanel.Core.Geometry
             return new Tuple<double, double, int, int>(0, 0, 0, 0);
         }
 
-        //IEnumerator Functions For Voxels
-        private int currentXIndex;
-        private int currentYIndex;
-        private int currentZIndex;
-        private Voxel voxel = new Voxel();
-
-        public bool MoveNext()
+        public void ComputeMax()
         {
-            currentXIndex++;
-            if(currentXIndex > XCoords.Length-1)
+            MaxVoxel.Value = float.MinValue;
+            foreach (var x in XCoords)
             {
-                currentXIndex = 0;
-                currentYIndex++;
-            }
-            if(currentYIndex > YCoords.Length-1)
-            {
-                currentYIndex = 0;
-                currentZIndex++;
-            }
-            if(!(currentZIndex > ZCoords.Length - 1))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public void Reset()
-        {
-            //currentXIndex = 0;
-            //currentYIndex = 0;
-            //currentZIndex = 0;
-        }
-
-        public void Dispose() { }
-
-        public Voxel Current
-        {
-            get
-            {
-                Voxel voxel = new Voxel();
-                voxel.Position.X = XCoords[currentXIndex];
-                voxel.Position.Y = YCoords[currentYIndex];
-                voxel.Position.Z = ZCoords[currentZIndex];
-                voxel.Value = Data[currentXIndex, currentYIndex, currentZIndex];
-                return voxel;
-            }
-        }
-
-        object IEnumerator.Current
-        {
-            get
-            {
-                return Current;
-            }
-        }
-
-        Voxel IEnumerator<Voxel>.Current
-        {
-            get
-            {
-                return Current;
+                foreach (var y in YCoords)
+                {
+                    foreach (var z in ZCoords)
+                    {
+                        var val = Interpolate(x, y, z).Value;
+                        if (val > MaxVoxel.Value)
+                        {
+                            MaxVoxel.Value = val;
+                            MaxVoxel.Position.X = x;
+                            MaxVoxel.Position.Y = y;
+                            MaxVoxel.Position.Z = z;
+                        }
+                    }
+                }
             }
         }
     }
+
 }

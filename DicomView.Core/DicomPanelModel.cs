@@ -2,6 +2,7 @@
 using DicomPanel.Core.Radiotherapy.Imaging;
 using DicomPanel.Core.Radiotherapy.ROIs;
 using DicomPanel.Core.Render;
+using DicomPanel.Core.Render.Overlays;
 using DicomPanel.Core.Toolbox;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,10 @@ namespace DicomPanel.Core
         public IDoseObject Dose { get; set; }
         private List<RegionOfInterest> ROIs { get; set; }
 
-        public DicomPanelGroup Group { get; set; }
+        public List<IOverlay> Overlays { get; set; }
+        public List<DicomPanelModel> OrthogonalModels { get; set; }
 
-        public ITool SelectedTool { get; set; }
-
-        public List<ITool> Tools { get; set; }
+        public ToolBox ToolBox { get; set; }
 
         public DicomPanelModel()
         {
@@ -39,36 +39,59 @@ namespace DicomPanel.Core
             DoseRenderer = new DoseRenderer();
             ROIRenderer = new ROIRenderer();
             ROIs = new List<RegionOfInterest>();
+            OrthogonalModels = new List<DicomPanelModel>();
+            Overlays = new List<IOverlay>();
+            ToolBox = new ToolBox();
         }
-
-
 
         /// <summary>
         /// Invalidates the View model, causing rendering of all rendering contexts
         /// </summary>
         public void Invalidate()
         {
-            ImageRenderContext.BeginRender();
-            DoseRenderContext.BeginRender();
-            RoiRenderContext.BeginRender();
-            OverlayContext.BeginRender();
+            ImageRenderContext?.BeginRender();
+            DoseRenderContext?.BeginRender();
+            RoiRenderContext?.BeginRender();
+            OverlayContext?.BeginRender();
 
             if (ImageRenderContext != null)
                 ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
 
             if (DoseRenderContext != null)
-                DoseRenderer?.Render(Dose, Camera, OverlayContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+                DoseRenderer?.Render(Dose, Camera, DoseRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
 
             if (RoiRenderContext != null)
                 ROIRenderer?.Render(ROIs, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
 
-            OverlayContext.DrawRect(0, 0, 1.0, 1.0 , DicomColor.FromRgb(128, 0, 128));
+            if (OverlayContext != null)
+            {
+                foreach (IOverlay overlay in Overlays)
+                {
+                    overlay.Render(this, OverlayContext);
+                }
+            }
 
-            ImageRenderContext.EndRender();
-            DoseRenderContext.EndRender();
-            RoiRenderContext.EndRender();
+            ImageRenderContext?.EndRender();
+            DoseRenderContext?.EndRender();
+            RoiRenderContext?.EndRender();
+            OverlayContext?.EndRender();
+
+        }
+
+        public void InvalidateImage()
+        {
+            ImageRenderContext?.BeginRender();
+            if (ImageRenderContext != null)
+                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+            ImageRenderContext?.EndRender();
+        }
+
+        public void InvalidateOverlays()
+        {
+            OverlayContext.BeginRender();
+            foreach (IOverlay overlay in Overlays)
+                overlay.Render(this, OverlayContext);
             OverlayContext.EndRender();
-
         }
 
         public void SetImage(DicomImageObject image)
@@ -136,28 +159,9 @@ namespace DicomPanel.Core
             OverlayContext = context;
         }
 
-        private void initTools()
+        public void SetToolBox(ToolBox toolBox)
         {
-            Tools = new List<ITool>()
-            {
-                new PanTool(this),
-            };
-        }
-
-        private void SelectTool(ITool tool)
-        {
-            SelectedTool?.Unselect();
-            SelectedTool = tool;
-            SelectedTool.Select();
-        }
-
-        private void SelectTool(string toolId)
-        {
-            foreach(ITool tool in Tools)
-            {
-                if (tool.Id == toolId)
-                    SelectTool(tool);
-            }
+            ToolBox = toolBox;
         }
     }
 }

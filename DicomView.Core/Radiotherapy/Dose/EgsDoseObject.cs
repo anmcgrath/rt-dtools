@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DicomPanel.Core.Geometry;
+using Dicom;
+using DicomPanel.Core.IO.Loaders;
 
 namespace DicomPanel.Core.Radiotherapy.Dose
 {
@@ -12,6 +14,12 @@ namespace DicomPanel.Core.Radiotherapy.Dose
         public string Name { get; set; }
         public string FileName { get; set; }
         public IVoxelDataStructure Grid { get; set; }
+
+        public EgsDoseObject(string file)
+        {
+            var loader = new EgsDoseLoader();
+            loader.Load(file, this);
+        }
 
         public float GetNormalisationAmount()
         {

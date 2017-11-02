@@ -15,6 +15,7 @@ namespace DicomPanel.Core.Radiotherapy.Dose
         public IVoxelDataStructure Grid { get; set; }
         public double DoseGridScaling { get; set; }
         public string Units { get; set; }
+        public string Name { get; set; }
 
         public DicomDoseObject(params DicomFile[] files):base(files)
         {

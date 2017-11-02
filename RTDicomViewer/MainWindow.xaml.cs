@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RTDicomViewer.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,20 @@ namespace RTDicomViewer
         public MainWindow()
         {
             InitializeComponent();
+            this.Closed += MainWindow_Closed;
+            this.Loaded += MainWindow_Loaded;
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainViewModel dc = (MainViewModel)DataContext;
+            dc.progressDialogView.Owner = this;
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            MainViewModel dc = (MainViewModel)DataContext;
+            dc.OnClose();
+        }
     }
 }

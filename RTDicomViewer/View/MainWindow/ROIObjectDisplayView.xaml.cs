@@ -18,7 +18,7 @@ namespace RTDicomViewer.View.MainWindow
     /// <summary>
     /// Interaction logic for ROIObjectDisplayView.xaml
     /// </summary>
-    public partial class ROIObjectDisplayView : TreeViewItem
+    public partial class ROIObjectDisplayView : UserControl
     {
         public ROIObjectDisplayView()
         {

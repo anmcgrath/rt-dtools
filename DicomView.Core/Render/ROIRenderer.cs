@@ -31,7 +31,7 @@ namespace DicomPanel.Core.Render
                     var cols = (int)Math.Round((boundingRect.Width * camera.GetFOV().X / gridSpacing)) + 1;
                     var grid = new bool[rows, cols];
                     var cnorm = camera.ColDir.Length();
-                    var rnorm = camera.ColDir.Length();
+                    var rnorm = camera.RowDir.Length();
                     var cx = (cnorm * camera.ColDir.X) * gridSpacing / camera.Scale;
                     var cy = (cnorm * camera.ColDir.Y) * gridSpacing / camera.Scale;
                     var cz = (cnorm * camera.ColDir.Z) * gridSpacing / camera.Scale;

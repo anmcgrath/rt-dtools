@@ -12,8 +12,9 @@ namespace DicomPanel.Core.IO.Loaders
     {
         public void Load(DicomFile[] files, DicomImageObject dicomObject)
         {
-            var gridLoader = new SliceBasedStructureDicomLoader();
+            var gridLoader = new GridBasedStructureDicomLoader();
             dicomObject.Grid = gridLoader.Load(files);
+            dicomObject.Grid.DefaultPhysicalValue = -1024;
 
             try
             {

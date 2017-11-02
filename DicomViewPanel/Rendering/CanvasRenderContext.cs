@@ -66,12 +66,29 @@ namespace DicomPanel.Wpf.Rendering
             y0 *= Canvas.ActualHeight;
             Line line = new Line();
             line.Stroke = new SolidColorBrush(DicomColorConverter.FromDicomColor(color));
-            line.StrokeThickness = 2;
+            line.StrokeThickness = 1;
             line.X1 = x0;
             line.X2 = x1;
             line.Y1 = y0;
             line.Y2 = y1;
             Canvas?.Children.Add(line);
+        }
+
+        public void FillRect(double x0, double y0, double x1, double y1, DicomColor fill, DicomColor stroke)
+        {
+            x0 *= Canvas.ActualWidth;
+            x1 *= Canvas.ActualWidth;
+            y1 *= Canvas.ActualHeight;
+            y0 *= Canvas.ActualHeight;
+
+            Rectangle rectangle = new Rectangle();
+            rectangle.Fill = new SolidColorBrush(DicomColorConverter.FromDicomColor(fill));
+            rectangle.Stroke = new SolidColorBrush(DicomColorConverter.FromDicomColor(stroke));
+            rectangle.Width = Math.Abs(x1 - x0);
+            rectangle.Height = Math.Abs(y1 - y0);
+            Canvas.SetLeft(rectangle, Math.Min(x0, x1));
+            Canvas.SetTop(rectangle, Math.Min(y0, y1));
+            Canvas?.Children.Add(rectangle);
         }
 
         public void BeginRender()

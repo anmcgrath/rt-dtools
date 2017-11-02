@@ -163,5 +163,15 @@ namespace DicomPanel.Core.Utilities.RTMath
             return point * multi;
         }
 
+        public static Point3d operator /(double multi, Point3d point)
+        {
+            return point * (1 / multi);
+        }
+
+        public static Point3d operator /(Point3d point, double multi)
+        {
+            return point * (1 / multi);
+        }
+
     }
 }

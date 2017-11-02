@@ -18,7 +18,7 @@ namespace RTDicomViewer.View.MainWindow
     /// <summary>
     /// Interaction logic for DoseObjectDisplayView.xaml
     /// </summary>
-    public partial class DoseObjectDisplayView : TreeViewItem
+    public partial class DoseObjectDisplayView : UserControl
     {
         public DoseObjectDisplayView()
         {

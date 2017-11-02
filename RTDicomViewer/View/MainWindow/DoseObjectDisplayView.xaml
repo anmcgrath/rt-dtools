@@ -1,4 +1,4 @@
-﻿<TreeViewItem x:Class="RTDicomViewer.View.MainWindow.DoseObjectDisplayView"
+﻿<UserControl x:Class="RTDicomViewer.View.MainWindow.DoseObjectDisplayView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,18 +7,21 @@
              xmlns:ex="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              DataContext="{Binding DoseObjectDisplay, Source={StaticResource Locator}}"
-              ItemsSource="{Binding DoseObjects}" Header="Dose grids"
-              Style="{StaticResource {x:Type TreeViewItem}}">
-    <TreeViewItem.ItemTemplate>
+              >
+    <TreeView ItemsSource="{Binding DoseObjects}" Style="{StaticResource {x:Type TreeView}}" >
+        <TreeView.ItemTemplate>
             <DataTemplate>
                 <WrapPanel>
                     <CheckBox Margin="0" Content="{Binding Value.Name}" IsChecked="{Binding IsSelected}"  BorderThickness="1"/>
                 </WrapPanel>
             </DataTemplate>
-        </TreeViewItem.ItemTemplate>
-    <TreeViewItem.ItemContainerStyle>
+        </TreeView.ItemTemplate>
+    <TreeView.ItemContainerStyle>
         <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
             <!--<Setter Property="ContextMenu" Value="{StaticResource DoseContextMenu}"/>-->
         </Style>
-    </TreeViewItem.ItemContainerStyle>
-</TreeViewItem>
+        </TreeView.ItemContainerStyle>
+        
+
+    </TreeView>
+</UserControl>

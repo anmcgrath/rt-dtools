@@ -12,11 +12,11 @@ namespace DicomPanel.Core.IO.Loaders
     public class EgsDoseLoader
     {
 
-        public EgsDoseObject Load(string fileName)
+        public EgsDoseObject Load(string fileName, EgsDoseObject doseObject)
         {
-            EgsDoseObject dose = new EgsDoseObject();
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
-            dose.Name = Path.GetFileName(fileName);
+            doseObject.Name = Path.GetFileName(fileName);
+            double max = 0;
 
             int SizeX, SizeY, SizeZ;
             using (TextReader reader = File.OpenText(fileName))
@@ -39,11 +39,17 @@ namespace DicomPanel.Core.IO.Loaders
                     int indexX = i % SizeX;
                     int indexZ = (int)(i / (SizeX * SizeY));
                     int indexY = (int)(i / SizeX) - indexZ * (SizeY);
-                    grid.Data[indexX, indexY, indexZ] = ReadFloat(reader);
+                    float data = ReadFloat(reader);
+                    grid.Data[indexX, indexY, indexZ] = data;
                 }
-
             }
-            return dose;
+            grid.XRange = new Range((double)grid.XCoords[0], (double)grid.XCoords[grid.XCoords.Length-1]);
+            grid.YRange = new Range(grid.YCoords[0], grid.YCoords[grid.YCoords.Length - 1]);
+            grid.ZRange = new Range(grid.ZCoords[0], grid.ZCoords[grid.ZCoords.Length - 1]);
+
+            doseObject.Grid = grid;
+            doseObject.Grid.ComputeMax();
+            return doseObject;
         }
 
         private double ReadDouble(TextReader reader)

@@ -74,6 +74,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Utilities\BindingProxy.cs" />
     <Compile Include="WriteableBitmapEx\BitmapContext.cs" />
     <Compile Include="WriteableBitmapEx\BitmapFactory.cs" />
     <Compile Include="WriteableBitmapEx\ClearTypeLetterGlyph.cs" />

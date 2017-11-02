@@ -46,9 +46,16 @@ namespace DicomPanel.Wpf
             DicomPanelViewModel vm = (DicomPanelViewModel)DataContext;
             vm.Canvas = OverlayCanvas;
             vm.OnSizeChanged(this.ActualWidth, this.ActualHeight);
+            this.Loaded += DicomPanelView_Loaded;
 
             this.SizeChanged += WorldViewControl_SizeChanged;
             this.MouseWheel += DicomPanelView_MouseWheel;
+        }
+
+        private void DicomPanelView_Loaded(object sender, RoutedEventArgs e)
+        {
+            DicomPanelViewModel vm = (DicomPanelViewModel)DataContext;
+            vm.OnSizeChanged(this.ActualWidth, this.ActualHeight);
         }
 
         private void WorldViewControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -59,12 +66,14 @@ namespace DicomPanel.Wpf
 
         private void DicomPanelView_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Model?.OnMouseDown(getWorldPoint(e.GetPosition(this)));
+            if(e.LeftButton == MouseButtonState.Pressed)
+                Model?.OnMouseDown(getWorldPoint(e.GetPosition(this)));
         }
 
         private void DicomPanelView_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            Model?.OnMouseUp(getWorldPoint(e.GetPosition(this)));
+            if(e.LeftButton == MouseButtonState.Released)
+                Model?.OnMouseUp(getWorldPoint(e.GetPosition(this)));
         }
 
         private void DicomPanelView_MouseMove(object sender, MouseEventArgs e)
@@ -94,6 +103,12 @@ namespace DicomPanel.Wpf
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
             Model?.OnMouseEnter(getWorldPoint(e.GetPosition(this)));
+        }
+
+        private void ContextMenuToolClick(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            Model.ToolBox.SelectTool(menuItem.Tag.ToString());
         }
     }
 }

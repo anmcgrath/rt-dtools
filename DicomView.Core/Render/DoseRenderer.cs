@@ -20,11 +20,15 @@ namespace DicomPanel.Core.Render
         {
             ContourInfo = new List<Contouring.ContourInfo>()
             {
-                new Contouring.ContourInfo(DicomColor.FromRgb(255,0,0),90),
-                new Contouring.ContourInfo(DicomColor.FromRgb(128,0,0),80),
-                new Contouring.ContourInfo(DicomColor.FromRgb(0,0,255),80),
-                new Contouring.ContourInfo(DicomColor.FromRgb(128,128,0),70),
-                new Contouring.ContourInfo(DicomColor.FromRgb(255,0,255),60),
+                new Contouring.ContourInfo(DicomColors.Red,90),
+                new Contouring.ContourInfo(DicomColors.OrangeRed,80),
+                new Contouring.ContourInfo(DicomColors.Orange,80),
+                new Contouring.ContourInfo(DicomColors.Yellow,70),
+                new Contouring.ContourInfo(DicomColors.White,60),
+                new Contouring.ContourInfo(DicomColors.Green,50),
+                new Contouring.ContourInfo(DicomColors.Blue,40),
+                new Contouring.ContourInfo(DicomColors.LightBlue,30),
+                new Contouring.ContourInfo(DicomColors.LightSkyBlue,60),
             };
         }
 

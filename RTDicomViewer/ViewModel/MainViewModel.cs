@@ -16,6 +16,10 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using RTDicomViewer.IO;
+using DicomPanel.Core.Toolbox;
+using RTDicomViewer.ViewModel.Dialogs;
+using RTDicomViewer.View.Dialogs;
+using RTDicomViewer.View.MainWindow;
 
 namespace RTDicomViewer.ViewModel
 {
@@ -26,17 +30,25 @@ namespace RTDicomViewer.ViewModel
         public DicomPanelModel CoronalPanelModel { get; set; }
         public DicomPanelModel SagittalPanelModel { get; set; }
 
+        public ToolBox ToolBox = new ToolBox();
+
         public RelayCommand OpenImageCommand => new RelayCommand(
-            ()=> { FileOpener.BeginOpenAsync<DicomImageObject>(true, "Open DICOM Images");});
+            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomImageObject>(true, "Open DICOM Images"); });
 
         public RelayCommand OpenDicomDoseCommand => new RelayCommand(
-            () => FileOpener.BeginOpenAsync<DicomDoseObject>(false, "Open DICOM Dose"));
+            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomDoseObject>(false, "Open DICOM Dose"); });
 
         public RelayCommand OpenEgsDoseCommand => new RelayCommand(
-            () => FileOpener.BeginOpenAsync<DicomDoseObject>(false, "Open 3DDose Dose"));
+            () => { var fo = new FileOpener(); fo.BeginOpenEgsAsync(); });
 
         public RelayCommand OpenStructureSetCommand => new RelayCommand(
-            () => FileOpener.BeginOpenAsync<StructureSet>(false, "Open Structure Set"));
+            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<StructureSet>(false, "Open Structure Set"); });
+
+        public RelayCommand OpenDoseStatisticsCommand => new RelayCommand(
+            () => { OpenDoseStatistics(); });
+
+        public RelayCommand CreateCubePhantomCommand => new RelayCommand(
+            () => { CreateCubePhantom(); });
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -45,12 +57,22 @@ namespace RTDicomViewer.ViewModel
         {
             AxialPanelModel = new DicomPanelModel();
             AxialPanelModel.Camera.SetAxial();
+            AxialPanelModel.SetToolBox(ToolBox);
 
             SagittalPanelModel = new DicomPanelModel();
             SagittalPanelModel.Camera.SetSagittal();
+            SagittalPanelModel.SetToolBox(ToolBox);
 
             CoronalPanelModel = new DicomPanelModel();
             CoronalPanelModel.Camera.SetCoronal();
+            CoronalPanelModel.SetToolBox(ToolBox);
+
+            AxialPanelModel.OrthogonalModels.Add(SagittalPanelModel);
+            AxialPanelModel.OrthogonalModels.Add(CoronalPanelModel);
+            SagittalPanelModel.OrthogonalModels.Add(AxialPanelModel);
+            SagittalPanelModel.OrthogonalModels.Add(CoronalPanelModel);
+            CoronalPanelModel.OrthogonalModels.Add(AxialPanelModel);
+            CoronalPanelModel.OrthogonalModels.Add(SagittalPanelModel);
 
             //When we load a new image, render it
             MessengerInstance.Register<RTObjectLoadedMessage<DicomImageObject>>(this, x => {
@@ -74,6 +96,48 @@ namespace RTDicomViewer.ViewModel
                 CoronalPanelModel.AddROIs(x.AddedRois);
                 CoronalPanelModel.RemoveROIs(x.RemovedRois);
             });
+
+            //Handle showing or closing loading dialog windows below
+            MessengerInstance.Register<ProgressMessage>(this, HandleProgressMessage);
+        }
+
+        private ProgressDialogViewModel progressDialogViewModel = new ProgressDialogViewModel();
+        public ProgressDialogView progressDialogView = new ProgressDialogView();
+        public void HandleProgressMessage(ProgressMessage message)
+        {
+            if (progressDialogView.DataContext != progressDialogViewModel)
+                progressDialogView.DataContext = progressDialogViewModel;
+
+            progressDialogViewModel.Apply(message);
+
+            if(message.ProgressType == Progress.Begin)
+            {
+                progressDialogView.Show();
+            }
+            if (message.ProgressType == Progress.End && progressDialogViewModel.ObjectProgressStatuses.Count == 0)
+            {
+                progressDialogView.Hide();
+            }
+        }
+
+        public void OnClose()
+        {
+            MessengerInstance.Unregister(this);
+            progressDialogView.Close();
+            progressDialogView = null;
+        }
+
+        public void OpenDoseStatistics()
+        {
+            var doseStatsWindow = new DVHObjectDisplayView();
+            doseStatsWindow.Show();
+        }
+
+        public void CreateCubePhantom()
+        {
+            var cubePhantom = new CubePhantom();
+            cubePhantom.Create(200, 200, 300, 1, 1, 1);
+            MessengerInstance.Send<RTObjectLoadedMessage<DicomImageObject>>(new RTObjectLoadedMessage<DicomImageObject>(cubePhantom));
         }
     }
 

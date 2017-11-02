@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace DicomPanel.Core.Geometry
 {
-    public interface IVoxelDataStructure:IEnumerator<Voxel>
+    public interface IVoxelDataStructure
     {
         Voxel Interpolate(double x, double y, double z);
         Voxel Interpolate(Point3d position);
         void Interpolate(double x, double y, double z, Voxel voxel);
         void Interpolate(Point3d position, Voxel voxel);
-        Voxels Voxels { get; }
 
         Range XRange { get; set; }
         Range YRange { get; set; }
         Range ZRange { get; set; }
+
+        float DefaultPhysicalValue { get; set; }
 
         Voxel MaxVoxel { get; set; }
         void ComputeMax();

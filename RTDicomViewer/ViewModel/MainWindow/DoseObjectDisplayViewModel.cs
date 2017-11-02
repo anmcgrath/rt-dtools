@@ -49,10 +49,9 @@ namespace RTDicomViewer.ViewModel.MainWindow
 
         public object DoseLoaded(IDoseObject dose)
         {
-            foreach (var obj in DoseObjects)
-                obj.IsSelected = false;
             var newSelectableObject = new SelectableObject<IDoseObject>(dose);
             AddNewDoseObject(newSelectableObject);
+            SelectDose(dose);
 
             return null;
         }
@@ -60,16 +59,40 @@ namespace RTDicomViewer.ViewModel.MainWindow
         //When a dose object is selected, we handle the event that is fired
         private void Dose_ObjectSelectionChanged(object sender, SelectableObjectEventArgs e)
         {
+            SelectableObject<IDoseObject> selectableDoseObject = (SelectableObject<IDoseObject>)sender;
             //Let everyone know we now want to render this dose object.
-            if(e.IsNowSelected)
+            if (e.IsNowSelected)
             {
-                SelectableObject<IDoseObject> selectableDoseObject = (SelectableObject<IDoseObject>)sender;
-                MessengerInstance.Send(new DoseObjectRenderMessage(selectableDoseObject.Value));
-            }else
-            {
-                SelectableObject<IDoseObject> selectableDoseObject = (SelectableObject<IDoseObject>)sender;
-                MessengerInstance.Send(new DoseObjectRenderMessage(null));
+                SelectDose(selectableDoseObject.Value);
             }
+            else
+            {
+                UnselectDose(selectableDoseObject.Value);
+            }
+        }
+
+        private void SelectDose(IDoseObject dose)
+        {
+            foreach (var doseObj in DoseObjects)
+            {
+                if (doseObj.Value != dose)
+                {
+                    doseObj.FireSelectionEvent = false;
+                    doseObj.IsSelected = false;
+                    doseObj.FireSelectionEvent = true;
+                } else
+                {
+                    doseObj.FireSelectionEvent = false;
+                    doseObj.IsSelected = true;
+                    doseObj.FireSelectionEvent = true;
+                }
+            }
+            MessengerInstance.Send(new DoseObjectRenderMessage(dose));
+        }
+
+        private void UnselectDose(IDoseObject dose)
+        {
+            MessengerInstance.Send(new DoseObjectRenderMessage(null));
         }
 
     }

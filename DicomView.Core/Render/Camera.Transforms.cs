@@ -155,8 +155,9 @@ namespace DicomPanel.Core.Render
             double s1x = (x - tlx) * Scale * MMPerPixel;
             double s1y = (y - tly) * Scale * MMPerPixel;
             double s1z = (z - tlz) * Scale * MMPerPixel;
-            screenCoords.X = colDirLength * (s1x * ColDir.X + s1y * ColDir.Y + s1z * ColDir.Z);
-            screenCoords.Y = rowDirLength * (s1x * RowDir.X + s1y * RowDir.Y + s1z * RowDir.Z);
+            screenCoords.X = (s1x * ColDir.X + s1y * ColDir.Y + s1z * ColDir.Z) * colDirLength;
+            screenCoords.Y = (s1x * RowDir.X + s1y * RowDir.Y + s1z * RowDir.Z) * rowDirLength;
+            var dot = ColDir.Dot(RowDir);
             screenCoords.X = t.X2Ndc(screenCoords.X, FOV.X);
             screenCoords.Y = t.Y2Ndc(screenCoords.Y, FOV.Y);
         }

@@ -38,12 +38,12 @@ namespace DicomPanel.Core.Render
             double px = initPosn.X;
             double py = initPosn.Y;
             double pz = initPosn.Z;
-            double cx = camera.ColDir.X * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            double cy = camera.ColDir.Y * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            double cz = camera.ColDir.Z * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            double rx = camera.RowDir.X * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
-            double ry = camera.RowDir.Y * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
-            double rz = camera.RowDir.Z * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            double cx = screenRect.Width * camera.ColDir.X * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double cy = screenRect.Width * camera.ColDir.Y * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double cz = screenRect.Width * camera.ColDir.Z * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            double rx = screenRect.Height * camera.RowDir.X * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            double ry = screenRect.Height * camera.RowDir.Y * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            double rz = screenRect.Height * camera.RowDir.Z * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
             int maxImagePixel = 255;
             for (int r = 0; r < rows; r += 1)
             {

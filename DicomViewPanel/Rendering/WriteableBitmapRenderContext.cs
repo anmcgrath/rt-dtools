@@ -35,6 +35,15 @@ namespace DicomPanel.Wpf.Rendering
             _bitmap.DrawRectangle(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(color));
         }
 
+        public void FillRect(double x0, double y0, double x1, double y1, DicomColor fill, DicomColor stroke)
+        {
+            int y0i = transyi(y0);
+            int y1i = transyi(y1);
+
+            _bitmap.FillRectangle(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(fill));
+            DrawRect(x0, y0, x1, y1, stroke);
+        }
+
         public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color)
         {
             _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(color));
@@ -44,7 +53,10 @@ namespace DicomPanel.Wpf.Rendering
         {
             var screenRect = new Recti(transxi(destRect.X), transyi(destRect.Y),
                 (int)(Width * (destRect.Width)), (int)(Height * (destRect.Height)));
-            _bitmap.WritePixels(new System.Windows.Int32Rect(0, 0, screenRect.Width, screenRect.Height), byteArray, _bitmap.BackBufferStride, screenRect.X, screenRect.Y);
+
+            int stride = 4 * ((screenRect.Width * (_bitmap.Format.BitsPerPixel/8) + 3) / 4);
+
+            _bitmap.WritePixels(new System.Windows.Int32Rect(0, 0, screenRect.Width, screenRect.Height), byteArray, stride, screenRect.X, screenRect.Y);
         }
 
         public void DrawString(string text, double x, double y, double size)

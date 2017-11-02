@@ -50,6 +50,13 @@ namespace DicomPanel.Core.IO.Loaders
                 {
                     int vertex_count = contourSlice.Get<int>(DicomTag.NumberOfContourPoints);
                     double[] vertices = contourSlice.Get<double[]>(DicomTag.ContourData);
+
+                    //Attempt to get the contour type from the dicom tag
+                    string type = contourSlice.Get<string>(DicomTag.ContourGeometricType, "");
+                    Enum.TryParse<ContourType>(type, out ContourType contourType);
+                    //Assume that each contour of the roi is of the same type...
+                    roi.Type = contourType;
+
                     PlanarPolygon poly = new PlanarPolygon();
                     // we divide the number of vertices here by 1.5 because we are going from a 3d poly to a 2d poly on the z plane
                     poly.Vertices = new double[(int)(vertices.Length / 1.5)];

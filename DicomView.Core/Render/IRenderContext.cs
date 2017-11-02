@@ -19,6 +19,7 @@ namespace DicomPanel.Core.Render
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color);
         void DrawString(string text, double x, double y, double size);
         void EndRender();
+        void FillRect(double x0, double y0, double x1, double y1, DicomColor fill, DicomColor stroke);
         void FillPixels(byte[] byteArray, Rectd destRect);
     }
 }

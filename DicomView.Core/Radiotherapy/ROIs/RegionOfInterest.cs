@@ -19,9 +19,13 @@ namespace DicomPanel.Core.Radiotherapy.ROIs
         public Range XRange { get; set; }
         public Range YRange { get; set; }
         public Range ZRange { get; set; }
+        public ContourType Type { get; set; }
 
         public List<RegionOfInterestSlice> RegionOfInterestSlices { get; set; }
         private Dictionary<double, RegionOfInterestSlice> sliceDictionary { get; set; }
+        /// <summary>
+        /// Lists all z coordinates where rois are
+        /// </summary>
         private List<double> roiZCoordinates { get; set; }
 
         public RegionOfInterest()

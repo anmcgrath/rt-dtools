@@ -1,4 +1,5 @@
-﻿using DicomPanel.Core.Geometry;
+﻿using DicomPanel.Core.Event;
+using DicomPanel.Core.Geometry;
 using DicomPanel.Core.Render;
 using DicomPanel.Core.Utilities.RTMath;
 using System;
@@ -110,6 +111,7 @@ namespace DicomPanel.Core.Render
             Position.Y = y;
             Position.Z = z;
             this.onUpdateView();
+            //CameraTranslated?.Invoke(this, new CameraTranslatedEventArgs(TranslationType.Pan));
         }
 
         public void SetDirections(double colDirx, double colDiry, double colDirz,
@@ -156,25 +158,37 @@ namespace DicomPanel.Core.Render
 
 
         /// <summary>
-        /// 
+        /// Rotates the camera by the angles in the three dimensions
         /// </summary>
         /// <param name="thetax">Angle around the x axis in degrees</param>
         /// <param name="thetay">Angle around the y axis in degrees</param>
         /// <param name="thetaz">Angle around the z axis in degrees</param>
         public void Rotate(double thetax, double thetay, double thetaz)
         {
-            double r_thetax = thetax * Math.PI / 180;
-            double r_thetay = thetay * Math.PI / 180;
-            double r_thetaz = thetaz * Math.PI / 180;
             var Rx = Matrix3d.GetRotationX(thetax);
             var Ry = Matrix3d.GetRotationY(thetay);
             var Rz = Matrix3d.GetRotationZ(thetaz);
-            ColDir = Rx * Ry * Rz * ColDir;
-            RowDir = Rx * Ry * Rz * RowDir;
+            Rotate(Rx * Ry * Rz);
+        }
+
+        /// <summary>
+        /// Rotates the camera by an angle around a vector u
+        /// </summary>
+        /// <param name="theta">The clockwise angle in degrees</param>
+        /// <param name="u"></param>
+        public void Rotate(double theta, Point3d u)
+        {
+            var R = Matrix3d.GetRotation(theta, u);
+            Rotate(R);
+        }
+
+        public void Rotate(Matrix3d rotationMatrix)
+        {
+            ColDir = rotationMatrix * ColDir;
+            RowDir = rotationMatrix * RowDir;
             colDirLength = ColDir.Length();
             rowDirLength = RowDir.Length();
             Normal = ColDir.Cross(RowDir);
-
             this.onUpdateView();
         }
 

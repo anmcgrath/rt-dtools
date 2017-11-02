@@ -1,4 +1,5 @@
-﻿using DicomPanel.Core.Utilities.RTMath;
+﻿using DicomPanel.Core.Event;
+using DicomPanel.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,6 @@ namespace DicomPanel.Core
 {
     public partial class DicomPanelModel
     {
-        public bool mouseDown = false;
 		public void OnMouseScroll(Point3d worldPoint, double delta)
         {
             if (delta > 0)
@@ -16,32 +16,22 @@ namespace DicomPanel.Core
                 Camera.Move(Camera.Normal * -2);
 
             Invalidate();
+            ToolBox?.SelectedTool?.HandleMouseScroll(this, worldPoint);
         }
 
         public void OnMouseDown(Point3d worldPoint)
         {
-            mouseDown = true;
-            initPoint = worldPoint;
+            ToolBox?.SelectedTool?.HandleMouseDown(this, worldPoint);
         }
 
-        private Point3d initPoint = new Point3d();
         public void OnMouseMove(Point3d worldPoint)
         {
-            if(mouseDown)
-            {
-                var wp = Camera.ConvertWorldToScreenCoords(worldPoint);
-
-                var diff = worldPoint - initPoint;
-                Camera.Move(-diff.X, -diff.Y, -diff.Z);
-                
-                Invalidate();
-                ImageRenderContext.DrawString(wp.X + ", " + wp.Y, 0, 0.5, 12);
-            }
+            ToolBox?.SelectedTool?.HandleMouseMove(this, worldPoint);
         }
 
         public void OnMouseExit(Point3d worldPoint)
         {
-            mouseDown = false;
+            ToolBox?.SelectedTool?.HandleMouseLeave(this, worldPoint);
         }
 
         public void OnMouseEnter(Point3d worldPoint)
@@ -51,7 +41,7 @@ namespace DicomPanel.Core
         
         public void OnMouseUp(Point3d worldPoint)
         {
-            mouseDown = false;
+            ToolBox?.SelectedTool?.HandleMouseUp(this, worldPoint);
         }
         
         public void OnResize(double width, double height)

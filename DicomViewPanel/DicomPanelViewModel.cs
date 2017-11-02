@@ -21,9 +21,6 @@ namespace DicomPanel.Wpf
         public WriteableBitmap ImageBase { get { return _imageBase; } set { SetField(ref _imageBase, value); } }
         private WriteableBitmap _imageBase;
 
-        public WriteableBitmap ImageTop { get { return _imageTop; } set { SetField(ref _imageTop, value); } }
-        private WriteableBitmap _imageTop;
-
         public WriteableBitmapRenderContext ImageBaseRenderContext { get; set; }
         public WriteableBitmapRenderContext ImageTopRenderContext { get; set; }
 
@@ -33,7 +30,7 @@ namespace DicomPanel.Wpf
         public DicomPanelViewModel()
         {
             ImageBaseRenderContext = new WriteableBitmapRenderContext(ImageBase);
-            ImageTopRenderContext = new WriteableBitmapRenderContext(ImageTop);
+            ImageTopRenderContext = new WriteableBitmapRenderContext(ImageBase);
             OverlayRenderContext = new CanvasRenderContext(null);
         }
 
@@ -56,7 +53,7 @@ namespace DicomPanel.Wpf
 
         private void createRenderTargets(double width, double height)
         {
-            if (width <= 0 || height <= 0)
+            if (width <= 1 || height <= 1)
                 return;
 
             double imgWidth = width, imgHeight = height;
@@ -65,17 +62,16 @@ namespace DicomPanel.Wpf
                 imgWidth = 512;
                 imgHeight *= (512/width);
             }
-            if (height >= 512)
+            else if (height >= 512)
             {
                 imgHeight = 512;
                 imgWidth *= (512/height);
             }
 
             ImageBase = new WriteableBitmap((int)Math.Round(imgWidth), (int)Math.Round(imgHeight), 96, 96, PixelFormats.Bgr32, null);
-            ImageTop = new WriteableBitmap((int)Math.Round(width), (int)Math.Round(height), 96, 96, PixelFormats.Bgr32, null);
             ImageBaseRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
-
-            ImageTopRenderContext.Resize(ImageTop, (int)Math.Round(width), (int)Math.Round(height));
+            ImageTopRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
+            OverlayRenderContext.Canvas.Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, width, height));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DicomPanel.Core.Utilities.RTMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -75,9 +76,19 @@ namespace DicomPanel.Core.Geometry
         public float Get(int row, int column)
         {
             if (row < 0 || column < 0 || row > Rows - 1 || column > Columns - 1)
-                return -1000;
+                return -1024;
             else
                 return Data[row * (Columns) + column];
+        }
+
+        private Point3d GetPosition(int index)
+        {
+            int column = index % Columns;
+            int row = (index - column) / (Columns);
+            return new Point3d(
+                ComputePx(row, column),
+                ComputePy(row, column),
+                ComputePz(row, column));
         }
 
         public void Set(int row, int column, float value)
@@ -101,6 +112,25 @@ namespace DicomPanel.Core.Geometry
         public double ComputePz(int row, int column)
         {
             return Yz * Dc * column + Xz * Dc * row + Sz;
+        }
+
+        public Voxel ComputeMax()
+        {
+            Point3d posn = new Point3d();
+            float max = float.MinValue;
+            for(int i = 0; i < Data.Length; i++)
+            {
+                if (Data[i] > max)
+                {
+                    max = Data[i];
+                    posn = GetPosition(i);
+                }
+            }
+            return new Voxel()
+            {
+                Position = posn,
+                Value = max,
+            };
         }
 
         public Range XRange

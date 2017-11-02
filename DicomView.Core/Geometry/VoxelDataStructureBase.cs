@@ -15,8 +15,6 @@ namespace DicomPanel.Core.Geometry
         public Voxel MaxVoxel { get; set; }
         private Point3d positionCache;
 
-        public Voxels Voxels { get; protected set; }
-
         public VoxelDataStructureBase()
         {
             XRange = new Range();
@@ -49,17 +47,6 @@ namespace DicomPanel.Core.Geometry
         }
 
         public abstract void Interpolate(Point3d position, Voxel voxel);
-
-        public void ComputeMax()
-        {
-            foreach(Voxel voxel in Voxels)
-            {
-                if(voxel.Value > MaxVoxel.Value)
-                {
-                    MaxVoxel = voxel;
-                }
-            }
-        }
 
     }
 }
