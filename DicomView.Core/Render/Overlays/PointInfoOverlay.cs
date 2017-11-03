@@ -14,7 +14,8 @@ namespace DicomPanel.Core.Render.Overlays
         {
             Position = new Point3d();
             poiOverlay = new POIOverlay();
-            poiOverlay.KeepSameSize = true;
+            poiOverlay.KeepSameSizeOnScreen = true;
+            poiOverlay.RenderCircle = false;
         }
 
         public void Render(DicomPanelModel model, IRenderContext context)
@@ -23,11 +24,20 @@ namespace DicomPanel.Core.Render.Overlays
             Position.CopyTo(textOverlay.Position);
             textOverlay.Position = Position - (model.Camera.RowDir * 25 / model.Camera.Scale);
             var HU = model?.Image?.Grid?.Interpolate(Position);
+            var doseNorm = model?.Dose?.GetNormalisationAmount();
+            var doseVoxel = model?.Dose?.Grid?.Interpolate(Position);
 
-            if(HU != null)
-                textOverlay.Text = Math.Round(HU.Value) + " HU"; 
+            if (HU != null)
+                textOverlay.Text = Math.Round(HU.Value) + " HU";
+            if (doseVoxel != null)
+            {
+                textOverlay.Text += "\n" + Math.Round(100*(doseVoxel.Value / (double)doseNorm), 2) + "%";
+            }
 
             poiOverlay.Render(model, context);
+            //Use the poi fractin of oriignal size to set opacity of text
+            textOverlay.Opacity = poiOverlay.Fraction;
+
             textOverlay.Render(model, context);
         }
     }

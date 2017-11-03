@@ -59,9 +59,9 @@ namespace DicomPanel.Wpf.Rendering
             _bitmap.WritePixels(new System.Windows.Int32Rect(0, 0, screenRect.Width, screenRect.Height), byteArray, stride, screenRect.X, screenRect.Y);
         }
 
-        public void DrawString(string text, double x, double y, double size)
+        public void DrawString(string text, double x, double y, double size, DicomColor color)
         {
-            _bitmap.DrawString(transxi(x), transyi(y), Colors.Yellow, new PortableFontDesc(), text);
+            _bitmap.DrawString(transxi(x), transyi(y), DicomColorConverter.FromDicomColor(color), new PortableFontDesc(), text);
         }
 
         public void BeginRender()
@@ -71,6 +71,11 @@ namespace DicomPanel.Wpf.Rendering
 
         public void EndRender()
         {
+        }
+
+        public void DrawEllipse(double x0, double y0, double radiusX, double radiusY, DicomColor color)
+        {
+            _bitmap.DrawEllipseCentered(transxi(x0), transyi(y0), transxi(radiusX), transyi(radiusY), DicomColorConverter.FromDicomColor(color));
         }
     }
 }

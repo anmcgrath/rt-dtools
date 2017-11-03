@@ -14,9 +14,9 @@ namespace DicomPanel.Core.Radiotherapy.Imaging
 
         public void Create(int xWidth, int yWidth, int zWidth, double xSpacing, double ySpacing, double zSpacing)
         {
-            int xRows = (int)(xWidth / xSpacing);
-            int yRows = (int)(yWidth / ySpacing);
-            int zRows = (int)(zWidth / zSpacing);
+            int xRows = (int)(xWidth / xSpacing)+1;
+            int yRows = (int)(yWidth / ySpacing)+1;
+            int zRows = (int)(zWidth / zSpacing)+1;
             var grid = new GridBasedVoxelDataStructure();
             grid.DefaultPhysicalValue = -1000;
             grid.ConstantGridSpacing = true;

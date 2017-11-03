@@ -27,7 +27,7 @@ namespace DicomPanel.Wpf.Rendering
             //Currently don't know how to do this...
         }
 
-        public void DrawString(string text, double x, double y, double size)
+        public void DrawString(string text, double x, double y, double size, DicomColor color)
         {
             TextBlock tb = new TextBlock();
             var dse = new DropShadowEffect();
@@ -35,7 +35,7 @@ namespace DicomPanel.Wpf.Rendering
             dse.ShadowDepth = 4;
             dse.Direction = 0;
             tb.FontSize = size;
-            tb.Foreground = new SolidColorBrush(Colors.Yellow);
+            tb.Foreground = new SolidColorBrush(DicomColorConverter.FromDicomColor(color));
             tb.Text = text;
             Canvas.SetLeft(tb, x * Canvas.ActualWidth);
             Canvas.SetTop(tb, y * Canvas.ActualHeight);
@@ -100,6 +100,22 @@ namespace DicomPanel.Wpf.Rendering
         public void EndRender()
         {
             Canvas.EndInit();
+        }
+
+        public void DrawEllipse(double x0, double y0, double radiusX, double radiusY, DicomColor color)
+        {
+            x0 *= Canvas.ActualWidth;
+            y0 *= Canvas.ActualHeight;
+            radiusX *= Canvas.ActualWidth;
+            radiusY *= Canvas.ActualHeight;
+
+            Ellipse ellipse = new Ellipse();
+            ellipse.Stroke = new SolidColorBrush(DicomColorConverter.FromDicomColor(color));
+            ellipse.Width = Math.Abs(radiusX);
+            ellipse.Height = Math.Abs(radiusY);
+            Canvas.SetLeft(ellipse, x0-radiusX/2);
+            Canvas.SetTop(ellipse, y0-radiusY/2);
+            Canvas?.Children.Add(ellipse);
         }
     }
 }

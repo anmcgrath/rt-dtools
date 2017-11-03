@@ -9,6 +9,10 @@ namespace DicomPanel.Core.Render.Overlays
     {
         public string Text { get; set; }
         public Point3d Position { get; set; }
+        /// <summary>
+        /// Text opacity value from 0 to 1
+        /// </summary>
+        public double Opacity = 1;
         public TextOverlay(string text)
         {
             Position = new Point3d();
@@ -25,8 +29,8 @@ namespace DicomPanel.Core.Render.Overlays
             var sr1 = model.Camera.ConvertWorldToScreenCoords(r1);
             var sr2 = model.Camera.ConvertWorldToScreenCoords(r2);
 
-            context.FillRect(sr1.X,sr1.Y,sr2.X,sr2.Y, DicomColor.FromArgb(128, 0, 0, 0), DicomColor.FromArgb(255, 100, 100, 100));
-            context.DrawString(Text, s.X, s.Y, 12);
+            context.FillRect(sr1.X,sr1.Y,sr2.X,sr2.Y, DicomColor.FromArgb((int)(128 * Opacity), 0, 0, 0), DicomColor.FromArgb((int)(255*Opacity), 100, 100, 100));
+            context.DrawString(Text, s.X, s.Y, 12, DicomColor.FromArgb((int)(255*Opacity), 0, 255, 255));
         }
     }
 }
