@@ -151,6 +151,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DoseObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DVHObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\POIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\CustomControls\TileControl.xaml.cs">
@@ -170,6 +171,9 @@
     </Compile>
     <Compile Include="View\MainWindow\DVHObjectDisplayView.xaml.cs">
       <DependentUpon>DVHObjectDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\POIObjectDisplayView.xaml.cs">
+      <DependentUpon>POIObjectDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow\ROIObjectDisplayView.xaml.cs">
       <DependentUpon>ROIObjectDisplayView.xaml</DependentUpon>
@@ -221,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainWindow\DVHObjectDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\POIObjectDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

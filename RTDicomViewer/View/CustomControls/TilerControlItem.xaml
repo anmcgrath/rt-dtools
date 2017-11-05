@@ -23,7 +23,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="#AAAAAA" Margin="3 0 0 0">Axial</TextBlock>
+                                    <TextBlock Foreground="#AAAAAA" Margin="3 0 0 0"></TextBlock>
                                     <Border Grid.Column="1" Width="20" Background="#555555">
                                         <Canvas>
                                             <Line X1="6" X2="15" Y1="6" Y2="6" Stroke="#AAAAAA" StrokeThickness="1"/>

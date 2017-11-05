@@ -50,6 +50,12 @@ namespace RTDicomViewer.ViewModel
         public RelayCommand CreateCubePhantomCommand => new RelayCommand(
             () => { CreateCubePhantom(); });
 
+        public RelayCommand OpenDicomPlanCommand => new RelayCommand(
+            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomPlanObject>(false, "Open RT Plan"); });
+
+        public RelayCommand CreateNewPOICommand => new RelayCommand(
+            () => { CreateNewPOI(); });
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -138,6 +144,13 @@ namespace RTDicomViewer.ViewModel
             var cubePhantom = new CubePhantom();
             cubePhantom.Create(200, 200, 300, 1, 1, 1);
             MessengerInstance.Send<RTObjectLoadedMessage<DicomImageObject>>(new RTObjectLoadedMessage<DicomImageObject>(cubePhantom));
+        }
+
+        public void CreateNewPOI()
+        {
+            var poi = new PointOfInterest();
+            poi.Name = "New POI";
+            MessengerInstance.Send(new RTObjectLoadedMessage<PointOfInterest>(poi));
         }
     }
 

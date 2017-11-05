@@ -8,6 +8,7 @@ namespace DicomPanel.Core.Radiotherapy.Planning
     public class PointOfInterest
     {
         public Point3d Position { get; set; }
+        public string Name { get; set; }
         public PointOfInterest(Point3d position)
         {
             this.Position = position;

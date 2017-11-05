@@ -27,6 +27,8 @@ namespace DicomPanel.Core.Render.Overlays
             var doseNorm = model?.Dose?.GetNormalisationAmount();
             var doseVoxel = model?.Dose?.Grid?.Interpolate(Position);
 
+            textOverlay.Text = "";
+
             if (HU != null)
                 textOverlay.Text = Math.Round(HU.Value) + " HU";
             if (doseVoxel != null)

@@ -46,6 +46,7 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DoseObjectDisplayViewModel>();
             SimpleIoc.Default.Register<ROIObjectDisplayViewModel>();
+            SimpleIoc.Default.Register<POIObjectDisplayViewModel>();
         }
 
         public MainViewModel Main
@@ -69,6 +70,14 @@ namespace RTDicomViewer.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<ROIObjectDisplayViewModel>();
+            }
+        }
+
+        public POIObjectDisplayViewModel POIDisplay
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<POIObjectDisplayViewModel>();
             }
         }
 
