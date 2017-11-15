@@ -1,7 +1,8 @@
-﻿using DicomPanel.Core.Utilities.RTMath;
+﻿using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Core.Render.Overlays
 {
@@ -17,7 +18,11 @@ namespace DicomPanel.Core.Render.Overlays
         public double Fraction { get; set; } = 1;
         public void Render(DicomPanelModel model, IRenderContext context)
         {
-            var dist = (model.Camera.ConvertScreenToWorldCoords(model.Camera.ConvertWorldToScreenCoords(Position)) - Position).Length();
+            Render(model.Camera, context);
+        }
+        public void Render(Camera camera, IRenderContext context)
+        {
+            var dist = (camera.ConvertScreenToWorldCoords(camera.ConvertWorldToScreenCoords(Position)) - Position).Length();
 
             if (dist != 0)
                 Fraction = (SizeInMM - Math.Abs(dist/2)) / SizeInMM;
@@ -29,27 +34,27 @@ namespace DicomPanel.Core.Render.Overlays
             double scale = 1;
             if (KeepSameSizeOnScreen)
             {
-                scale = model.Camera.Scale;
+                scale = camera.Scale;
             }
             var w = SizeInMM * Fraction / scale;
 
-                var p1 = model.Camera.ConvertWorldToScreenCoords(Position - model.Camera.ColDir * w);
-                var p2 = model.Camera.ConvertWorldToScreenCoords(Position + model.Camera.ColDir * w);
-                var p3 = model.Camera.ConvertWorldToScreenCoords(Position - model.Camera.RowDir * w);
-                var p4 = model.Camera.ConvertWorldToScreenCoords(Position + model.Camera.RowDir * w);
+                var p1 = camera.ConvertWorldToScreenCoords(Position - camera.ColDir * w);
+                var p2 = camera.ConvertWorldToScreenCoords(Position + camera.ColDir * w);
+                var p3 = camera.ConvertWorldToScreenCoords(Position - camera.RowDir * w);
+                var p4 = camera.ConvertWorldToScreenCoords(Position + camera.RowDir * w);
 
-            context.DrawLine(p1.X, p1.Y, p2.X, p2.Y, DicomColors.Red);
-            context.DrawLine(p3.X, p3.Y, p4.X, p4.Y, DicomColors.Red);
+            context.DrawLine(p1.X, p1.Y, p2.X, p2.Y, DicomColors.Red, LineType.Normal);
+            context.DrawLine(p3.X, p3.Y, p4.X, p4.Y, DicomColors.Red, LineType.Normal);
 
             if(RenderCircle)
             {
-                var center = model.Camera.ConvertWorldToScreenCoords(Position);
-                var wx = (2 * Fraction * SizeInMM / model.Camera.GetFOV().X);
-                var wy = (2 * Fraction * SizeInMM / model.Camera.GetFOV().Y);
+                var center = camera.ConvertWorldToScreenCoords(Position);
+                var wx = (2 * Fraction * SizeInMM / camera.GetFOV().X);
+                var wy = (2 * Fraction * SizeInMM / camera.GetFOV().Y);
                 if(!KeepSameSizeOnScreen)
                 {
-                    wx *= model.Camera.Scale;
-                    wy *= model.Camera.Scale;
+                    wx *= camera.Scale;
+                    wy *= camera.Scale;
                 }
                 context.DrawEllipse(center.X, center.Y, wx,wy, DicomColors.Red);
             }

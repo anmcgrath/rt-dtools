@@ -1,4 +1,4 @@
-﻿using DicomPanel.Core.Radiotherapy.Planning;
+﻿using RT.Core.Planning;
 using GalaSoft.MvvmLight.Messaging;
 using RTDicomViewer.Message;
 using RTDicomViewer.Utilities;

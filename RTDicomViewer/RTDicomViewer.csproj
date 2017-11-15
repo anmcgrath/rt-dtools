@@ -275,6 +275,10 @@
       <Project>{a8d763eb-539d-4393-b9a3-e65eaaf517d0}</Project>
       <Name>DicomPanel.Wpf</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RT.Core\RT.Core.csproj">
+      <Project>{ebb388b3-013c-4c29-802a-2c7e6d59954c}</Project>
+      <Name>RT.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\contour_closed.png" />

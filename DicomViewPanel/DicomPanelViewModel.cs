@@ -1,5 +1,5 @@
-﻿using DicomPanel.Core;
-using DicomPanel.Core.Render;
+﻿using DicomPanel.Core.Render;
+using DicomPanel.Core;
 using DicomPanel.Wpf.Rendering;
 using DicomPanel.Wpf.Utilities;
 using System;

@@ -1,9 +1,12 @@
-﻿using DicomPanel.Core.Radiotherapy.ROIs;
+﻿using RT.Core.Planning;
+using RT.Core.ROIs;
 using DicomPanel.Core.Render.Contouring;
-using DicomPanel.Core.Utilities.RTMath;
+using DicomPanel.Core.Render.Overlays;
+using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Core.Render
 {
@@ -62,6 +65,20 @@ namespace DicomPanel.Core.Render
                         context.DrawLine(screenCoords1.X,screenCoords1.Y,screenCoords2.X,screenCoords2.Y, roi.Color);
                     }
                 }
+            }
+        }
+
+
+        public void Render(IEnumerable<PointOfInterest> pois, Camera camera, IRenderContext context, Rectd screenRect)
+        {
+            POIOverlay poiOverlay = new POIOverlay();
+            poiOverlay.RenderCircle = true;
+            poiOverlay.SizeInMM = 6;
+            poiOverlay.KeepSameSizeOnScreen = false;
+            foreach (PointOfInterest poi in pois)
+            {
+                poiOverlay.Position = poi.Position;
+                poiOverlay.Render(camera, context);
             }
         }
     }

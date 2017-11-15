@@ -1,5 +1,5 @@
 ﻿using DicomPanel.Core.Render;
-using DicomPanel.Core.Utilities.RTMath;
+using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Wpf.Rendering
 {
@@ -44,9 +45,21 @@ namespace DicomPanel.Wpf.Rendering
             DrawRect(x0, y0, x1, y1, stroke);
         }
 
+        public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType)
+        {
+            if(lineType == LineType.Normal)
+                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(color));
+            else
+            {
+                double hx = x0+(x1 - x0) / 2;
+                double hy = y0+(y1 - y0) / 2;
+                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(hx), transyi(hy), DicomColorConverter.FromDicomColor(color));
+            }
+        }
+
         public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color)
         {
-            _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(color));
+            DrawLine(x0, y0, x1, y1, color, LineType.Normal);
         }
 
         public void FillPixels(byte[] byteArray, Rectd destRect)
@@ -61,7 +74,7 @@ namespace DicomPanel.Wpf.Rendering
 
         public void DrawString(string text, double x, double y, double size, DicomColor color)
         {
-            _bitmap.DrawString(transxi(x), transyi(y), DicomColorConverter.FromDicomColor(color), new PortableFontDesc(), text);
+            _bitmap.DrawString(transxi(x), transyi(y), DicomColorConverter.FromDicomColor(color), new PortableFontDesc("Aria",(int)((double)size/1.5)), text);
         }
 
         public void BeginRender()
@@ -75,7 +88,7 @@ namespace DicomPanel.Wpf.Rendering
 
         public void DrawEllipse(double x0, double y0, double radiusX, double radiusY, DicomColor color)
         {
-            _bitmap.DrawEllipseCentered(transxi(x0), transyi(y0), transxi(radiusX), transyi(radiusY), DicomColorConverter.FromDicomColor(color));
+            _bitmap.DrawEllipseCentered(transxi(x0), transyi(y0), transxi(radiusX/2), transyi(radiusY/2), DicomColorConverter.FromDicomColor(color));
         }
     }
 }

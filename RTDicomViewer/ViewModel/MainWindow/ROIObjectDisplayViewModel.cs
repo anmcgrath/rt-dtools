@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RTDicomViewer.Message;
-using DicomPanel.Core.Radiotherapy.ROIs;
+using RT.Core.ROIs;
 using System.Collections.ObjectModel;
 using RTDicomViewer.Utilities;
 

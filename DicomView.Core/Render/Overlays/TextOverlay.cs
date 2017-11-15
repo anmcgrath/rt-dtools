@@ -1,7 +1,8 @@
-﻿using DicomPanel.Core.Utilities.RTMath;
+﻿using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Core.Render.Overlays
 {

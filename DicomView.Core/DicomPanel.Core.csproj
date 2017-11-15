@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Render\DicomColor.cs" />
+    <Compile Remove="Render\DicomColors.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="DicomPanelModel.EventHandling.cs" />
   </ItemGroup>
 
@@ -12,6 +17,10 @@
     <PackageReference Include="fo-dicom.NetCore" Version="3.0.2" />
     <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RT.Core\RT.Core.csproj" />
   </ItemGroup>
 
 </Project>

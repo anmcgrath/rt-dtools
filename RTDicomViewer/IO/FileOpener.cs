@@ -1,5 +1,5 @@
-﻿using DicomPanel.Core.IO;
-using DicomPanel.Core.Radiotherapy.Dose;
+﻿using RT.Core.IO;
+using RT.Core.Dose;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Win32;
 using RTDicomViewer.Message;

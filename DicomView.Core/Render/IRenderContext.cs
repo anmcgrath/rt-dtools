@@ -1,5 +1,6 @@
-﻿using DicomPanel.Core.Utilities;
-using DicomPanel.Core.Utilities.RTMath;
+﻿using RT.Core.Utilities;
+using RT.Core.Utilities.RTMath;
+using RT.Core.DICOM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace DicomPanel.Core.Render
 
         void BeginRender();
         void DrawRect(double x0, double y0, double x1, double y1, DicomColor color);
+        void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color);
         void DrawEllipse(double x0, double y0, double radiusX, double radiusY, DicomColor color);
         void DrawString(string text, double x, double y, double size, DicomColor color);

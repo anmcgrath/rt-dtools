@@ -1,7 +1,8 @@
-﻿using DicomPanel.Core.Geometry;
-using DicomPanel.Core.Radiotherapy.Dose;
+﻿using RT.Core.Geometry;
+using RT.Core.Dose;
 using DicomPanel.Core.Render.Contouring;
-using DicomPanel.Core.Utilities.RTMath;
+using RT.Core.Utilities.RTMath;
+using RT.Core.DICOM;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,25 +15,25 @@ namespace DicomPanel.Core.Render
         /// <summary>
         /// The maximum number of grid points to use when interpolating dose for the marching squares algorithm
         /// </summary>
-        public int MaxNumberOfGridPoints { get; set; } = 50;
+        public int MaxNumberOfGridPoints { get; set; } = 100;
 
         public DoseRenderer()
         {
             ContourInfo = new List<Contouring.ContourInfo>()
             {
-                new Contouring.ContourInfo(DicomColors.Red,90),
-                new Contouring.ContourInfo(DicomColors.OrangeRed,80),
+                new Contouring.ContourInfo(DicomColors.Red,99),
+                new Contouring.ContourInfo(DicomColors.OrangeRed,90),
                 new Contouring.ContourInfo(DicomColors.Orange,80),
                 new Contouring.ContourInfo(DicomColors.Yellow,70),
                 new Contouring.ContourInfo(DicomColors.White,60),
                 new Contouring.ContourInfo(DicomColors.Green,50),
                 new Contouring.ContourInfo(DicomColors.Blue,40),
                 new Contouring.ContourInfo(DicomColors.LightBlue,30),
-                new Contouring.ContourInfo(DicomColors.LightSkyBlue,60),
+                new Contouring.ContourInfo(DicomColors.LightSkyBlue,20),
             };
         }
 
-        public void Render(IDoseObject doseObject, Camera camera, IRenderContext context, Rectd screenRect)
+        public void Render(IDoseObject doseObject, Camera camera, IRenderContext context, Rectd screenRect, LineType lineType)
         {
             if (doseObject == null || doseObject.Grid == null)
                 return;
@@ -40,6 +41,8 @@ namespace DicomPanel.Core.Render
             //Translates screen to world points and vice versa
             var ms = new MarchingSquares();
             List<PlanarPolygon> polygons = new List<PlanarPolygon>();
+
+            double textY = 0;
 
             foreach(ContourInfo contourInfo in ContourInfo)
             {
@@ -64,9 +67,11 @@ namespace DicomPanel.Core.Render
                     camera.ConvertWorldToScreenCoords(worldPoint1, screenPoint1);
                     camera.ConvertWorldToScreenCoords(worldPoint2, screenPoint2);
 
-                    context.DrawLine(screenPoint1.X, screenPoint1.Y, screenPoint2.X, screenPoint2.Y, contour.Color);
+                    context.DrawLine(screenPoint1.X, screenPoint1.Y, screenPoint2.X, screenPoint2.Y, contour.Color, lineType);
                 }
-                
+
+                context.DrawString("" + contourInfo.Threshold + "%", .02, textY, 12, contourInfo.Color);
+                textY += .05;
             }
         }
     }

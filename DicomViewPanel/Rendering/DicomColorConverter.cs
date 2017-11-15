@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Wpf.Rendering
 {

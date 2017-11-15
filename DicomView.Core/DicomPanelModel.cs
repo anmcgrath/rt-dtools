@@ -1,9 +1,11 @@
-﻿using DicomPanel.Core.Radiotherapy.Dose;
-using DicomPanel.Core.Radiotherapy.Imaging;
-using DicomPanel.Core.Radiotherapy.ROIs;
+﻿using RT.Core.Dose;
+using RT.Core.Imaging;
+using RT.Core.Planning;
+using RT.Core.ROIs;
 using DicomPanel.Core.Render;
 using DicomPanel.Core.Render.Overlays;
 using DicomPanel.Core.Toolbox;
+using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,8 +26,9 @@ namespace DicomPanel.Core
         public ROIRenderer ROIRenderer { get; set; }
 
         public DicomImageObject Image { get; set; }
-        public IDoseObject Dose { get; set; }
+        public List<IDoseObject> Doses { get; set; }
         private List<RegionOfInterest> ROIs { get; set; }
+        private List<PointOfInterest> POIs { get; set; }
 
         public List<IOverlay> Overlays { get; set; }
         public List<DicomPanelModel> OrthogonalModels { get; set; }
@@ -39,9 +42,12 @@ namespace DicomPanel.Core
             DoseRenderer = new DoseRenderer();
             ROIRenderer = new ROIRenderer();
             ROIs = new List<RegionOfInterest>();
+            POIs = new List<PointOfInterest>();
+            Doses = new List<IDoseObject>();
             OrthogonalModels = new List<DicomPanelModel>();
             Overlays = new List<IOverlay>();
             ToolBox = new ToolBox();
+            Overlays.Add(new ScaleOverlay());
         }
 
         /// <summary>
@@ -55,13 +61,21 @@ namespace DicomPanel.Core
             OverlayContext?.BeginRender();
 
             if (ImageRenderContext != null)
-                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
 
             if (DoseRenderContext != null)
-                DoseRenderer?.Render(Dose, Camera, DoseRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+            {
+                for (int i = 0; i < Doses.Count; i++)
+                {
+                    DoseRenderer?.Render(Doses[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1),(LineType)i);
+                }
+            }
 
             if (RoiRenderContext != null)
-                ROIRenderer?.Render(ROIs, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+            {
+                ROIRenderer?.Render(ROIs, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
+                ROIRenderer?.Render(POIs, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
+            }
 
             if (OverlayContext != null)
             {
@@ -82,7 +96,7 @@ namespace DicomPanel.Core
         {
             ImageRenderContext?.BeginRender();
             if (ImageRenderContext != null)
-                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Utilities.RTMath.Rectd(0, 0, 1, 1));
+                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
             ImageRenderContext?.EndRender();
         }
 
@@ -101,9 +115,17 @@ namespace DicomPanel.Core
             Invalidate();
         }
 
-        public void SetDose(IDoseObject dose)
+        public void AddDose(IDoseObject dose)
         {
-            Dose = dose;
+            if (!Doses.Contains(dose))
+                Doses.Add(dose);
+            Invalidate();
+        }
+
+        public void RemoveDose(IDoseObject dose)
+        {
+            if (Doses.Contains(dose))
+                Doses.Remove(dose);
             Invalidate();
         }
 
@@ -118,6 +140,18 @@ namespace DicomPanel.Core
             }
             if(hasROIsToAdd)
                 Invalidate();
+        }
+
+        public void AddPOI(PointOfInterest poi)
+        {
+            POIs.Add(poi);
+            Invalidate();
+        }
+
+        public void RemovePOI(PointOfInterest poi)
+        {
+            POIs.Remove(poi);
+            Invalidate();
         }
 
         public void RemoveROIs(IEnumerable<RegionOfInterest> rois)

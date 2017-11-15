@@ -113,6 +113,10 @@
       <Project>{cb10dbad-d27d-481d-a11f-df681796a5b5}</Project>
       <Name>DicomPanel.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RT.Core\RT.Core.csproj">
+      <Project>{ebb388b3-013c-4c29-802a-2c7e6d59954c}</Project>
+      <Name>RT.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="DicomPanelView.xaml">

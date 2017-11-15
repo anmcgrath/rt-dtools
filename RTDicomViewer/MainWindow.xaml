@@ -190,8 +190,29 @@
                         </Expander>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="Analyses">
+                <TabItem Header="Analyse">
                     <StackPanel>
+                        <GroupBox Header="Normalisation">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Isodose (%):</TextBlock>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NormalisationIsodose}"></TextBox>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Render Quality:</TextBlock>
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RenderQuality}"></TextBox>
+                                
+                                
+                                <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Width="70" Height="20" Margin="3" Command="{Binding ApplyNormalisationCommand}">Apply</Button>
+                            </Grid>
+                        </GroupBox>
                     </StackPanel>
                 </TabItem>
 

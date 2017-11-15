@@ -1,17 +1,23 @@
-﻿using DicomPanel.Core;
-using DicomPanel.Core.Radiotherapy.Dose;
-using DicomPanel.Core.Radiotherapy.Imaging;
-using DicomPanel.Core.Radiotherapy.ROIs;
+﻿using RT.Core;
+using RT.Core.Dose;
+using RT.Core.Imaging;
+using RT.Core.Planning;
+using RT.Core.ROIs;
+using GalaSoft.MvvmLight.Messaging;
+using RTDicomViewer.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DicomPanel.Core;
 
 namespace RTDicomViewer.Workspace
 {
     public class Workspace
     {
+        public static void Init() { _current = new Workspace(); }
+
         public static Workspace Current { get { if (_current == null) _current = new Workspace(); return _current; } }
         private static Workspace _current;
 
@@ -19,15 +25,24 @@ namespace RTDicomViewer.Workspace
         public DicomPanelModel Coronal { get; set; }
         public DicomPanelModel Sagittal { get; set; }
 
-        public WorkspaceItemCollection<IDoseObject> Doses { get; set; }
+        public WorkspaceItemCollection<DicomDoseObject> Doses { get; set; }
         public WorkspaceItemCollection<DicomImageObject> Images { get; set; }
         public WorkspaceItemCollection<StructureSet> StructureSets { get; set; }
+        public WorkspaceItemCollection<PointOfInterest> Points { get; set; }
 
         public Workspace()
         {
-            Doses = new WorkspaceItemCollection<IDoseObject>();
+            Doses = new WorkspaceItemCollection<DicomDoseObject>();
             Images = new WorkspaceItemCollection<DicomImageObject>();
             StructureSets = new WorkspaceItemCollection<StructureSet>();
+            Points = new WorkspaceItemCollection<PointOfInterest>();
+
+            Messenger.Default.Register<RTObjectLoadedMessage<DicomDoseObject>>(this, x => Doses.Add(x.Value,x.Value.Name));
+            Messenger.Default.Register<RTObjectLoadedMessage<PointOfInterest>>(this, 
+                x => Points.Add(x.Value, x.Value.Name));
+            Messenger.Default.Register<RTObjectLoadedMessage<DicomImageObject>>(this, 
+                x => Images.Add(x.Value, x.Value.SeriesUid));
+            Messenger.Default.Register<RTObjectLoadedMessage<StructureSet>>(this, x => StructureSets.Add(x.Value, x.Value.Name));
         }
     }
 }

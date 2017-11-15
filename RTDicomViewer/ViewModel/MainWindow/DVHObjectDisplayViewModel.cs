@@ -1,6 +1,6 @@
-﻿using DicomPanel.Core.Radiotherapy.Dose;
-using DicomPanel.Core.Radiotherapy.DVH;
-using DicomPanel.Core.Radiotherapy.ROIs;
+﻿using RT.Core.Dose;
+using RT.Core.DVH;
+using RT.Core.ROIs;
 using GalaSoft.MvvmLight;
 using RTDicomViewer.Message;
 using RTDicomViewer.Utilities;

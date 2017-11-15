@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Core.Render.Contouring
 {

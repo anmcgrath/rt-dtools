@@ -1,4 +1,4 @@
-﻿using DicomPanel.Core.Radiotherapy.Dose;
+﻿using RT.Core.Dose;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using RTDicomViewer.Message;
@@ -75,24 +75,28 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
             foreach (var doseObj in DoseObjects)
             {
-                if (doseObj.Value != dose)
-                {
-                    doseObj.FireSelectionEvent = false;
-                    doseObj.IsSelected = false;
-                    doseObj.FireSelectionEvent = true;
-                } else
+                if (doseObj.Value == dose)
                 {
                     doseObj.FireSelectionEvent = false;
                     doseObj.IsSelected = true;
                     doseObj.FireSelectionEvent = true;
                 }
             }
-            MessengerInstance.Send(new DoseObjectRenderMessage(dose));
+            MessengerInstance.Send(new DoseObjectRenderMessage(dose, false));
         }
 
         private void UnselectDose(IDoseObject dose)
         {
-            MessengerInstance.Send(new DoseObjectRenderMessage(null));
+            foreach (var doseObj in DoseObjects)
+            {
+                if (doseObj.Value == dose)
+                {
+                    doseObj.FireSelectionEvent = false;
+                    doseObj.IsSelected = false;
+                    doseObj.FireSelectionEvent = true;
+                }
+            }
+            MessengerInstance.Send(new DoseObjectRenderMessage(dose, true));
         }
 
     }

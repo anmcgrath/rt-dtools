@@ -29,6 +29,7 @@ namespace RTDicomViewer.Workspace
         public void Add(T item, string key)
         {
             this[key] = item;
+            listCollection.Add(item);
         }
 
         public int IndexOf(T item)

@@ -9,8 +9,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DicomPanel.Core.Render;
-using DicomPanel.Core.Utilities.RTMath;
+using RT.Core.Utilities.RTMath;
 using System.Windows.Media.Effects;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Wpf.Rendering
 {
@@ -58,7 +59,7 @@ namespace DicomPanel.Wpf.Rendering
             Canvas?.Children.Add(rectangle);
         }
 
-        public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color)
+        public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType)
         {
             x0 *= Canvas.ActualWidth;
             x1 *= Canvas.ActualWidth;
@@ -66,6 +67,19 @@ namespace DicomPanel.Wpf.Rendering
             y0 *= Canvas.ActualHeight;
             Line line = new Line();
             line.Stroke = new SolidColorBrush(DicomColorConverter.FromDicomColor(color));
+            if (lineType != LineType.Normal)
+            {
+                line.StrokeDashArray = new DoubleCollection();
+                if (lineType == LineType.Dotted)
+                {
+                    line.StrokeDashArray.Add(1);
+                    line.StrokeDashArray.Add(1);
+                }else if(lineType == LineType.Dashed)
+                {
+                    line.StrokeDashArray.Add(2);
+                    line.StrokeDashArray.Add(2);
+                }
+            }
             line.StrokeThickness = 1;
             line.X1 = x0;
             line.X2 = x1;
@@ -116,6 +130,11 @@ namespace DicomPanel.Wpf.Rendering
             Canvas.SetLeft(ellipse, x0-radiusX/2);
             Canvas.SetTop(ellipse, y0-radiusY/2);
             Canvas?.Children.Add(ellipse);
+        }
+
+        public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color)
+        {
+            DrawLine(x0, y0, x1, y1, color, LineType.Normal);
         }
     }
 }

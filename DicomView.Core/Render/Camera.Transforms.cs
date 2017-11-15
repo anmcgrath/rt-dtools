@@ -1,5 +1,5 @@
-﻿using DicomPanel.Core.Geometry;
-using DicomPanel.Core.Utilities.RTMath;
+﻿using RT.Core.Geometry;
+using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;

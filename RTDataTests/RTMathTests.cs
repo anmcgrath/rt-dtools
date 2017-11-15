@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DicomPanel.Core.Utilities.RTMath;
+using RT.Core.Utilities.RTMath;
 
 namespace RTDataTests
 {

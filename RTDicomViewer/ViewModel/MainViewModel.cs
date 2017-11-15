@@ -1,13 +1,13 @@
 using GalaSoft.MvvmLight;
-using DicomPanel.Core.Geometry;
-using DicomPanel.Core.IO;
-using DicomPanel.Core.Radiotherapy.Dose;
-using DicomPanel.Core.Radiotherapy.Imaging;
-using DicomPanel.Core.Radiotherapy.Planning;
-using DicomPanel.Core.Radiotherapy.ROIs;
+using RT.Core.Geometry;
+using RT.Core.IO;
+using RT.Core.Dose;
+using RT.Core.Imaging;
+using RT.Core.Planning;
+using RT.Core.ROIs;
 using System.IO;
 using System.Windows;
-using DicomPanel.Core;
+using RT.Core;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
@@ -20,11 +20,14 @@ using DicomPanel.Core.Toolbox;
 using RTDicomViewer.ViewModel.Dialogs;
 using RTDicomViewer.View.Dialogs;
 using RTDicomViewer.View.MainWindow;
+using DicomPanel.Core;
 
 namespace RTDicomViewer.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        public double NormalisationIsodose { get; set; } = 100.0;
+        public int RenderQuality { get; set; } = 50;
         private DicomPanelModel _axialPanelModel;
         public DicomPanelModel AxialPanelModel { get; set; }
         public DicomPanelModel CoronalPanelModel { get; set; }
@@ -56,11 +59,16 @@ namespace RTDicomViewer.ViewModel
         public RelayCommand CreateNewPOICommand => new RelayCommand(
             () => { CreateNewPOI(); });
 
+        public RelayCommand ApplyNormalisationCommand => new RelayCommand(
+            () => { ApplyNormalisation(); });
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
+            Workspace.Workspace.Init();
+
             AxialPanelModel = new DicomPanelModel();
             AxialPanelModel.Camera.SetAxial();
             AxialPanelModel.SetToolBox(ToolBox);
@@ -86,12 +94,26 @@ namespace RTDicomViewer.ViewModel
                 SagittalPanelModel.SetImage(x.Value);
                 CoronalPanelModel.SetImage(x.Value);
             });
+
+            MessengerInstance.Register<RTObjectLoadedMessage<DicomDoseObject>>(this, x => {
+                x.Value.NormalisationIsodose = this.NormalisationIsodose;
+            });
+
             //When a dose is selected, render it
             MessengerInstance.Register<DoseObjectRenderMessage>(this, x =>
             {
-                AxialPanelModel.SetDose(x.DoseObject);
-                SagittalPanelModel.SetDose(x.DoseObject);
-                CoronalPanelModel.SetDose(x.DoseObject);
+                if (x.RemoveDose)
+                {
+                    AxialPanelModel.RemoveDose(x.DoseObject);
+                    SagittalPanelModel.RemoveDose(x.DoseObject);
+                    CoronalPanelModel.RemoveDose(x.DoseObject);
+                }
+                else
+                {
+                    AxialPanelModel.AddDose(x.DoseObject);
+                    SagittalPanelModel.AddDose(x.DoseObject);
+                    CoronalPanelModel.AddDose(x.DoseObject);
+                }
             });
             MessengerInstance.Register<ROIsObjectRenderMessage>(this, x =>
             {
@@ -151,6 +173,24 @@ namespace RTDicomViewer.ViewModel
             var poi = new PointOfInterest();
             poi.Name = "New POI";
             MessengerInstance.Send(new RTObjectLoadedMessage<PointOfInterest>(poi));
+            AxialPanelModel.AddPOI(poi);
+            CoronalPanelModel.AddPOI(poi);
+            SagittalPanelModel.AddPOI(poi);
+        }
+
+        public void ApplyNormalisation()
+        {
+            foreach(var dose in Workspace.Workspace.Current.Doses.GetList())
+            {
+                dose.NormalisationIsodose = this.NormalisationIsodose;
+            }
+            AxialPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
+            CoronalPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
+            SagittalPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
+
+            AxialPanelModel.Invalidate();
+            CoronalPanelModel.Invalidate();
+            SagittalPanelModel.Invalidate();
         }
     }
 

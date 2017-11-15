@@ -11,7 +11,8 @@
         <TreeView.ItemTemplate>
             <DataTemplate>
                 <WrapPanel>
-                    <CheckBox Margin="0" Content="{Binding Value.Name}" IsChecked="{Binding IsSelected}"  BorderThickness="1"/>
+                    <CheckBox Margin="0" IsChecked="{Binding IsSelected}"  BorderThickness="1"></CheckBox>
+                    <TextBlock Text="{Binding Value.Name}"/>
                 </WrapPanel>
             </DataTemplate>
         </TreeView.ItemTemplate>

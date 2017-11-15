@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "DicomPanel.Core": {
+    "RT.Core": {
       "commandName": "Project"
     }
   }
