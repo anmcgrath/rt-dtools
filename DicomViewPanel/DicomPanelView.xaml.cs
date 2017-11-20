@@ -1,5 +1,7 @@
 ﻿using DicomPanel.Core;
 using RT.Core.Utilities.RTMath;
+using SharpGL;
+using SharpGL.SceneGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -109,6 +111,16 @@ namespace DicomPanel.Wpf
         {
             var menuItem = sender as MenuItem;
             Model.ToolBox.SelectTool(menuItem.Tag.ToString());
+        }
+
+        private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.Begin(OpenGL.GL_LINES);
+            gl.Color(1, 0, 0);
+            gl.Vertex(0, 0);
+            gl.Vertex(1, 1);
+            //((DicomPanelViewModel)(this.DataContext)).Draw()
         }
     }
 }

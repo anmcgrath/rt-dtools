@@ -19,7 +19,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
             StructureSets = new ObservableCollection<SelectableObject<StructureSet,RegionOfInterest>>();
 
-            MessengerInstance.Register<RTObjectLoadedMessage<StructureSet>>(this,
+            MessengerInstance.Register<RTObjectAddedMessage<StructureSet>>(this,
                 x => AddStructureSet(x.Value));
         }
 

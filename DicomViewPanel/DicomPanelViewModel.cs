@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SharpGL;
 
 namespace DicomPanel.Wpf
 {
@@ -72,6 +73,11 @@ namespace DicomPanel.Wpf
             ImageBaseRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
             ImageTopRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
             OverlayRenderContext.Canvas.Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, width, height));
+        }
+        
+        public void Draw(OpenGL gl)
+        {
+            
         }
     }
 }

@@ -10,7 +10,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:av="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:th="clr-namespace:RTDicomViewer.Themes"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="RTDicomViewer.MainWindow"
+        x:Class="RTDicomViewer.MainWindow"
     xmlns:cc="clr-namespace:RTDicomViewer.View.CustomControls"
         mc:Ignorable="d"
         Title="Radiotherapy research Monte Carlo tools" Height="600" Width="800" DataContext="{Binding Main, Source={StaticResource Locator}}"
@@ -76,7 +76,7 @@
 
             <TabControl Grid.Column="0" Grid.Row="1">
                 <TabItem Header="Image">
-                    
+                    <mv:ImageObjectDisplayview/>
                 </TabItem>
                 <TabItem Header="Structures">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -192,27 +192,7 @@
                 </TabItem>
                 <TabItem Header="Analyse">
                     <StackPanel>
-                        <GroupBox Header="Normalisation">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Isodose (%):</TextBlock>
-                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NormalisationIsodose}"></TextBox>
-
-                                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Render Quality:</TextBlock>
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RenderQuality}"></TextBox>
-                                
-                                
-                                <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Width="70" Height="20" Margin="3" Command="{Binding ApplyNormalisationCommand}">Apply</Button>
-                            </Grid>
-                        </GroupBox>
+                        <mv:AnalyseDisplayView/>
                     </StackPanel>
                 </TabItem>
 

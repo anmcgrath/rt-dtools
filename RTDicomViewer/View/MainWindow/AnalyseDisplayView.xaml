@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="RTDicomViewer.View.MainWindow.AnalyseDisplayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
+             xmlns:c="clr-namespace:RTDicomViewer.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding AnalyseDisplay, Source={StaticResource Locator}}" x:Name="Parent">
+    <UserControl.Resources>
+        <c:DicomColorConverter x:Key="DicomColorConverter"/>
+    </UserControl.Resources>
+    <StackPanel>
+    <GroupBox Header="Normalisation">
+        
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Isodose (%):</TextBlock>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RenderOptions.NormalisationIsodose}"></TextBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Render Quality:</TextBlock>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RenderOptions.RenderQuality}"></TextBox>
+            </Grid>
+    </GroupBox>
+        <GroupBox>
+            <GroupBox.Header>
+                <DockPanel Margin="0 0 -10 0"  Width="{Binding Path=ActualWidth,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=GroupBox}}">
+                    <Button Width="70" Height="20" Margin="0 0 8 0" DockPanel.Dock="Right" Command="{Binding AddNewContourInfoCommand}" ToolTip="Add isodose line">Add Line</Button>
+                    <TextBlock Text="Isodose lines" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                    
+                </DockPanel>
+                
+            </GroupBox.Header>
+            <StackPanel>
+                <WrapPanel HorizontalAlignment="Right">
+                    <!--<Button Width="70" Height="20" Margin="0 3 3 3" Grid.Column="0" Command="{Binding AddNewContourInfoCommand}">Rules...</Button>-->
+                    
+                </WrapPanel>
+
+                <Grid Background="#333333">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 0 0">Threshold</TextBlock>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 0 0 0">Colour</TextBlock>
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding RenderOptions.ContourInfo}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="#333333">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="20"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="#555555" BorderThickness="0 1 0 0"/>
+                                <TextBox Text="{Binding Threshold}" Grid.Column="0" TextAlignment="Right" Padding="2"></TextBox>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="3 0 0 0">%</TextBlock>
+                                <ComboBox Grid.Column="2" SelectedItem="{Binding Color}" ItemsSource="{Binding ElementName=Parent,Path=DataContext.AvailableColors}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border HorizontalAlignment="Center" BorderBrush="Black" Margin="2 0 2 0" BorderThickness="1" Height="12" Width="30" >
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{Binding .,Converter={StaticResource DicomColorConverter}}"/>
+                                                </Border.Background>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Grid.Column="4" Height="20" Command="{Binding ElementName=Parent,Path=DataContext.RemoveContourCommand}" CommandParameter="{Binding .}" ToolTip="Remove isodose line">X</Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        
+        </GroupBox>
+        <WrapPanel HorizontalAlignment="Right">
+            <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Width="70" Height="20" Margin="3 3 3 3" Command="{Binding ApplyNormalisationCommand}">Apply</Button>
+        </WrapPanel>
+    </StackPanel>
+
+</UserControl>

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RTDicomViewer.Message
 {
-    public class RTObjectLoadedMessage<T>
+    public class RTObjectDeletedMessage<T>
     {
         public T Value { get; set; }
-        public RTObjectLoadedMessage(T value)
+        public RTObjectDeletedMessage(T value)
         {
             Value = value;
         }

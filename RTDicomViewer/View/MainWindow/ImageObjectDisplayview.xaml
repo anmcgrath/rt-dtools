@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="RTDicomViewer.View.MainWindow.ImageObjectDisplayview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding ImageDisplay, Source={StaticResource Locator}}">
+    <ItemsControl ItemsSource="{Binding Images}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border MaxWidth="100" BorderThickness="2" BorderBrush="Gray" Background="Black" Margin="10" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="{Binding Value.ImagePreview}"/>
+                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.PatientName}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Border.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteImageCommand, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+                        </ContextMenu>
+                    </Border.ContextMenu>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

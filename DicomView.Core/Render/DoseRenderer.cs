@@ -69,9 +69,6 @@ namespace DicomPanel.Core.Render
 
                     context.DrawLine(screenPoint1.X, screenPoint1.Y, screenPoint2.X, screenPoint2.Y, contour.Color, lineType);
                 }
-
-                context.DrawString("" + contourInfo.Threshold + "%", .02, textY, 12, contourInfo.Color);
-                textY += .05;
             }
         }
     }

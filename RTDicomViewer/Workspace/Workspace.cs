@@ -37,12 +37,15 @@ namespace RTDicomViewer.Workspace
             StructureSets = new WorkspaceItemCollection<StructureSet>();
             Points = new WorkspaceItemCollection<PointOfInterest>();
 
-            Messenger.Default.Register<RTObjectLoadedMessage<DicomDoseObject>>(this, x => Doses.Add(x.Value,x.Value.Name));
-            Messenger.Default.Register<RTObjectLoadedMessage<PointOfInterest>>(this, 
+            Messenger.Default.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => Doses.Add(x.Value,x.Value.Name));
+            Messenger.Default.Register<RTObjectAddedMessage<PointOfInterest>>(this, 
                 x => Points.Add(x.Value, x.Value.Name));
-            Messenger.Default.Register<RTObjectLoadedMessage<DicomImageObject>>(this, 
+            Messenger.Default.Register<RTObjectAddedMessage<DicomImageObject>>(this, 
                 x => Images.Add(x.Value, x.Value.SeriesUid));
-            Messenger.Default.Register<RTObjectLoadedMessage<StructureSet>>(this, x => StructureSets.Add(x.Value, x.Value.Name));
+            Messenger.Default.Register<RTObjectAddedMessage<StructureSet>>(this, x => StructureSets.Add(x.Value, x.Value.Name));
+
+            Messenger.Default.Register<RTObjectDeletedMessage<DicomImageObject>>(this,
+                x => Images.Remove(x.Value));
         }
     }
 }

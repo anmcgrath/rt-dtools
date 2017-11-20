@@ -19,18 +19,18 @@ namespace RTDicomViewer.ViewModel.MainWindow
         public DoseObjectDisplayViewModel()
         {
             DoseObjects = new ObservableCollection<SelectableObject<IDoseObject>>();
-            MessengerInstance.Register<RTObjectLoadedMessage<DicomDoseObject>>(this, x => DoseLoadedMessageReceive(x));
-            MessengerInstance.Register<RTObjectLoadedMessage<EgsDoseObject>>(this, x => DoseLoadedMessageReceive(x));
+            MessengerInstance.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => DoseLoadedMessageReceive(x));
+            MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this, x => DoseLoadedMessageReceive(x));
         }
 
         //When we receive a global message telling us a dicom dose object is loaded, we handle it
-        public void DoseLoadedMessageReceive(RTObjectLoadedMessage<DicomDoseObject> message)
+        public void DoseLoadedMessageReceive(RTObjectAddedMessage<DicomDoseObject> message)
         {
             DoseLoaded(message.Value);
         }
 
         //When we receive a global message telling us an egs dose object is loaded, we handle it
-        public void DoseLoadedMessageReceive(RTObjectLoadedMessage<EgsDoseObject> message)
+        public void DoseLoadedMessageReceive(RTObjectAddedMessage<EgsDoseObject> message)
         {
             DoseLoaded(message.Value);
         }

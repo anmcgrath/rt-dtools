@@ -39,7 +39,7 @@ namespace RTDicomViewer.IO
                     }
                 });
                 if (openedObject != null)
-                    Messenger.Default.Send(new RTDicomViewer.Message.RTObjectLoadedMessage<T>(openedObject));
+                    Messenger.Default.Send(new RTDicomViewer.Message.RTObjectAddedMessage<T>(openedObject));
 
                 Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this,Progress.End, "Loading Complete."));
             }
@@ -65,7 +65,7 @@ namespace RTDicomViewer.IO
                     }
                 });
                 if (openedObject != null)
-                    Messenger.Default.Send(new RTDicomViewer.Message.RTObjectLoadedMessage<EgsDoseObject>(openedObject));
+                    Messenger.Default.Send(new RTDicomViewer.Message.RTObjectAddedMessage<EgsDoseObject>(openedObject));
             }
         }
 

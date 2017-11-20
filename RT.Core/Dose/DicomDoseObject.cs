@@ -15,7 +15,6 @@ namespace RT.Core.Dose
         public IVoxelDataStructure Grid { get; set; }
         public double DoseGridScaling { get; set; }
         public string Units { get; set; }
-        public string Name { get; set; }
 
         //Change this to proper normalisation
         public double NormalisationIsodose = 100;

@@ -10,10 +10,10 @@ namespace DicomPanel.Core.Render.Contouring
     /// </summary>
     public class MarchingSquares
     {
-        private double[] vA = new double[3];
-        private double[] vB = new double[3];
-        private double[] vC = new double[3];
-        private double[] vD = new double[3];
+        private double[] vTopLeft = new double[3];
+        private double[] vTopRight = new double[3];
+        private double[] vBottomLeft = new double[3];
+        private double[] vBottomRight = new double[3];
         public MarchingSquares()
         {
 
@@ -107,10 +107,10 @@ namespace DicomPanel.Core.Render.Contouring
             lineType |= nwb;
 
             // The corner vectors
-            vA[0] = x; vA[1] = y; vA[2] = z;
-            vB[0] = x + cdx; vB[1] = y + cdy; vB[2] = z + cdz;
-            vD[0] = x + cdx + rdx; vD[1] = y + cdy + rdy; vD[2] = z + cdz + rdz;
-            vC[0] = x + rdx; vC[1] = y + rdy; vC[2] = z + rdz;
+            vTopLeft[0] = x; vTopLeft[1] = y; vTopLeft[2] = z;
+            vTopRight[0] = x + cdx; vTopRight[1] = y + cdy; vTopRight[2] = z + cdz;
+            vBottomRight[0] = x + cdx + rdx; vBottomRight[1] = y + cdy + rdy; vBottomRight[2] = z + cdz + rdz;
+            vBottomLeft[0] = x + rdx; vBottomLeft[1] = y + rdy; vBottomLeft[2] = z + rdz;
             //Vector<double> vA = Vector<double>.Build.Dense(new double[] { x, y, z });
             //Vector<double> vB = Vector<double>.Build.Dense(new double[] { x+cdx, y+cdy, z+cdz });
             //Vector<double> vD = Vector<double>.Build.Dense(new double[] { x+cdx+rdx, y+cdy+rdy, z+cdz+rdz });
@@ -138,86 +138,86 @@ namespace DicomPanel.Core.Render.Contouring
             lineType |= nwb;
 
             // The corner vectors
-            vA = coords[row - 1][col - 1];
-            vB = coords[row - 1][col];
-            vD = coords[row][col];
-            vC = coords[row][col - 1];
+            vTopLeft = coords[row - 1][col - 1];
+            vTopRight = coords[row - 1][col];
+            vBottomRight = coords[row][col];
+            vBottomLeft = coords[row][col - 1];
             addVertices(vertices, lineType, A, B, C, D, threshold);
         }
 
-        private void addVertices(List<double> vertices, byte lineType, float A, float B, float C, float D, double threshold)
+        private void addVertices(List<double> vertices, byte lineType, float topLeft, float topRight, float bottomRight, float bottomLeft, double threshold)
         {
             double x0 = 0, x1 = 0, y0 = 0, y1 = 0, z0 = 0, z1 = 0;
 
             if (lineType == 1 || lineType == 14)
             {
-                x0 = (vC[0] + (vA[0] - vC[0]) * ((threshold - C) / (A - C)));
-                y0 = (vC[1] + (vA[1] - vC[1]) * ((threshold - C) / (A - C)));
-                z0 = (vC[2] + (vA[2] - vC[2]) * ((threshold - C) / (A - C)));
-                x1 = (vC[0] + (vD[0] - vC[0]) * ((threshold - C) / (D - C)));
-                y1 = (vC[1] + (vD[1] - vC[1]) * ((threshold - C) / (D - C)));
-                z1 = (vC[2] + (vD[2] - vC[2]) * ((threshold - C) / (D - C)));
+                x0 = (vBottomLeft[0] + (vTopLeft[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vTopLeft[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vTopLeft[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                x1 = (vBottomLeft[0] + (vBottomRight[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                y1 = (vBottomLeft[1] + (vBottomRight[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                z1 = (vBottomLeft[2] + (vBottomRight[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
             }
             else if (lineType == 2 || lineType == 13)
             {
-                x1 = (vB[0] + (vD[0] - vB[0]) * ((threshold - B) / (D - B)));
-                y1 = (vB[1] + (vD[1] - vB[1]) * ((threshold - B) / (D - B)));
-                z1 = (vB[2] + (vD[2] - vB[2]) * ((threshold - B) / (D - B)));
-                x0 = (vC[0] + (vD[0] - vC[0]) * ((threshold - C) / (D - C)));
-                y0 = (vC[1] + (vD[1] - vC[1]) * ((threshold - C) / (D - C)));
-                z0 = (vC[2] + (vD[2] - vC[2]) * ((threshold - C) / (D - C)));
+                x1 = (vTopRight[0] + (vBottomRight[0] - vTopRight[0]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                y1 = (vTopRight[1] + (vBottomRight[1] - vTopRight[1]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                z1 = (vTopRight[2] + (vBottomRight[2] - vTopRight[2]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                x0 = (vBottomLeft[0] + (vBottomRight[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vBottomRight[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vBottomRight[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
             }
             else if (lineType == 3 || lineType == 12)
             {
-                x0 = (vC[0] + (vA[0] - vC[0]) * ((threshold - C) / (A - C)));
-                y0 = (vC[1] + (vA[1] - vC[1]) * ((threshold - C) / (A - C)));
-                z0 = (vC[2] + (vA[2] - vC[2]) * ((threshold - C) / (A - C)));
-                x1 = (vB[0] + (vD[0] - vB[0]) * ((threshold - B) / (D - B)));
-                y1 = (vB[1] + (vD[1] - vB[1]) * ((threshold - B) / (D - B)));
-                z1 = (vB[2] + (vD[2] - vB[2]) * ((threshold - B) / (D - B)));
+                x0 = (vBottomLeft[0] + (vTopLeft[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vTopLeft[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vTopLeft[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                x1 = (vTopRight[0] + (vBottomRight[0] - vTopRight[0]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                y1 = (vTopRight[1] + (vBottomRight[1] - vTopRight[1]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                z1 = (vTopRight[2] + (vBottomRight[2] - vTopRight[2]) * ((threshold - topRight) / (bottomLeft - topRight)));
             }
             else if (lineType == 4 || lineType == 11)
             {
-                x0 = (vA[0] + (vB[0] - vA[0]) * ((threshold - A) / (B - A)));
-                y0 = (vA[1] + (vB[1] - vA[1]) * ((threshold - A) / (B - A)));
-                z0 = (vA[2] + (vB[2] - vA[2]) * ((threshold - A) / (B - A)));
-                x1 = vB[0] + (vD[0] - vB[0]) * ((threshold - B) / (D - B));
-                y1 = vB[1] + (vD[1] - vB[1]) * ((threshold - B) / (D - B));
-                z1 = vB[2] + (vD[2] - vB[2]) * ((threshold - B) / (D - B));
+                x0 = (vTopLeft[0] + (vTopRight[0] - vTopLeft[0]) * ((threshold - topLeft) / (topRight - topLeft)));
+                y0 = (vTopLeft[1] + (vTopRight[1] - vTopLeft[1]) * ((threshold - topLeft) / (topRight - topLeft)));
+                z0 = (vTopLeft[2] + (vTopRight[2] - vTopLeft[2]) * ((threshold - topLeft) / (topRight - topLeft)));
+                x1 = vTopRight[0] + (vBottomRight[0] - vTopRight[0]) * ((threshold - topRight) / (bottomLeft - topRight));
+                y1 = vTopRight[1] + (vBottomRight[1] - vTopRight[1]) * ((threshold - topRight) / (bottomLeft - topRight));
+                z1 = vTopRight[2] + (vBottomRight[2] - vTopRight[2]) * ((threshold - topRight) / (bottomLeft - topRight));
             }
             else if (lineType == 5)
             {
-                x0 = (vC[0] + (vA[0] - vC[0]) * ((threshold - C) / (A - C)));
-                y0 = (vC[1] + (vA[1] - vC[1]) * ((threshold - C) / (A - C)));
-                z0 = (vC[2] + (vA[2] - vC[2]) * ((threshold - C) / (A - C)));
-                x1 = (vA[0] + (vB[0] - vA[0]) * ((threshold - A) / (B - A)));
-                y1 = (vA[1] + (vB[1] - vA[1]) * ((threshold - A) / (B - A)));
-                z1 = (vA[2] + (vB[2] - vA[2]) * ((threshold - A) / (B - A)));
+                x0 = (vBottomLeft[0] + (vTopLeft[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vTopLeft[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vTopLeft[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                x1 = (vTopLeft[0] + (vTopRight[0] - vTopLeft[0]) * ((threshold - topLeft) / (topRight - topLeft)));
+                y1 = (vTopLeft[1] + (vTopRight[1] - vTopLeft[1]) * ((threshold - topLeft) / (topRight - topLeft)));
+                z1 = (vTopLeft[2] + (vTopRight[2] - vTopLeft[2]) * ((threshold - topLeft) / (topRight - topLeft)));
                 vertices.AddRange(new double[] { x0, y0, z0, x1, y1, z1 });
-                x0 = (vC[0] + (vD[0] - vC[0]) * ((threshold - C) / (D - C)));
-                y0 = (vC[1] + (vD[1] - vC[1]) * ((threshold - C) / (D - C)));
-                z0 = (vC[2] + (vD[2] - vC[2]) * ((threshold - C) / (D - C)));
-                x1 = (vB[0] + (vD[0] - vB[0]) * ((threshold - B) / (D - B)));
-                y1 = (vB[1] + (vD[1] - vB[1]) * ((threshold - B) / (D - B)));
-                z1 = (vB[2] + (vD[2] - vB[2]) * ((threshold - B) / (D - B)));
+                x0 = (vBottomLeft[0] + (vBottomRight[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vBottomRight[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vBottomRight[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                x1 = (vTopRight[0] + (vBottomRight[0] - vTopRight[0]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                y1 = (vTopRight[1] + (vBottomRight[1] - vTopRight[1]) * ((threshold - topRight) / (bottomLeft - topRight)));
+                z1 = (vTopRight[2] + (vBottomRight[2] - vTopRight[2]) * ((threshold - topRight) / (bottomLeft - topRight)));
             }
             else if (lineType == 6 || lineType == 9)
             {
-                x0 = (vA[0] + (vB[0] - vA[0]) * ((threshold - A) / (B - A)));
-                y0 = (vA[1] + (vB[1] - vA[1]) * ((threshold - A) / (B - A)));
-                z0 = (vA[2] + (vB[2] - vA[2]) * ((threshold - A) / (B - A)));
-                x1 = (vC[0] + (vD[0] - vC[0]) * ((threshold - C) / (D - C)));
-                y1 = (vC[1] + (vD[1] - vC[1]) * ((threshold - C) / (D - C)));
-                z1 = (vC[2] + (vD[2] - vC[2]) * ((threshold - C) / (D - C)));
+                x0 = (vTopLeft[0] + (vTopRight[0] - vTopLeft[0]) * ((threshold - topLeft) / (topRight - topLeft)));
+                y0 = (vTopLeft[1] + (vTopRight[1] - vTopLeft[1]) * ((threshold - topLeft) / (topRight - topLeft)));
+                z0 = (vTopLeft[2] + (vTopRight[2] - vTopLeft[2]) * ((threshold - topLeft) / (topRight - topLeft)));
+                x1 = (vBottomLeft[0] + (vBottomRight[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                y1 = (vBottomLeft[1] + (vBottomRight[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
+                z1 = (vBottomLeft[2] + (vBottomRight[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (bottomLeft - bottomRight)));
             }
             else if (lineType == 7 || lineType == 8)
             {
-                x0 = (vC[0] + (vA[0] - vC[0]) * ((threshold - C) / (A - C)));
-                y0 = (vC[1] + (vA[1] - vC[1]) * ((threshold - C) / (A - C)));
-                z0 = (vC[2] + (vA[2] - vC[2]) * ((threshold - C) / (A - C)));
-                x1 = (vA[0] + (vB[0] - vA[0]) * ((threshold - A) / (B - A)));
-                y1 = (vA[1] + (vB[1] - vA[1]) * ((threshold - A) / (B - A)));
-                z1 = (vA[2] + (vB[2] - vA[2]) * ((threshold - A) / (B - A)));
+                x0 = (vBottomLeft[0] + (vTopLeft[0] - vBottomLeft[0]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                y0 = (vBottomLeft[1] + (vTopLeft[1] - vBottomLeft[1]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                z0 = (vBottomLeft[2] + (vTopLeft[2] - vBottomLeft[2]) * ((threshold - bottomRight) / (topLeft - bottomRight)));
+                x1 = (vTopLeft[0] + (vTopRight[0] - vTopLeft[0]) * ((threshold - topLeft) / (topRight - topLeft)));
+                y1 = (vTopLeft[1] + (vTopRight[1] - vTopLeft[1]) * ((threshold - topLeft) / (topRight - topLeft)));
+                z1 = (vTopLeft[2] + (vTopRight[2] - vTopLeft[2]) * ((threshold - topLeft) / (topRight - topLeft)));
             }
             else if (lineType == 10)
             {

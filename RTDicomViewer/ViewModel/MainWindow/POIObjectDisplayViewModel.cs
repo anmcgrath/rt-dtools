@@ -17,7 +17,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
         public POIObjectDisplayViewModel()
         {
             PointsOfInterest = new ObservableCollection<SelectableObject<PointOfInterest>>();
-            Messenger.Default.Register<RTObjectLoadedMessage<PointOfInterest>>(this, x => AddPoi(x.Value));
+            Messenger.Default.Register<RTObjectAddedMessage<PointOfInterest>>(this, x => AddPoi(x.Value));
         }
 
         public void AddPoi(PointOfInterest poi)

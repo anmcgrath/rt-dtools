@@ -21,13 +21,13 @@ using RTDicomViewer.ViewModel.Dialogs;
 using RTDicomViewer.View.Dialogs;
 using RTDicomViewer.View.MainWindow;
 using DicomPanel.Core;
+using RTDicomViewer.Utilities;
+using System.Linq;
 
 namespace RTDicomViewer.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        public double NormalisationIsodose { get; set; } = 100.0;
-        public int RenderQuality { get; set; } = 50;
         private DicomPanelModel _axialPanelModel;
         public DicomPanelModel AxialPanelModel { get; set; }
         public DicomPanelModel CoronalPanelModel { get; set; }
@@ -59,8 +59,6 @@ namespace RTDicomViewer.ViewModel
         public RelayCommand CreateNewPOICommand => new RelayCommand(
             () => { CreateNewPOI(); });
 
-        public RelayCommand ApplyNormalisationCommand => new RelayCommand(
-            () => { ApplyNormalisation(); });
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -89,14 +87,17 @@ namespace RTDicomViewer.ViewModel
             CoronalPanelModel.OrthogonalModels.Add(SagittalPanelModel);
 
             //When we load a new image, render it
-            MessengerInstance.Register<RTObjectLoadedMessage<DicomImageObject>>(this, x => {
+            MessengerInstance.Register<RTObjectAddedMessage<DicomImageObject>>(this, x => {
                 AxialPanelModel.SetImage(x.Value);
                 SagittalPanelModel.SetImage(x.Value);
                 CoronalPanelModel.SetImage(x.Value);
             });
 
-            MessengerInstance.Register<RTObjectLoadedMessage<DicomDoseObject>>(this, x => {
-                x.Value.NormalisationIsodose = this.NormalisationIsodose;
+            MessengerInstance.Register<RTObjectDeletedMessage<DicomImageObject>>(this, x =>
+            {
+                AxialPanelModel.SetImage(null);
+                SagittalPanelModel.SetImage(null);
+                CoronalPanelModel.SetImage(null);
             });
 
             //When a dose is selected, render it
@@ -123,6 +124,12 @@ namespace RTDicomViewer.ViewModel
                 SagittalPanelModel.RemoveROIs(x.RemovedRois);
                 CoronalPanelModel.AddROIs(x.AddedRois);
                 CoronalPanelModel.RemoveROIs(x.RemovedRois);
+            });
+
+            //When the dose render options are changed...
+            MessengerInstance.Register<DoseRenderQualityChanged>(this, x =>
+            {
+                ChangeDoseRenderOptions(x.Options);
             });
 
             //Handle showing or closing loading dialog windows below
@@ -165,28 +172,32 @@ namespace RTDicomViewer.ViewModel
         {
             var cubePhantom = new CubePhantom();
             cubePhantom.Create(200, 200, 300, 1, 1, 1);
-            MessengerInstance.Send<RTObjectLoadedMessage<DicomImageObject>>(new RTObjectLoadedMessage<DicomImageObject>(cubePhantom));
+            MessengerInstance.Send<RTObjectAddedMessage<DicomImageObject>>(new RTObjectAddedMessage<DicomImageObject>(cubePhantom));
         }
 
         public void CreateNewPOI()
         {
             var poi = new PointOfInterest();
             poi.Name = "New POI";
-            MessengerInstance.Send(new RTObjectLoadedMessage<PointOfInterest>(poi));
+            MessengerInstance.Send(new RTObjectAddedMessage<PointOfInterest>(poi));
             AxialPanelModel.AddPOI(poi);
             CoronalPanelModel.AddPOI(poi);
             SagittalPanelModel.AddPOI(poi);
         }
 
-        public void ApplyNormalisation()
+        public void ChangeDoseRenderOptions(DoseRenderOptions options)
         {
             foreach(var dose in Workspace.Workspace.Current.Doses.GetList())
             {
-                dose.NormalisationIsodose = this.NormalisationIsodose;
+                dose.NormalisationIsodose = options.NormalisationIsodose;
             }
-            AxialPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
-            CoronalPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
-            SagittalPanelModel.DoseRenderer.MaxNumberOfGridPoints = RenderQuality;
+            AxialPanelModel.DoseRenderer.MaxNumberOfGridPoints = options.RenderQuality;
+            CoronalPanelModel.DoseRenderer.MaxNumberOfGridPoints = options.RenderQuality;
+            SagittalPanelModel.DoseRenderer.MaxNumberOfGridPoints = options.RenderQuality;
+
+            AxialPanelModel.DoseRenderer.ContourInfo = options.ContourInfo.ToList();
+            CoronalPanelModel.DoseRenderer.ContourInfo = options.ContourInfo.ToList();
+            SagittalPanelModel.DoseRenderer.ContourInfo = options.ContourInfo.ToList();
 
             AxialPanelModel.Invalidate();
             CoronalPanelModel.Invalidate();

@@ -23,13 +23,13 @@ namespace RTDicomViewer.ViewModel.MainWindow
             RegionOfInterests = new ObservableCollection<SelectableObject<RegionOfInterest, DoseVolumeHistogram>>();
             Doses = new List<IDoseObject>();
 
-            MessengerInstance.Register<RTObjectLoadedMessage<StructureSet>>(this,
+            MessengerInstance.Register<RTObjectAddedMessage<StructureSet>>(this,
                 x => AddStructureSet(x.Value));
 
-            MessengerInstance.Register<RTObjectLoadedMessage<DicomDoseObject>>(this,
+            MessengerInstance.Register<RTObjectAddedMessage<DicomDoseObject>>(this,
                 x => AddDoseObject(x.Value));
 
-            MessengerInstance.Register<RTObjectLoadedMessage<EgsDoseObject>>(this,
+            MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this,
                 x => AddDoseObject(x.Value));
         }
 

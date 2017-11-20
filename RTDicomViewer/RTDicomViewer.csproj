@@ -139,18 +139,24 @@
     <Compile Include="Converters\DicomColorConverter.cs" />
     <Compile Include="IO\FileOpener.cs" />
     <Compile Include="Message\DoseObjectRenderMessage.cs" />
+    <Compile Include="Message\DoseRenderQualityChanged.cs" />
     <Compile Include="Message\ProgressMessage.cs" />
     <Compile Include="Message\ROIsObjectRenderMessage.cs" />
-    <Compile Include="Message\RTObjectLoadedMessage.cs" />
+    <Compile Include="Message\RTObjectAddedMessage.cs" />
+    <Compile Include="Message\RTObjectDeletedMessage.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
+    <Compile Include="Utilities\DoseRenderOptions.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\ProgressDialogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\AnalyseDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DoseObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DVHObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\ImageObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\ImagePreviewObject.cs" />
     <Compile Include="ViewModel\MainWindow\POIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -163,6 +169,9 @@
     <Compile Include="View\Dialogs\ProgressDialogView.xaml.cs">
       <DependentUpon>ProgressDialogView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\MainWindow\AnalyseDisplayView.xaml.cs">
+      <DependentUpon>AnalyseDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainWindow\DoseStatisticsView.xaml.cs">
       <DependentUpon>DoseStatisticsView.xaml</DependentUpon>
     </Compile>
@@ -171,6 +180,9 @@
     </Compile>
     <Compile Include="View\MainWindow\DVHObjectDisplayView.xaml.cs">
       <DependentUpon>DVHObjectDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\ImageObjectDisplayview.xaml.cs">
+      <DependentUpon>ImageObjectDisplayview.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow\POIObjectDisplayView.xaml.cs">
       <DependentUpon>POIObjectDisplayView.xaml</DependentUpon>
@@ -216,6 +228,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\MainWindow\AnalyseDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow\DoseStatisticsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -225,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainWindow\DVHObjectDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\ImageObjectDisplayview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -28,7 +28,12 @@ namespace RTDicomViewer.Workspace
 
         public void Add(T item, string key)
         {
-            this[key] = item;
+            //this[key] = item;
+            listCollection.Add(item);
+        }
+
+        public void Add(T item)
+        {
             listCollection.Add(item);
         }
 
@@ -59,7 +64,7 @@ namespace RTDicomViewer.Workspace
         {
             if (this.Contains(item))
             {
-                stringCollection.Remove(stringCollection.First(x => x.Value.Equals(item)).Key);
+                //stringCollection.Remove(stringCollection.First(x => x.Value.Equals(item)).Key);
                 listCollection.Remove(item);
             }
         }

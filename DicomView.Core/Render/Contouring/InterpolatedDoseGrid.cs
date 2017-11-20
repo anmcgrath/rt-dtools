@@ -16,6 +16,7 @@ namespace DicomPanel.Core.Render.Contouring
 
         public InterpolatedDoseGrid(IDoseObject doseObject, int maxNumberOfGrids, Camera camera, Rectd normRect)
         {
+            //Intersect the camera screen and cube surrounding the dose object to limit the rendering.
             var boundingRect = camera.GetBoundingScreenRect(doseObject.Grid.XRange, doseObject.Grid.YRange, doseObject.Grid.ZRange, normRect);
 
             if (boundingRect == null)

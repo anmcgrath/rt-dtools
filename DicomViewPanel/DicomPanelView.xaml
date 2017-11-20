@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DicomPanel.Wpf"
              xmlns:util="clr-namespace:DicomPanel.Wpf.Utilities"
+             xmlns:sgl="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.DataContext>
@@ -21,8 +22,9 @@
 
         <!-- The DICOM Image -->
         <Image Source="{Binding ImageBase}" RenderOptions.BitmapScalingMode="Fant"/>
-        
-        
+        <!--<sgl:OpenGLControl OpenGLDraw="OpenGLControl_OpenGLDraw" DrawFPS="True"/>-->
+
+
         <Canvas x:Name="OverlayCanvas" IsHitTestVisible="False"/>
         <!-- Everything else -->
         <!--<Image Source="{Binding ImageTop}"/>-->
