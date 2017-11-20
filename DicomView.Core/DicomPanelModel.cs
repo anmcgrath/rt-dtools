@@ -71,6 +71,16 @@ namespace DicomPanel.Core
                 }
             }
 
+            if (Doses.Count > 0)
+            {
+                int k = 0;
+                foreach (var contourInfo in DoseRenderer.ContourInfo)
+                {
+                    //OverlayContext.DrawString("" + contourInfo.Threshold, .02, .02 + k * .05, 12, contourInfo.Color);
+                    k++;
+                }
+            }
+
             if (RoiRenderContext != null)
             {
                 ROIRenderer?.Render(ROIs, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));

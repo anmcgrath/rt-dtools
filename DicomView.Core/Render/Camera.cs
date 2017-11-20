@@ -59,6 +59,14 @@ namespace DicomPanel.Core.Render
             rowDirLength = RowDir.Length();
         }
 
+        public Point3d GetTopLeftPosition()
+        {
+            return new Point3d(
+                Position.X - FOV.X * ColDir.X - FOV.Y * RowDir.X,
+                Position.Y - FOV.X * ColDir.Y - FOV.Y * RowDir.Y,
+                Position.Z - FOV.X * ColDir.Z - FOV.Y * RowDir.Z);
+        }
+
         public void SetFOV(double width, double height)
         {
             FOV.X = width;
