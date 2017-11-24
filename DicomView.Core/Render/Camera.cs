@@ -200,6 +200,25 @@ namespace DicomPanel.Core.Render
             this.onUpdateView();
         }
 
+        /// <summary>
+        /// Intersects the line made up of two points with the plane of the camera and returns the intersection point.
+        /// See https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+        /// </summary>
+        /// <param name="p1">The first point of the line</param>
+        /// <param name="p2">The second point of the line</param>
+        public Point3d Intersect(Point3d p1, Point3d p2)
+        {
+            var l = (p2 - p1);
+            l /= l.Length();
+            var divisor = l.Dot(Normal);
+            if (divisor < 0.001)
+                divisor = 1;
+            //l is vecotr in direction of line
+            double d = (Position - p1).Dot(Normal) / divisor;
+            var intersection = d * l + p1;
+            return intersection;
+        }
+
 
     }
 }

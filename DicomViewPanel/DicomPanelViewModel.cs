@@ -73,6 +73,8 @@ namespace DicomPanel.Wpf
             ImageBaseRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
             ImageTopRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
             OverlayRenderContext.Canvas.Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, width, height));
+            OverlayRenderContext.Width = (int)width;
+            OverlayRenderContext.Height = (int)height;
         }
         
         public void Draw(OpenGL gl)

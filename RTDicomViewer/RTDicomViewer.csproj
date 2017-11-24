@@ -157,6 +157,7 @@
     <Compile Include="ViewModel\MainWindow\DVHObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ImageObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ImagePreviewObject.cs" />
+    <Compile Include="ViewModel\MainWindow\PlanViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\POIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -183,6 +184,9 @@
     </Compile>
     <Compile Include="View\MainWindow\ImageObjectDisplayview.xaml.cs">
       <DependentUpon>ImageObjectDisplayview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\PlanView.xaml.cs">
+      <DependentUpon>PlanView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow\POIObjectDisplayView.xaml.cs">
       <DependentUpon>POIObjectDisplayView.xaml</DependentUpon>
@@ -245,6 +249,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainWindow\ImageObjectDisplayview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\PlanView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

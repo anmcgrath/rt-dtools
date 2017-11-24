@@ -18,13 +18,13 @@
 
         <ContentPresenter Grid.Column="0" Grid.Row="0" Content="{Binding TopLeft,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:TileControl}}" Margin="0 0 2.5 2.5"/>
 
-        <GridSplitter HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="5" Margin="-2.5 0 0 0"/>
+        <GridSplitter Background="#454545" HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="5" Margin="-2.5 0 0 0"/>
 
         <ContentPresenter Grid.Column="1" Grid.Row="0" Content="{Binding TopRight,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:TileControl}}" Margin="2.5 0 0 2.5"/>
 
         <ContentPresenter Grid.Column="0" Grid.Row="1" Content="{Binding BottomLeft,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:TileControl}}" Margin="0 0 2.5 2.5"/>
 
-        <GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="5" Margin="0 -2.5 0 0"/>
+        <GridSplitter Background="#454545" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="5" Margin="0 -2.5 0 0"/>
 
         <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding BottomRight,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:TileControl}}" Margin="2.5 2.5 0 0"/>
     </Grid>

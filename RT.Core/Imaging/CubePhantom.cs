@@ -9,7 +9,9 @@ namespace RT.Core.Imaging
     {
         public CubePhantom()
         {
-
+            this.PatientName = "CUBE^PHANTOM";
+            this.Name = "Cube Phantom";
+            this.Modality = "CT";
         }
 
         public void Create(int xWidth, int yWidth, int zWidth, double xSpacing, double ySpacing, double zSpacing)

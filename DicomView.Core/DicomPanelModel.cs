@@ -9,6 +9,8 @@ using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RT.Core.Imaging.LUT;
+using RT.Core.Geometry;
 
 namespace DicomPanel.Core
 {
@@ -24,11 +26,16 @@ namespace DicomPanel.Core
         public ImageRenderer ImageRenderer { get; set; }
         public DoseRenderer DoseRenderer { get; set; }
         public ROIRenderer ROIRenderer { get; set; }
+        public BeamRenderer BeamRenderer { get; set; }
 
         public DicomImageObject Image { get; set; }
-        public List<IDoseObject> Doses { get; set; }
+        public DicomImageObject SecondaryImage { get; set; }
+        public List<IDoseObject> ContouredDoses { get; set; }
         private List<RegionOfInterest> ROIs { get; set; }
         private List<PointOfInterest> POIs { get; set; }
+        private List<Beam> Beams { get; set; }
+
+        public double PrimarySecondaryImageSplitLocation = 0.5;
 
         public List<IOverlay> Overlays { get; set; }
         public List<DicomPanelModel> OrthogonalModels { get; set; }
@@ -43,7 +50,9 @@ namespace DicomPanel.Core
             ROIRenderer = new ROIRenderer();
             ROIs = new List<RegionOfInterest>();
             POIs = new List<PointOfInterest>();
-            Doses = new List<IDoseObject>();
+            ContouredDoses = new List<IDoseObject>();
+            BeamRenderer = new BeamRenderer();
+            Beams = new List<Beam>();
             OrthogonalModels = new List<DicomPanelModel>();
             Overlays = new List<IOverlay>();
             ToolBox = new ToolBox();
@@ -60,23 +69,57 @@ namespace DicomPanel.Core
             RoiRenderContext?.BeginRender();
             OverlayContext?.BeginRender();
 
-            if (ImageRenderContext != null)
-                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
+            var primaryImgRect = new Rectd(0, 0, 1, 1);
+            var secondaryImgRect = new Rectd(0, 0, 1, 1);
+            if(SecondaryImage != null)
+            {
+                //primaryImgRect.Width = PrimarySecondaryImageSplitLocation;
+                //secondaryImgRect.X = PrimarySecondaryImageSplitLocation;
+                //secondaryImgRect.Width = (1 - PrimarySecondaryImageSplitLocation);
+                //OverlayContext?.DrawRect(PrimarySecondaryImageSplitLocation - .01, 0, PrimarySecondaryImageSplitLocation + .01, .01, new RT.Core.DICOM.DicomColor(255, 255, 0, 0));
+            }
+            if(ImageRenderContext != null)
+            {
+                List<IVoxelDataStructure> imgs = new List<IVoxelDataStructure>();
+                List<ILUT> luts = new List<ILUT>();
+                List<double> alphas = new List<double>();
+                if(Image != null)
+                {
+                    imgs.Add(Image.Grid);
+                    luts.Add(Image.LUT);
+                    alphas.Add(.5);
+                }
+                if(SecondaryImage != null)
+                {
+                    imgs.Add(SecondaryImage.Grid);
+                    luts.Add(SecondaryImage.LUT);
+                    alphas.Add(.5);
+                }
+                ImageRenderer?.Render(imgs, Camera, ImageRenderContext, primaryImgRect, luts, alphas);
+            }
 
             if (DoseRenderContext != null)
             {
-                for (int i = 0; i < Doses.Count; i++)
+                for (int i = 0; i < ContouredDoses.Count; i++)
                 {
-                    DoseRenderer?.Render(Doses[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1),(LineType)i);
+                    DoseRenderer?.Render(ContouredDoses[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1),(LineType)i);
+                }
+
+                for(int i = 0; i < Beams.Count; i++)
+                {
+                    BeamRenderer?.Render(Beams[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1), (LineType)i);
                 }
             }
 
-            if (Doses.Count > 0)
+            if (ContouredDoses.Count > 0)
             {
                 int k = 0;
+                double initY = 5.0 / (double)OverlayContext.Height;
+                double initX = 5.0 / (double)OverlayContext.Width;
+                double spacing = 17 / (double)OverlayContext.Height;
                 foreach (var contourInfo in DoseRenderer.ContourInfo)
                 {
-                    //OverlayContext.DrawString("" + contourInfo.Threshold, .02, .02 + k * .05, 12, contourInfo.Color);
+                    OverlayContext.DrawString("" + contourInfo.Threshold, initX, initY + k * spacing, 12, contourInfo.Color);
                     k++;
                 }
             }
@@ -105,8 +148,8 @@ namespace DicomPanel.Core
         public void InvalidateImage()
         {
             ImageRenderContext?.BeginRender();
-            if (ImageRenderContext != null)
-                ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
+            //if (ImageRenderContext != null)
+                //ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1), new GrayScaleLUT(0,0));
             ImageRenderContext?.EndRender();
         }
 
@@ -125,17 +168,23 @@ namespace DicomPanel.Core
             Invalidate();
         }
 
+        public void SetSecondaryImage(DicomImageObject image)
+        {
+            SecondaryImage = image;
+            Invalidate();
+        }
+
         public void AddDose(IDoseObject dose)
         {
-            if (!Doses.Contains(dose))
-                Doses.Add(dose);
+            if (!ContouredDoses.Contains(dose))
+                ContouredDoses.Add(dose);
             Invalidate();
         }
 
         public void RemoveDose(IDoseObject dose)
         {
-            if (Doses.Contains(dose))
-                Doses.Remove(dose);
+            if (ContouredDoses.Contains(dose))
+                ContouredDoses.Remove(dose);
             Invalidate();
         }
 
@@ -161,6 +210,18 @@ namespace DicomPanel.Core
         public void RemovePOI(PointOfInterest poi)
         {
             POIs.Remove(poi);
+            Invalidate();
+        }
+
+        public void AddBeam(Beam beam)
+        {
+            Beams.Add(beam);
+            Invalidate();
+        }
+
+        public void RemoveBeam(Beam beam)
+        {
+            Beams.Remove(beam);
             Invalidate();
         }
 

@@ -21,6 +21,29 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
         if (MessageBox.Show("Are you sure you wish to delete the image set " + x.Name + "?", "Delete?", System.Windows.MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
                 sendDeleteImageMessage(x);
+        },y=>
+        {
+            return true;
+        });
+
+        public RelayCommand<DicomImageObject> SetPrimaryCommand => new RelayCommand<DicomImageObject>(x =>
+        {
+            Workspace.Workspace.Current.Axial.SetImage(x);
+            Workspace.Workspace.Current.Sagittal.SetImage(x);
+            Workspace.Workspace.Current.Coronal.SetImage(x);
+        }, y =>
+        {
+            return y != Workspace.Workspace.Current.Axial.Image;
+        });
+
+        public RelayCommand<DicomImageObject> SetSecondaryCommand => new RelayCommand<DicomImageObject>(x =>
+        {
+            Workspace.Workspace.Current.Axial.SetSecondaryImage(x);
+            Workspace.Workspace.Current.Sagittal.SetSecondaryImage(x);
+            Workspace.Workspace.Current.Coronal.SetSecondaryImage(x);
+        }, y =>
+        {
+            return true;
         });
 
         public ImageObjectDisplayViewModel()

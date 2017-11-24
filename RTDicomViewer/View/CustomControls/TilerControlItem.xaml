@@ -14,17 +14,16 @@
                     <ControlTemplate TargetType="{x:Type local:TilerControlItem}">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="20"></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Border Background="#333333" BorderBrush="#555555" BorderThickness="1" Grid.Row="0" Height="20">
+                            <!--<Border Background="#FFEBE9ED" BorderBrush="#555555" BorderThickness="1" Grid.Row="0" Height="20">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Foreground="#AAAAAA" Margin="3 0 0 0"></TextBlock>
-                                    <Border Grid.Column="1" Width="20" Background="#555555">
+                                    <Border Grid.Column="1" Width="20" Background="#777777">
                                         <Canvas>
                                             <Line X1="6" X2="15" Y1="6" Y2="6" Stroke="#AAAAAA" StrokeThickness="1"/>
                                             <Line X1="6" X2="15" Y1="13" Y2="13" Stroke="#AAAAAA" StrokeThickness="1"/>
@@ -33,7 +32,7 @@
                                         </Canvas>
                                     </Border>
                                 </Grid>
-                            </Border>
+                            </Border>-->
                             <Border BorderThickness="1 0 1 1" BorderBrush="#555555" Grid.Row="1" Background="Black">
                                 <ContentPresenter></ContentPresenter>
                             </Border>

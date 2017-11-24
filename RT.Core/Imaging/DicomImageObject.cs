@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RT.Core.Imaging.LUT;
 
 namespace RT.Core.Imaging
 {
     public class DicomImageObject:DicomObject
     {
         public IVoxelDataStructure Grid { get; set; }
-        public int Window { get; set; } = 400;
-        public int Level { get; set; } = 0;
+        public ILUT LUT { get; set; } = new GrayScaleLUT();
 
         public DicomImageObject() { }
         public DicomImageObject(params DicomFile[] files):base(files)

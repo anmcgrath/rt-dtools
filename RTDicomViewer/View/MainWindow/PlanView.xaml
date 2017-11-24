@@ -1,0 +1,112 @@
+﻿<UserControl x:Class="RTDicomViewer.View.MainWindow.PlanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding PlanDisplay, Source={StaticResource Locator}}">
+    <StackPanel>
+        <GroupBox Header="Beam">
+            <StackPanel>
+                <ListView Height="120" ItemsSource="{Binding Beams}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedBeam}">
+                    
+                </ListView>
+                <GroupBox Header="Beam Parameters">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Modality:</TextBlock>
+                        <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="Photons"></ComboBox>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Energy:</TextBlock>
+                        <ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="6 MV">
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Name:</TextBlock>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedBeam.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Geometry">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Gantry (degrees):</TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" Grid.Row="0" Grid.Column="1" Text="{Binding SelectedBeam.GantryStart,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Collim. (degrees):</TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="1" Grid.Column="1" Text="{Binding SelectedBeam.CollimatorAngle,UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Couch (degrees):</TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="2" Grid.Column="1" Text="{Binding SelectedBeam.CouchAngle,UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">X1 (mm):</TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="3" Grid.Column="1" Text="{Binding SelectedBeam.XJaw.NegativeJawPosition,UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">X2 (mm):
+                        </TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="4" Grid.Column="1" Text="{Binding SelectedBeam.XJaw.PositiveJawPosition,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Y1 (mm):
+                        </TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="5" Grid.Column="1" Text="{Binding SelectedBeam.YJaw.NegativeJawPosition, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center">Y2 (mm):
+                        </TextBlock>
+                        <TextBox Keyboard.KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"  Grid.Row="6" Grid.Column="1" Text="{Binding SelectedBeam.YJaw.PositiveJawPosition,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center">SSD (mm):
+                        </TextBlock>
+                        
+                        <TextBox IsEnabled="False" Grid.Row="7" Grid.Column="1" Text="{Binding SelectedBeam.SSD}"></TextBox>
+                        
+
+                    </Grid>
+                </GroupBox>
+                <Expander Header="Weighting" IsExpanded="True"></Expander>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Prescription">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Type:</TextBlock>
+                <ComboBox Grid.Row="0" Grid.Column="1"></ComboBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Isodose (%):</TextBlock>
+                <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Dose (Gy):</TextBlock>
+                <TextBox Grid.Row="2" Grid.Column="1"></TextBox>
+
+
+            </Grid>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

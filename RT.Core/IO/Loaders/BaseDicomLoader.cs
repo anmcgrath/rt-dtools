@@ -25,6 +25,8 @@ namespace RT.Core.IO.Loaders
                 dicomObject.PatientName = files[0].Dataset.Get<string>(DicomTag.PatientName, "");
                 dicomObject.SeriesUid = files[0].Dataset.Get<string>(DicomTag.SeriesInstanceUID, "");
                 dicomObject.Modality = files[0].Dataset.Get<string>(DicomTag.Modality, "");
+                dicomObject.SeriesDescription = files[0].Dataset.Get<string>(DicomTag.SeriesDescription, "");
+                dicomObject.StudyDescription = files[0].Dataset.Get<string>(DicomTag.StudyDescription, "");
             }
         }
     }

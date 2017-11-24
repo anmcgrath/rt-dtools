@@ -49,6 +49,7 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<POIObjectDisplayViewModel>();
             SimpleIoc.Default.Register<ImageObjectDisplayViewModel>();
             SimpleIoc.Default.Register<AnalyseDisplayViewModel>();
+            SimpleIoc.Default.Register<PlanViewModel>();
         }
 
         public MainViewModel Main
@@ -96,6 +97,14 @@ namespace RTDicomViewer.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<AnalyseDisplayViewModel>();
+            }
+        }
+
+        public PlanViewModel PlanDisplay
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PlanViewModel>();
             }
         }
 

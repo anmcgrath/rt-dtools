@@ -19,6 +19,8 @@ namespace RT.Core.DICOM
         public string SeriesUid { get; set; }
         public string Modality { get; set; }
         public string Name { get; set; }
+        public string SeriesDescription { get; set; }
+        public string StudyDescription { get; set; }
 
         public DicomObject() { }
         public DicomObject(params DicomFile[] files)

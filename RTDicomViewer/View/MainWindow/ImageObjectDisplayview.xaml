@@ -9,13 +9,22 @@
     <ItemsControl ItemsSource="{Binding Images}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Border MaxWidth="100" BorderThickness="2" BorderBrush="Gray" Background="Black" Margin="10" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
+                <Border MaxWidth="180" BorderThickness="2" BorderBrush="Gray" Background="Black" Margin="10 10 0 0" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
                     <StackPanel Orientation="Vertical">
                         <Image Source="{Binding Value.ImagePreview}"/>
                         <TextBlock TextAlignment="Center" Text="{Binding Value.Image.PatientName}" TextWrapping="Wrap"/>
+                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.StudyDescription}" TextWrapping="Wrap"/>
                     </StackPanel>
                     <Border.ContextMenu>
                         <ContextMenu>
+                            <MenuItem Header="Set as Primary" Command="{Binding Path=PlacementTarget.Tag.SetPrimaryCommand, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+
+                            <MenuItem Header="Set as Secondary" Command="{Binding Path=PlacementTarget.Tag.SetSecondaryCommand, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+
                             <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteImageCommand, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>

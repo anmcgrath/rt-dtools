@@ -12,6 +12,7 @@ using DicomPanel.Core.Render;
 using RT.Core.Utilities.RTMath;
 using System.Windows.Media.Effects;
 using RT.Core.DICOM;
+using System.Windows;
 
 namespace DicomPanel.Wpf.Rendering
 {
@@ -19,10 +20,13 @@ namespace DicomPanel.Wpf.Rendering
     {
         public double RelativeScale { get; set; }
         public Canvas Canvas;
+
         public CanvasRenderContext(Canvas canvas)
         {
             Canvas = canvas;
         }
+
+
         public void FillPixels(byte[] byteArray, Rectd destRect)
         {
             //Currently don't know how to do this...
@@ -40,6 +44,11 @@ namespace DicomPanel.Wpf.Rendering
             tb.Text = text;
             Canvas.SetLeft(tb, x * Canvas.ActualWidth);
             Canvas.SetTop(tb, y * Canvas.ActualHeight);
+
+            FormattedText fm = new FormattedText(tb.Text, System.Globalization.CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch),tb.FontSize,tb.Foreground);
+
+            FillRect(x , y , x + fm.Width/Canvas.ActualWidth, y + fm.Height /Canvas.ActualHeight, DicomColor.FromArgb(128, 0, 0, 0),DicomColor.FromArgb(0,0,0,0));
+
             Canvas?.Children.Add(tb);
         }
 

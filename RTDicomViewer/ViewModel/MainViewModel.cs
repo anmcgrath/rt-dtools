@@ -23,6 +23,7 @@ using RTDicomViewer.View.MainWindow;
 using DicomPanel.Core;
 using RTDicomViewer.Utilities;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace RTDicomViewer.ViewModel
 {
@@ -58,6 +59,9 @@ namespace RTDicomViewer.ViewModel
 
         public RelayCommand CreateNewPOICommand => new RelayCommand(
             () => { CreateNewPOI(); });
+
+        public RelayCommand CreateNewBeamCommand => new RelayCommand(
+            () => { CreateNewBeam(); });
 
 
         /// <summary>
@@ -134,6 +138,10 @@ namespace RTDicomViewer.ViewModel
 
             //Handle showing or closing loading dialog windows below
             MessengerInstance.Register<ProgressMessage>(this, HandleProgressMessage);
+
+            Workspace.Workspace.Current.Axial = AxialPanelModel;
+            Workspace.Workspace.Current.Coronal = CoronalPanelModel;
+            Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
         }
 
         private ProgressDialogViewModel progressDialogViewModel = new ProgressDialogViewModel();
@@ -183,6 +191,25 @@ namespace RTDicomViewer.ViewModel
             AxialPanelModel.AddPOI(poi);
             CoronalPanelModel.AddPOI(poi);
             SagittalPanelModel.AddPOI(poi);
+        }
+
+        public void CreateNewBeam()
+        {
+            var beam = new Beam();
+            beam.ControlPoints = new List<ControlPoint>();
+            beam.GantryStart = 0;
+            beam.CollimatorAngle = 0;
+            beam.Name = "New Beam";
+            if (Workspace.Workspace.Current.Points.GetList().Count == 0)
+            {
+                CreateNewPOI();
+            }
+            beam.Isocentre = Workspace.Workspace.Current.Points.GetList().First();
+            MessengerInstance.Send(new RTObjectAddedMessage<Beam>(beam));
+
+            AxialPanelModel.AddBeam(beam);
+            CoronalPanelModel.AddBeam(beam);
+            SagittalPanelModel.AddBeam(beam);
         }
 
         public void ChangeDoseRenderOptions(DoseRenderOptions options)

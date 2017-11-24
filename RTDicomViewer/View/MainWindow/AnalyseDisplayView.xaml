@@ -45,7 +45,7 @@
                     
                 </WrapPanel>
 
-                <Grid Background="#333333">
+                <Grid Background="#FFEBE9ED">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70"/>
                         <ColumnDefinition Width="2*"/>
@@ -62,7 +62,7 @@
                 <ItemsControl ItemsSource="{Binding RenderOptions.ContourInfo}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="#333333">
+                            <Grid Background="#FFEBE9ED">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="70"/>
                                     <ColumnDefinition Width="2*"/>

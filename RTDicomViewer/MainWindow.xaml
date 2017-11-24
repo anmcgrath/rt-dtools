@@ -32,6 +32,7 @@
             <MenuItem Header="Edit">
                 <MenuItem Header="Insert cube phantom..." Command="{Binding CreateCubePhantomCommand}"/>
                 <MenuItem Header="Insert new POI..." Command="{Binding CreateNewPOICommand}"/>
+                <MenuItem Header="Insert new Beam..." Command="{Binding CreateNewBeamCommand}"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Dose statistics..." Command="{Binding OpenDoseStatisticsCommand}"/>
@@ -63,7 +64,7 @@
             </av:LayoutRoot>
         </av:DockingManager>-->
 
-        <Grid DockPanel.Dock="Top" Background="#333333">
+        <Grid DockPanel.Dock="Top" Background="#FFEBE9ED">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition/>
@@ -72,9 +73,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <GridSplitter Grid.Column="1" Width="5" Background="#444444" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Width="5" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
-            <TabControl Grid.Column="0" Grid.Row="1">
+            <TabControl Grid.Column="0" Grid.Row="1" Background="#FFEBE9ED">
                 <TabItem Header="Image">
                     <mv:ImageObjectDisplayview/>
                 </TabItem>
@@ -91,97 +92,7 @@
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Plan">
-                    <StackPanel>
-                        <GroupBox Header="Beam">
-                            <StackPanel>
-                                <ComboBox>
-                                </ComboBox>
-                                <Expander Header="Beam Parameters" IsExpanded="True">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Modality:</TextBlock>
-                                        <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="Photons">Photons</ComboBox>
-
-                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Energy:</TextBlock>
-                                        <ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="6 MV">6 MV
-                                        </ComboBox>
-
-                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Name:</TextBlock>
-                                        <TextBox Grid.Row="2" Grid.Column="1"></TextBox>
-                                    </Grid>
-                                </Expander>
-                                <Expander Header="Geometry" IsExpanded="True">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Gantry (degrees):</TextBlock>
-                                        <TextBox Grid.Row="0" Grid.Column="1"></TextBox>
-
-                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Collim. (degrees):</TextBlock>
-                                        <TextBox Grid.Row="1" Grid.Column="1" ></TextBox>
-
-                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">X1 (mm):</TextBlock>
-                                        <TextBox Grid.Row="2" Grid.Column="1"></TextBox>
-
-                                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">X2 (mm):
-                                        </TextBlock>
-                                        <TextBox Grid.Row="3" Grid.Column="1"></TextBox>
-
-                                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Y1 (mm):
-                                        </TextBlock>
-                                        <TextBox Grid.Row="4" Grid.Column="1"></TextBox>
-
-                                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Y2 (mm):
-                                        </TextBlock>
-                                        <TextBox Grid.Row="5" Grid.Column="1"></TextBox>
-
-                                    </Grid>
-                                </Expander>
-                                <Expander Header="Weighting" IsExpanded="True"></Expander>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Header="Prescription">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Type:</TextBlock>
-                                <ComboBox Grid.Row="0" Grid.Column="1"></ComboBox>
-                                
-                                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Isodose (%):</TextBlock>
-                                <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
-
-                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Dose (Gy):</TextBlock>
-                                <TextBox Grid.Row="2" Grid.Column="1"></TextBox>
-
-
-                            </Grid>
-                        </GroupBox>
-                    </StackPanel>
+                    <mv:PlanView/>
                 </TabItem>
                 <TabItem Header="Dose">
                     <StackPanel>

@@ -15,10 +15,26 @@ namespace DicomPanel.Wpf.Rendering
     {
         private WriteableBitmap _bitmap;
         public double RelativeScale { get; set; }
+        public Dictionary<DicomColor, Color> cachedColors;
 
         public WriteableBitmapRenderContext(WriteableBitmap bitmap)
         {
             _bitmap = bitmap;
+            cachedColors = new Dictionary<DicomColor, Color>();
+        }
+
+        private Color getCachedColor(DicomColor dicomColor)
+        {
+            Color color;
+            if (!cachedColors.ContainsKey(dicomColor))
+            {
+                color = DicomColorConverter.FromDicomColor(dicomColor);
+                cachedColors.Add(dicomColor, color);
+            }else
+            {
+                color = cachedColors[dicomColor];
+            }
+            return color;
         }
 
         public void Resize(WriteableBitmap bitmap, int width, int height)
@@ -48,12 +64,12 @@ namespace DicomPanel.Wpf.Rendering
         public void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType)
         {
             if(lineType == LineType.Normal)
-                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(x1), transyi(y1), DicomColorConverter.FromDicomColor(color));
+                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(x1), transyi(y1), getCachedColor(color));
             else
             {
                 double hx = x0+(x1 - x0) / 2;
                 double hy = y0+(y1 - y0) / 2;
-                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(hx), transyi(hy), DicomColorConverter.FromDicomColor(color));
+                _bitmap.DrawLine(transxi(x0), transyi(y0), transxi(hx), transyi(hy), getCachedColor(color));
             }
         }
 

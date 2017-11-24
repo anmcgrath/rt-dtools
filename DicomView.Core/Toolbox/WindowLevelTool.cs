@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using RT.Core.Utilities.RTMath;
+using RT.Core.Imaging.LUT;
 
 namespace DicomPanel.Core.Toolbox
 {
@@ -28,13 +29,14 @@ namespace DicomPanel.Core.Toolbox
             {
                 int window = (int)(screenPoint.X * (model.Image.Grid.MaxVoxel.Value+1000))-1000;
                 int level = (int)(screenPoint.Y * (model.Image.Grid.MaxVoxel.Value+1000))-1000;
-                model.Image.Window = window;
-                model.Image.Level = level;
-                model.InvalidateImage();
+                model.SecondaryImage.LUT = new HeatLUT();
+                model.SecondaryImage.LUT.Window = window;
+                model.SecondaryImage.LUT.Level = level;
+                model.Invalidate();
 
                 foreach(DicomPanelModel orthoModel in model.OrthogonalModels)
                 {
-                    orthoModel.InvalidateImage();
+                    orthoModel.Invalidate();
                 }
             }
         }
