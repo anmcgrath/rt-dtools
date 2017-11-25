@@ -15,6 +15,11 @@ namespace RTDicomViewer.ViewModel.MainWindow
     public class DoseObjectDisplayViewModel:ViewModelBase
     {
         public ObservableCollection<SelectableObject<IDoseObject>> DoseObjects { get; set; }
+        /// <summary>
+        /// Selected as in highlighted in the list, not as in rendered
+        /// </summary>
+        public SelectableObject<IDoseObject> SelectedDose { get { return _selectedDose; } set { _selectedDose = value; RaisePropertyChanged("SelectedDose"); } }
+        private SelectableObject<IDoseObject> _selectedDose { get; set; }
 
         public DoseObjectDisplayViewModel()
         {
@@ -51,6 +56,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
             var newSelectableObject = new SelectableObject<IDoseObject>(dose);
             AddNewDoseObject(newSelectableObject);
+            SelectedDose = newSelectableObject;
             SelectDose(dose);
 
             return null;

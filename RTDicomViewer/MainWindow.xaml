@@ -96,9 +96,7 @@
                 </TabItem>
                 <TabItem Header="Dose">
                     <StackPanel>
-                        <Expander Header="Dose Grids" IsExpanded="True">
-                            <mv:DoseObjectDisplayView/>
-                        </Expander>
+                        <mv:DoseObjectDisplayView/>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Analyse">
