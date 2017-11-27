@@ -147,6 +147,7 @@
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
     <Compile Include="Utilities\DoseRenderOptions.cs" />
+    <Compile Include="Utilities\DoseRenderType.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />

@@ -11,5 +11,6 @@ namespace RT.Core.Dose
     {
         IVoxelDataStructure Grid { get; set; }
         float GetNormalisationAmount();
+        float Scaling { get; set; }
     }
 }

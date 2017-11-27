@@ -51,18 +51,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
               
             
             RenderOptions = new DoseRenderOptions();
-            RenderOptions.ContourInfo = new System.Collections.ObjectModel.ObservableCollection<ContourInfo>()
-            {
-                new ContourInfo(DicomColors.Red,99),
-                new ContourInfo(DicomColors.OrangeRed,90),
-                new ContourInfo(DicomColors.Orange,80),
-                new ContourInfo(DicomColors.Yellow,70),
-                new ContourInfo(DicomColors.White,60),
-                new ContourInfo(DicomColors.Green,50),
-                new ContourInfo(DicomColors.Blue,40),
-                new ContourInfo(DicomColors.LightBlue,30),
-                new ContourInfo(DicomColors.LightSkyBlue,20),
-            };
+            RenderOptions.ContourInfo = new ObservableCollection<ContourInfo>(Workspace.Workspace.Current.ContourInfo);
             RenderOptions.NormalisationIsodose = 100;
             RenderOptions.RenderQuality = 50;
 

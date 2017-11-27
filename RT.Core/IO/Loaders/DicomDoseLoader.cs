@@ -14,7 +14,7 @@ namespace RT.Core.IO.Loaders
         public void Load(DicomFile[] files, DicomDoseObject dicomObject)
         {
             DicomFile file0 = files[0];
-            dicomObject.DoseGridScaling = file0.Dataset.Get<double>(DicomTag.DoseGridScaling, 1.0d);
+            dicomObject.Scaling = file0.Dataset.Get<float>(DicomTag.DoseGridScaling, 1.0f);
             dicomObject.Units = file0.Dataset.Get<string>(DicomTag.DoseUnits, "None");
             dicomObject.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
             var gridLoader = new GridBasedStructureDicomLoader();

@@ -37,6 +37,8 @@
                 <MenuItem Header="Window/Level" Click="ContextMenuToolClick" Tag="windowlevel"/>
                 <Separator/>
                 <MenuItem Header="Point Info" Click="ContextMenuToolClick" Tag="pointinfo"/>
+                <Separator/>
+                <MenuItem Header="Spyglass" Click="ContextMenuToolClick" Tag="spyglass" IsCheckable="True" IsChecked="{Binding SpyGlassChecked}"/>
             </ContextMenu>
         </Grid.ContextMenu>
     </Grid>

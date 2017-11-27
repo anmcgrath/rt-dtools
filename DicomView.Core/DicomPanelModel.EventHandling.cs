@@ -1,4 +1,5 @@
-﻿using RT.Core.Utilities.RTMath;
+﻿using DicomPanel.Core.Toolbox;
+using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,21 +17,38 @@ namespace DicomPanel.Core
 
             Invalidate();
             ToolBox?.SelectedTool?.HandleMouseScroll(this, worldPoint);
+
+            foreach (ITool tool in ToolBox?.ActivatedTools)
+            {
+                tool.HandleMouseScroll(this, worldPoint);
+            }
         }
 
         public void OnMouseDown(Point3d worldPoint)
         {
             ToolBox?.SelectedTool?.HandleMouseDown(this, worldPoint);
+            foreach(ITool tool in ToolBox?.ActivatedTools)
+            {
+                tool.HandleMouseDown(this, worldPoint);
+            }
         }
 
         public void OnMouseMove(Point3d worldPoint)
         {
             ToolBox?.SelectedTool?.HandleMouseMove(this, worldPoint);
+            foreach (ITool tool in ToolBox?.ActivatedTools)
+            {
+                tool.HandleMouseMove(this, worldPoint);
+            }
         }
 
         public void OnMouseExit(Point3d worldPoint)
         {
             ToolBox?.SelectedTool?.HandleMouseLeave(this, worldPoint);
+            foreach (ITool tool in ToolBox?.ActivatedTools)
+            {
+                tool.HandleMouseLeave(this, worldPoint);
+            }
         }
 
         public void OnMouseEnter(Point3d worldPoint)
@@ -41,6 +59,10 @@ namespace DicomPanel.Core
         public void OnMouseUp(Point3d worldPoint)
         {
             ToolBox?.SelectedTool?.HandleMouseUp(this, worldPoint);
+            foreach (ITool tool in ToolBox?.ActivatedTools)
+            {
+                tool.HandleMouseUp(this, worldPoint);
+            }
         }
         
         public void OnResize(double width, double height)

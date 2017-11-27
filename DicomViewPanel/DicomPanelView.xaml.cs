@@ -42,6 +42,8 @@ namespace DicomPanel.Wpf
             ((DicomPanelViewModel)(panel.DataContext)).SetModel((DicomPanelModel)e.NewValue);
         }
 
+        public bool SpyGlassChecked { get { return Model.ToolBox.ActivatedTools.Contains(Model.ToolBox.GetTool("spyglass")); } set { } }
+
         public DicomPanelView()
         {
             InitializeComponent();

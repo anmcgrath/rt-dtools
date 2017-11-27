@@ -24,11 +24,19 @@ namespace DicomPanel.Core.Render.Overlays
             Position.CopyTo(textOverlay.Position);
             textOverlay.Position = Position - (model.Camera.RowDir * 25 / model.Camera.Scale);
 
-            /*var HU = model?.Image?.Grid?.Interpolate(Position);
-            var doseNorm = model?.Doses?.GetNormalisationAmount();
-            var doseVoxel = model?.Doses?.Grid?.Interpolate(Position);*/
+            var HU = model?.PrimaryImage?.Grid?.Interpolate(Position);
 
-            textOverlay.Text = "";
+            foreach(var dose in model?.ContouredDoses)
+            {
+                var doseNorm = dose.GetNormalisationAmount();
+                var doseVoxel = dose.Grid.Interpolate(Position);
+                textOverlay.Text = ("#1: " + Math.Round(doseVoxel.Value / doseNorm, 4));
+                textOverlay.Position = Position - (model.Camera.RowDir * 25 / model.Camera.Scale);
+                textOverlay.Render(model, context);
+            }
+            
+
+            //textOverlay.Text = "";
 
             /*if (HU != null)
                 textOverlay.Text = Math.Round(HU.Value) + " HU";
@@ -37,13 +45,13 @@ namespace DicomPanel.Core.Render.Overlays
                 textOverlay.Text += "\n" + Math.Round(100*(doseVoxel.Value / (double)doseNorm), 2) + "%";
             }*/
 
-            textOverlay.Text = "("+Math.Round(Position.X,2)+", "+Math.Round(Position.Y,2)+", "+Math.Round(Position.Z,2)+") (mm)";
+            /*textOverlay.Text = "("+Math.Round(Position.X,2)+", "+Math.Round(Position.Y,2)+", "+Math.Round(Position.Z,2)+") (mm)";
 
             poiOverlay.Render(model, context);
             //Use the poi fractin of oriignal size to set opacity of text
             textOverlay.Opacity = poiOverlay.Fraction;
 
-            textOverlay.Render(model, context);
+            textOverlay.Render(model, context);*/
         }
     }
 }

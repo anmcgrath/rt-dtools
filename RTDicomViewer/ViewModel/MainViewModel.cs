@@ -92,16 +92,16 @@ namespace RTDicomViewer.ViewModel
 
             //When we load a new image, render it
             MessengerInstance.Register<RTObjectAddedMessage<DicomImageObject>>(this, x => {
-                AxialPanelModel.SetImage(x.Value);
-                SagittalPanelModel.SetImage(x.Value);
-                CoronalPanelModel.SetImage(x.Value);
+                AxialPanelModel.SetPrimaryImage(x.Value);
+                SagittalPanelModel.SetPrimaryImage(x.Value);
+                CoronalPanelModel.SetPrimaryImage(x.Value);
             });
 
             MessengerInstance.Register<RTObjectDeletedMessage<DicomImageObject>>(this, x =>
             {
-                AxialPanelModel.SetImage(null);
-                SagittalPanelModel.SetImage(null);
-                CoronalPanelModel.SetImage(null);
+                AxialPanelModel.SetPrimaryImage(null);
+                SagittalPanelModel.SetPrimaryImage(null);
+                CoronalPanelModel.SetPrimaryImage(null);
             });
 
             //When a dose is selected, render it

@@ -28,12 +28,12 @@ namespace RTDicomViewer.ViewModel.MainWindow
 
         public RelayCommand<DicomImageObject> SetPrimaryCommand => new RelayCommand<DicomImageObject>(x =>
         {
-            Workspace.Workspace.Current.Axial.SetImage(x);
-            Workspace.Workspace.Current.Sagittal.SetImage(x);
-            Workspace.Workspace.Current.Coronal.SetImage(x);
+            Workspace.Workspace.Current.Axial.SetPrimaryImage(x);
+            Workspace.Workspace.Current.Sagittal.SetPrimaryImage(x);
+            Workspace.Workspace.Current.Coronal.SetPrimaryImage(x);
         }, y =>
         {
-            return y != Workspace.Workspace.Current.Axial.Image;
+            return y != Workspace.Workspace.Current.Axial.PrimaryImage;
         });
 
         public RelayCommand<DicomImageObject> SetSecondaryCommand => new RelayCommand<DicomImageObject>(x =>

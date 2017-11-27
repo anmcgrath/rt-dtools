@@ -6,16 +6,28 @@ namespace DicomPanel.Core.Toolbox
 {
     public class ToolBase
     {
-        public bool IsActive { get; set; }
+        public bool IsSelected { get; set; }
+        public bool IsActivatable { get; set; }
+        public bool IsActivated { get; set; }
 
         public virtual void Select()
         {
-            IsActive = true;
+            IsSelected = true;
         }
 
         public virtual void Unselect()
         {
-            IsActive = false;
+            IsSelected = false;
+        }
+
+        public virtual void Activate()
+        {
+            IsActivated = true;
+        }
+
+        public virtual void Deactivate()
+        {
+            IsActivated = false;
         }
     }
 }

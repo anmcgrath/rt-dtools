@@ -8,10 +8,15 @@ namespace DicomPanel.Core.Toolbox
     {
         public ITool SelectedTool { get; set; }
         public List<ITool> Tools { get; set; }
+        /// <summary>
+        /// Activated tools are activated alongside selected tools.
+        /// </summary>
+        public List<ITool> ActivatedTools { get; set; }
 
         public ToolBox()
         {
             Tools = new List<ITool>();
+            ActivatedTools = new List<ITool>();
             initTools();
         }
 
@@ -24,24 +29,45 @@ namespace DicomPanel.Core.Toolbox
                 new WindowLevelTool(),
                 new PointInfoTool(),
                 new RotateTool(),
+                new SpyglassTool(),
             };
             SelectedTool = Tools[0];
         }
 
         public void SelectTool(ITool tool)
         {
-            SelectedTool?.Unselect();
-            SelectedTool = tool;
-            SelectedTool.Select();
+            if (tool.IsActivatable)
+            {
+                if (ActivatedTools.Contains(tool))
+                    ActivatedTools.Remove(tool);
+                else
+                    ActivatedTools.Add(tool);
+
+                tool.IsActivated = ActivatedTools.Contains(tool);
+            }
+            else
+            {
+                SelectedTool?.Unselect();
+                 SelectedTool = tool;
+                SelectedTool.Select();
+            }
         }
 
         public void SelectTool(string toolId)
         {
+            ITool tool;
+            if ((tool = GetTool(toolId)) != null)
+                SelectTool(tool);
+        }
+
+        public ITool GetTool(string toolId)
+        {
             foreach (ITool tool in Tools)
             {
                 if (tool.Id == toolId)
-                    SelectTool(tool);
+                    return tool;
             }
+            return null;
         }
     }
 }

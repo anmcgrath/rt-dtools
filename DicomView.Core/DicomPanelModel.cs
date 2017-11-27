@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using RT.Core.Imaging.LUT;
 using RT.Core.Geometry;
+using DicomPanel.Core.Render.Blending;
 
 namespace DicomPanel.Core
 {
@@ -23,14 +24,20 @@ namespace DicomPanel.Core
         private IRenderContext RoiRenderContext { get; set; }
         private IRenderContext OverlayContext { get; set; }
 
+        public bool UseSpyGlass = false;
+        public Rectd SpyGlass { get; set; }
+
         public ImageRenderer ImageRenderer { get; set; }
         public DoseRenderer DoseRenderer { get; set; }
         public ROIRenderer ROIRenderer { get; set; }
         public BeamRenderer BeamRenderer { get; set; }
 
-        public DicomImageObject Image { get; set; }
+        public DicomImageObject PrimaryImage { get; set; }
         public DicomImageObject SecondaryImage { get; set; }
+        private List<RenderableImage> AdditionalImages { get; set; }
+
         public List<IDoseObject> ContouredDoses { get; set; }
+        
         private List<RegionOfInterest> ROIs { get; set; }
         private List<PointOfInterest> POIs { get; set; }
         private List<Beam> Beams { get; set; }
@@ -57,6 +64,8 @@ namespace DicomPanel.Core
             Overlays = new List<IOverlay>();
             ToolBox = new ToolBox();
             Overlays.Add(new ScaleOverlay());
+            SpyGlass = new Rectd(0, 0, 1, 1);
+            AdditionalImages = new List<RenderableImage>();
         }
 
         /// <summary>
@@ -69,74 +78,11 @@ namespace DicomPanel.Core
             RoiRenderContext?.BeginRender();
             OverlayContext?.BeginRender();
 
-            var primaryImgRect = new Rectd(0, 0, 1, 1);
-            var secondaryImgRect = new Rectd(0, 0, 1, 1);
-            if(SecondaryImage != null)
-            {
-                //primaryImgRect.Width = PrimarySecondaryImageSplitLocation;
-                //secondaryImgRect.X = PrimarySecondaryImageSplitLocation;
-                //secondaryImgRect.Width = (1 - PrimarySecondaryImageSplitLocation);
-                //OverlayContext?.DrawRect(PrimarySecondaryImageSplitLocation - .01, 0, PrimarySecondaryImageSplitLocation + .01, .01, new RT.Core.DICOM.DicomColor(255, 255, 0, 0));
-            }
-            if(ImageRenderContext != null)
-            {
-                List<IVoxelDataStructure> imgs = new List<IVoxelDataStructure>();
-                List<ILUT> luts = new List<ILUT>();
-                List<double> alphas = new List<double>();
-                if(Image != null)
-                {
-                    imgs.Add(Image.Grid);
-                    luts.Add(Image.LUT);
-                    alphas.Add(.5);
-                }
-                if(SecondaryImage != null)
-                {
-                    imgs.Add(SecondaryImage.Grid);
-                    luts.Add(SecondaryImage.LUT);
-                    alphas.Add(.5);
-                }
-                ImageRenderer?.Render(imgs, Camera, ImageRenderContext, primaryImgRect, luts, alphas);
-            }
-
-            if (DoseRenderContext != null)
-            {
-                for (int i = 0; i < ContouredDoses.Count; i++)
-                {
-                    DoseRenderer?.Render(ContouredDoses[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1),(LineType)i);
-                }
-
-                for(int i = 0; i < Beams.Count; i++)
-                {
-                    BeamRenderer?.Render(Beams[i], Camera, ImageRenderContext, new Rectd(0, 0, 1, 1), (LineType)i);
-                }
-            }
-
-            if (ContouredDoses.Count > 0)
-            {
-                int k = 0;
-                double initY = 5.0 / (double)OverlayContext.Height;
-                double initX = 5.0 / (double)OverlayContext.Width;
-                double spacing = 17 / (double)OverlayContext.Height;
-                foreach (var contourInfo in DoseRenderer.ContourInfo)
-                {
-                    OverlayContext.DrawString("" + contourInfo.Threshold, initX, initY + k * spacing, 12, contourInfo.Color);
-                    k++;
-                }
-            }
-
-            if (RoiRenderContext != null)
-            {
-                ROIRenderer?.Render(ROIs, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
-                ROIRenderer?.Render(POIs, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
-            }
-
-            if (OverlayContext != null)
-            {
-                foreach (IOverlay overlay in Overlays)
-                {
-                    overlay.Render(this, OverlayContext);
-                }
-            }
+            RenderImages(ImageRenderContext);
+            RenderDoses(ImageRenderContext);
+            RenderROIs(ImageRenderContext);
+            RenderBeams(ImageRenderContext);
+            RenderOverlays(OverlayContext);
 
             ImageRenderContext?.EndRender();
             DoseRenderContext?.EndRender();
@@ -145,25 +91,107 @@ namespace DicomPanel.Core
 
         }
 
-        public void InvalidateImage()
+        private void RenderImages(IRenderContext context)
         {
-            ImageRenderContext?.BeginRender();
-            //if (ImageRenderContext != null)
-                //ImageRenderer?.Render(Image, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1), new GrayScaleLUT(0,0));
-            ImageRenderContext?.EndRender();
+            var primaryImgRect = new Rectd(0, 0, 1, 1);
+            var secondaryImgRect = new Rectd(0, 0, 1, 1);
+
+            if (ImageRenderContext != null)
+            {
+                ImageRenderer?.BeginRender(primaryImgRect, context);
+                ImageRenderer?.Render(FromImage(PrimaryImage, BlendMode.None, new Rectd(0,0,1,1)), Camera, context);
+                ImageRenderer?.Render(FromImage(SecondaryImage, BlendMode.OverWhereNonZero, SpyGlass), Camera, context);
+                foreach (var img in AdditionalImages)
+                    ImageRenderer?.Render(img, Camera, context);
+                    
+                ImageRenderer?.EndRender(primaryImgRect, context);
+            }
+        }
+
+        private RenderableImage FromImage(DicomImageObject image, BlendMode blendMode, Rectd screenRect)
+        {
+            if (image == null)
+                return new RenderableImage();
+            Random r = new Random();
+
+            return new RenderableImage()
+            {
+                Grid = image.Grid,
+                Alpha = 0.5f,
+                BlendMode = blendMode,
+                Name = image.Name,
+                LUT = image.LUT,
+                Scaling = 1,
+                Units = "HU",
+                ScreenRect = screenRect
+            };
+        }
+
+        private void RenderDoses(IRenderContext context)
+        {
+            if (context != null)
+            {
+                for (int i = 0; i < ContouredDoses.Count; i++)
+                {
+                    DoseRenderer?.Render(ContouredDoses[i], Camera, context, new Rectd(0, 0, 1, 1), (LineType)i);
+                }
+            }
+        }
+
+        private void RenderROIs(IRenderContext context)
+        {
+            if (context != null)
+            {
+                ROIRenderer?.Render(ROIs, Camera, context, new Rectd(0, 0, 1, 1));
+                ROIRenderer?.Render(POIs, Camera, context, new Rectd(0, 0, 1, 1));
+            }
+        }
+
+        private void RenderBeams(IRenderContext context)
+        {
+            if(context != null)
+            {
+                for (int i = 0; i < Beams.Count; i++)
+                {
+                    BeamRenderer?.Render(Beams[i], Camera, context, new Rectd(0, 0, 1, 1), (LineType)i);
+                }
+            }
+        }
+
+        private void RenderOverlays(IRenderContext context)
+        {
+            if (ContouredDoses.Count > 0)
+            {
+                int k = 0;
+                double initY = 5.0 / (double)OverlayContext.Height;
+                double initX = 5.0 / (double)OverlayContext.Width;
+                double spacing = 17 / (double)OverlayContext.Height;
+                foreach (var contourInfo in DoseRenderer.ContourInfo)
+                {
+                    context.DrawString("" + contourInfo.Threshold, initX, initY + k * spacing, 12, contourInfo.Color);
+                    k++;
+                }
+            }
+
+            if (context != null)
+            {
+                foreach (IOverlay overlay in Overlays)
+                {
+                    overlay.Render(this, context);
+                }
+            }
         }
 
         public void InvalidateOverlays()
         {
             OverlayContext.BeginRender();
-            foreach (IOverlay overlay in Overlays)
-                overlay.Render(this, OverlayContext);
+            RenderOverlays(OverlayContext);
             OverlayContext.EndRender();
         }
 
-        public void SetImage(DicomImageObject image)
+        public void SetPrimaryImage(DicomImageObject image)
         {
-            Image = image;
+            PrimaryImage = image;
             ResetCameraToImageCentre();
             Invalidate();
         }
@@ -186,6 +214,19 @@ namespace DicomPanel.Core
             if (ContouredDoses.Contains(dose))
                 ContouredDoses.Remove(dose);
             Invalidate();
+        }
+
+        public void AddImage(RenderableImage image)
+        {
+            if(!AdditionalImages.Contains(image))
+                AdditionalImages.Add(image);
+            Invalidate();
+        }
+
+        public void RemoveImage(RenderableImage image)
+        {
+            if(AdditionalImages.Contains(image))
+                AdditionalImages.Remove(image);
         }
 
         public void AddROIs(IEnumerable<RegionOfInterest> rois)
@@ -240,8 +281,8 @@ namespace DicomPanel.Core
 
         public void ResetCameraToImageCentre()
         {
-            if(Image?.Grid != null)
-                Camera.MoveTo(Image.Grid.XRange.GetCentre(), Image.Grid.YRange.GetCentre(), Image.Grid.ZRange.GetCentre());
+            if(PrimaryImage?.Grid != null)
+                Camera.MoveTo(PrimaryImage.Grid.XRange.GetCentre(), PrimaryImage.Grid.YRange.GetCentre(), PrimaryImage.Grid.ZRange.GetCentre());
         }
 
         public void SetImageRenderContext(IRenderContext context)

@@ -22,7 +22,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
             camera.SetAxial();
             camera.SetFOV(512, 227.5);
             camera.MoveTo(img.Grid.XRange.GetCentre(), img.Grid.YRange.GetCentre(), img.Grid.ZRange.GetCentre());
-            imgRenderer.Render(img.Grid, camera, wbContext, new RT.Core.Utilities.RTMath.Rectd(0, 0, 1, 1), img.LUT, 1);
+            //imgRenderer.Render(img.Grid, camera, wbContext, new RT.Core.Utilities.RTMath.Rectd(0, 0, 1, 1), img.LUT, 1);
         }
     }
 }

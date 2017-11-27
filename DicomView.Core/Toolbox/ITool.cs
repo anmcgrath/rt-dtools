@@ -9,7 +9,9 @@ namespace DicomPanel.Core.Toolbox
     {
         string Name { get; }
         string Id { get; }
-        bool IsActive { get; set; }
+        bool IsSelected { get; set; }
+        bool IsActivatable { get; set; }
+        bool IsActivated { get; set; }
         void HandleMouseDown(DicomPanelModel model, Point3d worldPoint);
         void HandleMouseUp(DicomPanelModel model, Point3d worldPoint);
         void HandleMouseLeave(DicomPanelModel model, Point3d worldPoint);
@@ -18,5 +20,7 @@ namespace DicomPanel.Core.Toolbox
         void HandleMouseMove(DicomPanelModel model, Point3d worldPoint);
         void Select();
         void Unselect();
+        void Activate();
+        void Deactivate();
     }
 }

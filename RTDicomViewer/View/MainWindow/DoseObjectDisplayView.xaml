@@ -41,6 +41,12 @@
                     
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</TextBlock>
                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Value.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Scaling:</TextBlock>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Value.DoseGridScaling}" IsEnabled="False"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Units:</TextBlock>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Value.Units}" IsEnabled="False"/>
                 </Grid>
             </GroupBox>
             <GroupBox Header="Display">
@@ -56,14 +62,18 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" IsChecked="{Binding SelectedDose.IsSelected}" VerticalAlignment="Center">Render Isodose Lines</CheckBox>
-
-                    <RadioButton GroupName="FilledDisplay" Grid.Row="1" Grid.ColumnSpan="2">Render Filled Contours</RadioButton>
-                    <RadioButton GroupName="FilledDisplay" Grid.Row="2" Grid.ColumnSpan="2">Render Dose Color Wash</RadioButton>
-
-                    <TextBlock Text="LUT:" Grid.Row="3" Grid.Column="0"></TextBlock>
-                    <ComboBox Grid.Row="3" Grid.Column="1"></ComboBox>
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0">
+                        <ItemsControl ItemsSource="{Binding SelectedDose.Children}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                     
+                    <TextBlock Text="LUT:" Grid.Row="3" Grid.Column="0"></TextBlock>
+                    <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LUTs}" SelectedItem="{Binding SelectedRenderableImage.LUT}"></ComboBox>
 
                 </Grid>
             </GroupBox>

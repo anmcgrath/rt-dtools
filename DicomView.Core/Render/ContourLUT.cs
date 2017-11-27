@@ -31,7 +31,7 @@ namespace DicomPanel.Core.Render
                 for (int i = contours.Count - 1; i >= 0; i--)
                 {
                     double thr = (double)j / 256.0;
-                    if(thr > contours[i].Threshold/100)
+                    if(thr >= (contours[i].Threshold/100))
                     {
                         red[j] = (byte)contours[i].Color.R;
                         green[j] = (byte)contours[i].Color.G;

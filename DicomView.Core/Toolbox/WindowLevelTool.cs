@@ -25,13 +25,12 @@ namespace DicomPanel.Core.Toolbox
         public void HandleMouseMove(DicomPanelModel model, Point3d worldPoint)
         {
             var screenPoint = model.Camera.ConvertWorldToScreenCoords(worldPoint);
-            if(mouseDown && model?.Image?.Grid?.MaxVoxel != null)
+            if(mouseDown && model?.PrimaryImage?.Grid?.MaxVoxel != null)
             {
-                int window = (int)(screenPoint.X * (model.Image.Grid.MaxVoxel.Value+1000))-1000;
-                int level = (int)(screenPoint.Y * (model.Image.Grid.MaxVoxel.Value+1000))-1000;
-                model.SecondaryImage.LUT = new HeatLUT();
-                model.SecondaryImage.LUT.Window = window;
-                model.SecondaryImage.LUT.Level = level;
+                int window = (int)(screenPoint.X * (model.PrimaryImage.Grid.MaxVoxel.Value+1000))-1000;
+                int level = (int)(screenPoint.Y * (model.PrimaryImage.Grid.MaxVoxel.Value+1000))-1000;
+                model.PrimaryImage.LUT.Window = window;
+                model.PrimaryImage.LUT.Level = level;
                 model.Invalidate();
 
                 foreach(DicomPanelModel orthoModel in model.OrthogonalModels)

@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DicomPanel.Core;
+using DicomPanel.Core.Render.Contouring;
+using RT.Core.DICOM;
 
 namespace RTDicomViewer.Workspace
 {
@@ -24,6 +26,19 @@ namespace RTDicomViewer.Workspace
         public DicomPanelModel Axial { get; set; }
         public DicomPanelModel Coronal { get; set; }
         public DicomPanelModel Sagittal { get; set; }
+
+        public List<ContourInfo> ContourInfo = new List<DicomPanel.Core.Render.Contouring.ContourInfo>()
+            {
+                new ContourInfo(DicomColors.Black,99),
+                new ContourInfo(DicomColors.OrangeRed,90),
+                new ContourInfo(DicomColors.Orange,80),
+                new ContourInfo(DicomColors.Yellow,70),
+                new ContourInfo(DicomColors.White,60),
+                new ContourInfo(DicomColors.Green,50),
+                new ContourInfo(DicomColors.Blue,40),
+                new ContourInfo(DicomColors.LightBlue,30),
+                new ContourInfo(DicomColors.LightSkyBlue,20),
+            };
 
         public WorkspaceItemCollection<DicomDoseObject> Doses { get; set; }
         public WorkspaceItemCollection<DicomImageObject> Images { get; set; }
