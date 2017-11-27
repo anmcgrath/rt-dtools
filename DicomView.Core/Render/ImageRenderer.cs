@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using RT.Core.Geometry;
+using RT.Core.DICOM;
 
 namespace DicomPanel.Core.Render
 {
@@ -21,6 +22,7 @@ namespace DicomPanel.Core.Render
         private int bytespp = 4;
         private byte[] buffer;
         private double alpha = 1;
+        //here for debugging... remove and move to local function when done
         public void BeginRender(Rectd screenRect, IRenderContext context)
         {
             if (context == null)
@@ -29,6 +31,7 @@ namespace DicomPanel.Core.Render
             totalCols = (int)(screenRect.Width * context.Width);
             TotalScreenRect = screenRect;
             buffer = new byte[totalRows * totalCols * bytespp];
+            
         }
         public void EndRender(Rectd screenRect, IRenderContext context)
         {
@@ -48,13 +51,19 @@ namespace DicomPanel.Core.Render
             // then store in a byte array to render to the image layer.
 
             // Get the direction we move in each iteration from the top left of the camera
-            Point3d initPosn = camera.ConvertScreenToWorldCoords(image.ScreenRect.Y, image.ScreenRect.X);
-            Point3d posn = camera.ConvertScreenToWorldCoords(image.ScreenRect.Y, image.ScreenRect.X);
+            Rectd screenRect = camera.GetBoundingScreenRect(image.Grid.XRange,image.Grid.YRange,image.Grid.ZRange,image.ScreenRect);
+            //Rectd screenRect = new Rectd(0,0,1,1);
 
-            int rows = (int)(image.ScreenRect.Height * context.Height);
-            int cols = (int)(image.ScreenRect.Width * context.Width);
-            int startingRow = (int)((image.ScreenRect.Y / TotalScreenRect.Height) * totalRows);
-            int startingCol = (int)((image.ScreenRect.X / TotalScreenRect.Width) * totalCols);
+            if (screenRect == null)
+                return;
+
+            Point3d initPosn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
+            Point3d posn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
+
+            int rows = (int)Math.Round(screenRect.Height * context.Height);
+            int cols = (int)Math.Round(screenRect.Width * context.Width);
+            int startingRow = (int)Math.Round((screenRect.Y / TotalScreenRect.Height) * totalRows);
+            int startingCol = (int)Math.Round((screenRect.X / TotalScreenRect.Width) * totalCols);
 
             double ix, iy, iz, px, py, pz, cx, cy, cz, rx, ry, rz;
             ix = initPosn.X;
@@ -63,15 +72,15 @@ namespace DicomPanel.Core.Render
             px = initPosn.X;
             py = initPosn.Y;
             pz = initPosn.Z;
-            cx = image.ScreenRect.Width * camera.ColDir.X * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            cy = image.ScreenRect.Width * camera.ColDir.Y * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            cz = image.ScreenRect.Width * camera.ColDir.Z * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
-            rx = image.ScreenRect.Height * camera.RowDir.X * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
-            ry = image.ScreenRect.Height * camera.RowDir.Y * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
-            rz = image.ScreenRect.Height * camera.RowDir.Z * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            cx = screenRect.Width * camera.ColDir.X * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            cy = screenRect.Width * camera.ColDir.Y * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            cz = screenRect.Width * camera.ColDir.Z * camera.GetFOV().X / (cols * camera.Scale * camera.MMPerPixel);
+            rx = screenRect.Height * camera.RowDir.X * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            ry = screenRect.Height * camera.RowDir.Y * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
+            rz = screenRect.Height * camera.RowDir.Z * camera.GetFOV().Y / (rows * camera.Scale * camera.MMPerPixel);
 
-
-            int k = (startingRow * cols + startingCol) * bytespp;
+            int k;
+            int dr = 0;
             float value;
             byte blue, green, red;
             byte actualBlue = 0, actualGreen = 0, actualRed = 0;
@@ -80,10 +89,12 @@ namespace DicomPanel.Core.Render
             Voxel interpolatedVoxel = new Voxel();
             double val1, val2, val3;
 
-            for (int r = startingRow; r < rows; r += 1)
+            for (int r = startingRow; r < rows+startingRow; r += 1)
             {
-                px = ix + rx * r; py = iy + ry * r; pz = iz + rz * r;
-                for (int c = startingCol; c < cols; c += 1)
+                dr++;
+                k = r * totalCols * bytespp + startingCol * bytespp;
+                px = ix + rx * dr; py = iy + ry * dr; pz = iz + rz * dr;
+                for (int c = startingCol; c < cols+startingCol; c += 1)
                 {
                     image.Grid.Interpolate(px, py, pz, interpolatedVoxel);
                     value = interpolatedVoxel.Value;
@@ -147,7 +158,6 @@ namespace DicomPanel.Core.Render
                     k += bytespp;
                     px += cx; py += cy; pz += cz;
                 }
-                k += (totalCols - (startingCol + cols)) * bytespp;
             }
         }
     }

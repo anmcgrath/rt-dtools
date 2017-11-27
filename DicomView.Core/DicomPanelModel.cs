@@ -12,6 +12,8 @@ using System.Text;
 using RT.Core.Imaging.LUT;
 using RT.Core.Geometry;
 using DicomPanel.Core.Render.Blending;
+using RT.Core.DICOM;
+using System.Diagnostics;
 
 namespace DicomPanel.Core
 {
@@ -73,6 +75,7 @@ namespace DicomPanel.Core
         /// </summary>
         public void Invalidate()
         {
+            Stopwatch sw = Stopwatch.StartNew();
             ImageRenderContext?.BeginRender();
             DoseRenderContext?.BeginRender();
             RoiRenderContext?.BeginRender();
@@ -88,6 +91,9 @@ namespace DicomPanel.Core
             DoseRenderContext?.EndRender();
             RoiRenderContext?.EndRender();
             OverlayContext?.EndRender();
+
+            OverlayContext?.DrawString("" + sw.ElapsedMilliseconds + " ms", 0, 0, 12, DicomColors.Yellow);
+            sw.Stop();
 
         }
 
@@ -105,6 +111,8 @@ namespace DicomPanel.Core
                     ImageRenderer?.Render(img, Camera, context);
                     
                 ImageRenderer?.EndRender(primaryImgRect, context);
+                //ImageRenderContext?.DrawString("" + ImageRenderer.iy, 0, 0, 12, DicomColors.Yellow);
+
             }
         }
 

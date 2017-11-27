@@ -42,8 +42,6 @@ namespace DicomPanel.Core.Render
             var ms = new MarchingSquares();
             List<PlanarPolygon> polygons = new List<PlanarPolygon>();
 
-            double textY = 0;
-
             foreach(ContourInfo contourInfo in ContourInfo)
             {
                 var interpolatedDoseGrid = new InterpolatedDoseGrid(doseObject, MaxNumberOfGridPoints, camera, screenRect);

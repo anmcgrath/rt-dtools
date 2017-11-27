@@ -33,6 +33,7 @@ namespace DicomPanel.Core.Render.Contouring
 
             Coords = new double[Rows][][];
             Data = new float[Rows][];
+            Voxel voxel = new Voxel();
 
             for (int row = 0; row < Rows; row++)
             {
@@ -46,7 +47,8 @@ namespace DicomPanel.Core.Render.Contouring
                     var pt = camera.ConvertScreenToWorldCoords(screenPoint);
                     Coords[row][col] = new double[3] { pt.X, pt.Y, pt.Z };
 
-                    Data[row][col] = 100 * doseObject.Grid.Interpolate(pt).Value / normalisationAmount;
+                    doseObject.Grid.Interpolate(pt, voxel);
+                    Data[row][col] = 100 * voxel.Value / normalisationAmount;
                 }
             }
         }

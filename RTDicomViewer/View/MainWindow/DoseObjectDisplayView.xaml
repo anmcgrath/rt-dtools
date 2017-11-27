@@ -66,7 +66,7 @@
                         <ItemsControl ItemsSource="{Binding SelectedDose.Children}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Value}"></CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
