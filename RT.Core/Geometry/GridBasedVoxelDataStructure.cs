@@ -45,6 +45,8 @@ namespace RT.Core.Geometry
         }
 
 
+        float x0, x1, y0, y1, z0, z1;
+        int ix0, ix1, iy0, iy1, iz0, iz1;
         public override void Interpolate(Point3d position, Voxel voxel)
         {
             voxel.Position.X = position.X;
@@ -57,17 +59,17 @@ namespace RT.Core.Geometry
             }
             else
             {
-                float x0 = 0, x1 = 0, y0 = 0, y1 = 0, z0 = 0, z1 = 0;
-                int ix0 = 0, ix1 = 0, iy0 = 0, iy1 = 0, iz0 = 0, iz1 = 0;
+                //float x0 = 0, x1 = 0, y0 = 0, y1 = 0, z0 = 0, z1 = 0;
+                //int ix0 = 0, ix1 = 0, iy0 = 0, iy1 = 0, iz0 = 0, iz1 = 0;
 
                 if (ConstantGridSpacing)
                 {
                     ix0 = (int)((position.X - XCoords[0]) / GridSpacing.X);
-                    ix1 = ix0 == XCoords.Length - 1 ? ix0 : ix0 + 1;
+                    ix1 = (ix0 == XCoords.Length - 1) ? ix0 : ix0 + 1;
                     x0 = (float)XCoords[ix0];
                     x1 = (float)XCoords[ix1];
                     iy0 = (int)((position.Y - YCoords[0]) / GridSpacing.Y);
-                    iy1 = iy0 == YCoords.Length - 1 ? iy0 : iy0 + 1;
+                    iy1 = (iy0 == YCoords.Length - 1) ? iy0 : iy0 + 1;
                     y0 = (float)YCoords[iy0];
                     y1 = (float)YCoords[iy1];
                     if (GridSpacing.Z != 0)
