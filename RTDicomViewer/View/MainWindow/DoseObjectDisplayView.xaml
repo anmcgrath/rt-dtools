@@ -11,12 +11,11 @@
 
     <GroupBox Header="Dose">
         <StackPanel>
-            <ListView Height="120" ItemsSource="{Binding DoseObjects}" SelectedItem="{Binding SelectedDose}">
+            <ListView Height="120" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedDose}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <CheckBox Margin="0 0 2 0" IsChecked="{Binding IsSelected}"  BorderThickness="1"/>
-                            <TextBlock Text="{Binding Value.Name}"/>
+                            <TextBlock Text="{Binding Dose.Name}"/>
                         </WrapPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -40,13 +39,14 @@
                     </Grid.ColumnDefinitions>
                     
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Value.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Dose.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Scaling:</TextBlock>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Value.DoseGridScaling}" IsEnabled="False"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Dose.Scaling}" IsEnabled="False"/>
 
                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Units:</TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Value.Units}" IsEnabled="False"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Dose.Units}" IsEnabled="False"/>
+                    
                 </Grid>
             </GroupBox>
             <GroupBox Header="Display">
@@ -62,18 +62,12 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0">
-                        <ItemsControl ItemsSource="{Binding SelectedDose.Children}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Value}"></CheckBox>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                    <CheckBox IsChecked="{Binding SelectedDose.RenderLines}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Tag="{Binding SelectedDose}">Render Isodose Lines</CheckBox>
                     
+                    <CheckBox IsChecked="{Binding SelectedDose.RenderDoseWash}" Tag="{Binding SelectedDose}" x:Name="renderDoseWashCheckBox" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Render Dose Color wash</CheckBox>
+
                     <TextBlock Text="LUT:" Grid.Row="3" Grid.Column="0"></TextBlock>
-                    <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LUTs}" SelectedItem="{Binding SelectedRenderableImage.LUT}"></ComboBox>
+                    <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LUTTypes}" SelectedItem="{Binding SelectedDose.LUTType}" SelectionChanged="ComboBox_SelectionChanged" Tag="{Binding SelectedDose}"></ComboBox>
 
                 </Grid>
             </GroupBox>

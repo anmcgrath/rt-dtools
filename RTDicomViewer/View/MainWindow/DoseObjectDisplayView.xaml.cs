@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RTDicomViewer.Utilities;
+using RTDicomViewer.ViewModel.MainWindow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,20 @@ namespace RTDicomViewer.View.MainWindow
         public DoseObjectDisplayView()
         {
             InitializeComponent();
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var vm = (DoseObjectDisplayViewModel)DataContext;
+            var wrapper = (DoseGridWrapper)((CheckBox)sender).Tag;
+            vm.OnRenderDoseChanged(wrapper);
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var vm = (DoseObjectDisplayViewModel)DataContext;
+            var wrapper = (DoseGridWrapper)((ComboBox)sender).Tag;
+            vm.OnLUTTypeChanged(wrapper);
         }
     }
 }

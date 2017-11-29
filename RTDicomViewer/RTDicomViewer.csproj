@@ -146,8 +146,10 @@
     <Compile Include="Message\RTObjectDeletedMessage.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
+    <Compile Include="Utilities\DoseGridWrapper.cs" />
     <Compile Include="Utilities\DoseRenderOptions.cs" />
     <Compile Include="Utilities\DoseRenderType.cs" />
+    <Compile Include="Utilities\LUTType.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />

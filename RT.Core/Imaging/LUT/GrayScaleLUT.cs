@@ -10,7 +10,7 @@ namespace RT.Core.Imaging.LUT
 
         public float Window { get { return _window; } set { Create(value, _level); _window = value; } }
         private float _window = 400;
-        public float Level { get { return _level; } set { Create(_window, value); } }
+        public float Level { get { return _level; } set { Create(_window, value); _level = value; } }
         private float _level = 40;
 
         private int maxPixel = 255;

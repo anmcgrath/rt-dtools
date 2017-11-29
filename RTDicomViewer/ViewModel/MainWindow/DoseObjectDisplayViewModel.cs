@@ -15,175 +15,135 @@ using DicomPanel.Core.Render.Contouring;
 
 namespace RTDicomViewer.ViewModel.MainWindow
 {
-    public class DoseObjectDisplayViewModel:ViewModelBase
+    public class DoseObjectDisplayViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Renderable Images of the dose can be rendered as a color wash etc.
-        /// </summary>
-        public Dictionary<SelectableObject<IDoseObject,DoseRenderType>, RenderableImage> RenderableImages;
-        public RenderableImage SelectedRenderableImage { get { return _selectedRenderableImage; } set { _selectedRenderableImage = value; RaisePropertyChanged("SelectedRenderableImage"); } }
-        private RenderableImage _selectedRenderableImage;
+        public ObservableCollection<DoseGridWrapper> Doses { get; set; }
+        public DoseGridWrapper SelectedDose { get { return _selectedDose; } set { _selectedDose = value; RaisePropertyChanged("SelectedDose"); } }
+        private DoseGridWrapper _selectedDose;
 
-        public ObservableCollection<SelectableObject<IDoseObject, DoseRenderType>> DoseObjects { get; set; }
-        /// <summary>
-        /// Selected as in highlighted in the list, not as in rendered
-        /// </summary>
-        public SelectableObject<IDoseObject,DoseRenderType> SelectedDose { get { return _selectedDose; } set { _selectedDose = value; RaisePropertyChanged("SelectedDose"); SelectedRenderableImage = RenderableImages[SelectedDose]; } }
-        private SelectableObject<IDoseObject, DoseRenderType> _selectedDose { get; set; }
-
-        private ContourLUT contourLUT = new ContourLUT();
-        private List<ContourInfo> contourInfo;
-
-        public ObservableCollection<ILUT> LUTs { get; set; }
+        public ObservableCollection<LUTType> LUTTypes { get; set; }
 
         public DoseObjectDisplayViewModel()
         {
-            DoseObjects = new ObservableCollection<SelectableObject<IDoseObject, DoseRenderType>>();
-            MessengerInstance.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => DoseLoadedMessageReceive(x));
-            MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this, x => DoseLoadedMessageReceive(x));
-            RenderableImages = new Dictionary<SelectableObject<IDoseObject, DoseRenderType>, RenderableImage>();
-            LUTs = new ObservableCollection<ILUT>()
-            {
-                contourLUT,
-                new HeatLUT(),
-            };
-            MessengerInstance.Register<DoseRenderQualityChanged>(this, x =>
-             {
-                 List<ContourInfo> newList = new List<ContourInfo>();
-                 contourInfo = x.Options.ContourInfo.ToList();
-
-                 if(SelectedDose != null)
-                    contourLUT.Create(newList, SelectedDose.Value.Grid.MaxVoxel.Value);
-             }
-            );
+            Doses = new ObservableCollection<DoseGridWrapper>();
+            LUTTypes = new ObservableCollection<LUTType>() { LUTType.Contour, LUTType.Heat };
+            MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this, x => AddNewDose(x.Value));
+            MessengerInstance.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => AddNewDose(x.Value));
+            MessengerInstance.Register<DoseRenderQualityChanged>(this, x => OnContourListChanged(x.Options.ContourInfo.ToList()));
         }
 
-        //When we receive a global message telling us a dicom dose object is loaded, we handle it
-        public void DoseLoadedMessageReceive(RTObjectAddedMessage<DicomDoseObject> message)
+        public void AddNewDose(IDoseObject dose)
         {
-            DoseLoaded(message.Value);
+            var wrapper = new DoseGridWrapper();
+            wrapper.Dose = dose;
+            wrapper.LUTType = LUTType.Contour;
+            wrapper.LUT = getNewLUT(wrapper.LUTType, dose);
+            wrapper.RenderDoseWash = false;
+            wrapper.RenderLines = true;
+
+            Doses.Add(wrapper);
+            SelectedDose = wrapper;
+            OnRenderDoseChanged(wrapper);
         }
 
-        //When we receive a global message telling us an egs dose object is loaded, we handle it
-        public void DoseLoadedMessageReceive(RTObjectAddedMessage<EgsDoseObject> message)
+        public void OnContourListChanged(List<ContourInfo> contourList)
         {
-            DoseLoaded(message.Value);
-        }
-
-        public void AddNewDoseObject(SelectableObject<IDoseObject, DoseRenderType> selectableDoseObject)
-        {
-            selectableDoseObject.ObjectSelectionChanged += Dose_ObjectSelectionChanged;
-            selectableDoseObject.ChildrenObjectsSelectionChanged += SelectableDoseObject_ChildrenObjectsSelectionChanged;
-            DoseObjects.Add(selectableDoseObject);
-            RenderableImages.Add(selectableDoseObject, new RenderableImage()
+            foreach (var doseWrapper in Doses)
             {
-                LUT = LUTs.First(),
-                Alpha = 0.7f,
-                BlendMode = DicomPanel.Core.Render.Blending.BlendMode.OverWhereNonZero,
-                Grid = selectableDoseObject.Value.Grid,
-                Scaling = selectableDoseObject.Value.Scaling,
-                Name = "",
-                ScreenRect = new RT.Core.Utilities.RTMath.Rectd(0,0,1,1),
-                Units = "",
-            });
-        }
-
-        private void SelectableDoseObject_ChildrenObjectsSelectionChanged(object sender, MultiSelectableObjectEventArgs<DoseRenderType> e)
-        {
-            SelectableObject<IDoseObject, DoseRenderType> dose = (SelectableObject<IDoseObject, DoseRenderType>)sender;
-            foreach (var unselectedObject in e.UnselectedObjects)
-            {
-                if (unselectedObject.Value == DoseRenderType.Lines)
-                {
-                    Workspace.Workspace.Current.Axial.RemoveDose(dose.Value);
-                    Workspace.Workspace.Current.Coronal.RemoveDose(dose.Value);
-                    Workspace.Workspace.Current.Sagittal.RemoveDose(dose.Value);
-                }else
-                {
-                    Workspace.Workspace.Current.Axial.RemoveImage(RenderableImages[dose]);
-                    Workspace.Workspace.Current.Coronal.RemoveImage(RenderableImages[dose]);
-                    Workspace.Workspace.Current.Sagittal.RemoveImage(RenderableImages[dose]);
-                }
-            }
-            foreach (var unselectedObject in e.SelectedObjects)
-            {
-                if (unselectedObject.Value == DoseRenderType.Lines)
-                {
-                    Workspace.Workspace.Current.Axial.AddDose(dose.Value);
-                    Workspace.Workspace.Current.Coronal.AddDose(dose.Value);
-                    Workspace.Workspace.Current.Sagittal.AddDose(dose.Value);
-                }
-                else
-                {
-                    Workspace.Workspace.Current.Axial.AddImage(RenderableImages[dose]);
-                    Workspace.Workspace.Current.Coronal.AddImage(RenderableImages[dose]);
-                    Workspace.Workspace.Current.Sagittal.AddImage(RenderableImages[dose]);
-                }
+                if (doseWrapper.LUTType == LUTType.Contour)
+                    doseWrapper.LUT = getNewLUT(LUTType.Contour, doseWrapper.Dose, contourList);
+                if (doseWrapper.RenderLines || doseWrapper.LUTType == LUTType.Contour)
+                    OnRenderDoseChanged(doseWrapper);
             }
         }
 
-        public void RemoveDoseObject(SelectableObject<IDoseObject, DoseRenderType> selectableDoseObject)
+        public void OnLUTTypeChanged(DoseGridWrapper doseWrapper)
         {
-            selectableDoseObject.ObjectSelectionChanged -= Dose_ObjectSelectionChanged;
-            DoseObjects.Remove(selectableDoseObject);
-            RenderableImages.Remove(selectableDoseObject);
+            if (doseWrapper == null)
+                return;
+            doseWrapper.LUT = getNewLUT(doseWrapper.LUTType, doseWrapper.Dose);
+            OnRenderDoseChanged(doseWrapper);
         }
 
-        public object DoseLoaded(IDoseObject dose)
+        public void OnRenderDoseChanged(DoseGridWrapper doseWrapper)
         {
-            var newSelectableObject = new SelectableObject<IDoseObject, DoseRenderType>(dose);
-            newSelectableObject.AddChild(new SelectableObject<DoseRenderType>(DoseRenderType.Lines));
-            newSelectableObject.AddChild(new SelectableObject<DoseRenderType>(DoseRenderType.Wash));
-            contourLUT.Create(contourInfo, dose.Grid.MaxVoxel.Value);
+            if (doseWrapper == null)
+                return;
 
-            AddNewDoseObject(newSelectableObject);
-            SelectedDose = newSelectableObject;
-            SelectDose(dose);
-            return null;
-        }
-
-        //When a dose object is selected, we handle the event that is fired
-        private void Dose_ObjectSelectionChanged(object sender, SelectableObjectEventArgs e)
-        {
-            SelectableObject<IDoseObject,DoseRenderType> selectableDoseObject = (SelectableObject<IDoseObject, DoseRenderType>)sender;
-            //Let everyone know we now want to render this dose object.
-            if (e.IsNowSelected)
+            if (doseWrapper.RenderLines)
             {
-                foreach(var child in selectableDoseObject.Children)
-                {
-                    child.IsSelected = true;
-                }
+                Workspace.Workspace.Current.Axial.AddDose(doseWrapper.Dose);
+                Workspace.Workspace.Current.Sagittal.AddDose(doseWrapper.Dose);
+                Workspace.Workspace.Current.Coronal.AddDose(doseWrapper.Dose);
             }
             else
             {
-                foreach (var child in selectableDoseObject.Children)
-                {
-                    child.IsSelected = false;
-                }
+                Workspace.Workspace.Current.Axial.RemoveDose(doseWrapper.Dose);
+                Workspace.Workspace.Current.Sagittal.RemoveDose(doseWrapper.Dose);
+                Workspace.Workspace.Current.Coronal.RemoveDose(doseWrapper.Dose);
             }
-        }
-
-        private void SelectDose(IDoseObject dose)
-        {
-            foreach (var doseObj in DoseObjects)
+            if (doseWrapper.RenderDoseWash)
             {
-                if (doseObj.Value == dose)
+                if (doseWrapper.RenderableImage != null)
                 {
-                    doseObj.IsSelected = true;
+                    Workspace.Workspace.Current.Axial.RemoveImage(doseWrapper.RenderableImage);
+                    Workspace.Workspace.Current.Sagittal.RemoveImage(doseWrapper.RenderableImage);
+                    Workspace.Workspace.Current.Coronal.RemoveImage(doseWrapper.RenderableImage);
+                    doseWrapper.RenderableImage = null;
                 }
+                doseWrapper.RenderableImage = getNewRenderableImage(doseWrapper);
+                Workspace.Workspace.Current.Axial.AddImage(doseWrapper.RenderableImage);
+                Workspace.Workspace.Current.Sagittal.AddImage(doseWrapper.RenderableImage);
+                Workspace.Workspace.Current.Coronal.AddImage(doseWrapper.RenderableImage);
             }
-        }
-
-        private void UnselectDose(IDoseObject dose)
-        {
-            foreach (var doseObj in DoseObjects)
+            else if (doseWrapper.RenderableImage != null)
             {
-                if (doseObj.Value == dose)
-                {
-                    doseObj.IsSelected = false;
-                }
+                Workspace.Workspace.Current.Axial.RemoveImage(doseWrapper.RenderableImage);
+                Workspace.Workspace.Current.Sagittal.RemoveImage(doseWrapper.RenderableImage);
+                Workspace.Workspace.Current.Coronal.RemoveImage(doseWrapper.RenderableImage);
+                Workspace.Workspace.Current.Axial.Invalidate();
+                Workspace.Workspace.Current.Sagittal.Invalidate();
+                Workspace.Workspace.Current.Coronal.Invalidate();
+                doseWrapper.RenderableImage = null;
             }
         }
 
+        private RenderableImage getNewRenderableImage(DoseGridWrapper doseWrapper)
+        {
+            RenderableImage renderableImage = new RenderableImage()
+            {
+                Alpha = 0.7f,
+                BlendMode = DicomPanel.Core.Render.Blending.BlendMode.OverWhereNonZero,
+                Grid = doseWrapper.Dose.Grid,
+                LUT = doseWrapper.LUT,
+                Name = "Dose",
+                Scaling = doseWrapper.Dose.Scaling,
+                ScreenRect = new RT.Core.Utilities.RTMath.Rectd(0, 0, 1, 1),
+                Units = "undefined",
+            };
+            return renderableImage;
+        }
+
+        private ILUT getNewLUT(LUTType lutType, IDoseObject dose)
+        {
+            return getNewLUT(lutType, dose, Workspace.Workspace.Current.ContourInfo);
+        }
+
+        private ILUT getNewLUT(LUTType lutType, IDoseObject dose, List<ContourInfo> contourList)
+        {
+            switch (lutType)
+            {
+                case LUTType.Contour:
+                    var contourLUT = new ContourLUT();
+                    contourLUT.Create(contourList, dose.Grid.MaxVoxel.Value);
+                    return contourLUT;
+                case LUTType.Heat:
+                    var heatLUT = new HeatLUT();
+                    heatLUT.Level = (float)(dose.Grid.MaxVoxel.Value / 2) + .1f * dose.Grid.MaxVoxel.Value;
+                    heatLUT.Window = dose.Grid.MaxVoxel.Value * .8f; ;
+                    return heatLUT;
+            }
+            return null;
+        }
     }
 }
