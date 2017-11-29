@@ -13,7 +13,18 @@ namespace RT.Core.Geometry
         public Range YRange { get; set; }
         public Range ZRange { get; set; }
         public Voxel MaxVoxel { get; set; }
+        public Voxel MinVoxel { get; set; }
         private Point3d positionCache;
+
+        /// <summary>
+        /// Converts actual value to value of type Unit
+        /// </summary>
+        public float Scaling { get; set; } = 1;
+
+        /// <summary>
+        /// The physical unit
+        /// </summary>
+        public Unit ValueUnit { get; set; }
 
         public VoxelDataStructureBase()
         {
@@ -22,6 +33,7 @@ namespace RT.Core.Geometry
             ZRange = new Range();
             positionCache = new Point3d();
             MaxVoxel = new Voxel() { Value = float.MinValue };
+            MinVoxel = new Voxel() { Value = float.MaxValue };
         }
 
         public Voxel Interpolate(double x, double y, double z)

@@ -52,7 +52,7 @@ namespace RT.Core.IO.Loaders
             //grid.Window = (int)grid.GlobalMax.Value ;
             //grid.Level = (int)(grid.GlobalMax.Value / 2);
 
-            grid.ComputeMax();
+            //grid.ComputeMax();
             return grid;
         }
 

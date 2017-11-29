@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dicom;
 using System.IO;
+using RT.Core.Geometry;
 
 namespace RT.Core.IO.Loaders
 {
@@ -19,6 +20,16 @@ namespace RT.Core.IO.Loaders
             dicomObject.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
             var gridLoader = new GridBasedStructureDicomLoader();
             dicomObject.Grid = gridLoader.Load(files);
+        }
+
+        private Unit unitFromString(string unit)
+        {
+            switch(unit.ToLower())
+            {
+                case "gy": return Unit.Gy;
+                case "relative":return Unit.Relative;
+            }
+            return Unit.Relative;
         }
     }
 }

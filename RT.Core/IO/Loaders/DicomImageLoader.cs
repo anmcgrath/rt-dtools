@@ -15,6 +15,8 @@ namespace RT.Core.IO.Loaders
             var gridLoader = new GridBasedStructureDicomLoader();
             dicomObject.Grid = gridLoader.Load(files);
             dicomObject.Grid.DefaultPhysicalValue = -1024;
+            dicomObject.Grid.Scaling = 1;
+            dicomObject.Grid.ValueUnit = Geometry.Unit.HU;
 
             try
             {

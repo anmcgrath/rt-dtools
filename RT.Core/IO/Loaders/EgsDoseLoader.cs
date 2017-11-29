@@ -41,6 +41,21 @@ namespace RT.Core.IO.Loaders
                     int indexY = (int)(i / SizeX) - indexZ * (SizeY);
                     float data = ReadFloat(reader);
                     grid.Data[indexX, indexY, indexZ] = data;
+
+                    if(data > grid.MaxVoxel.Value)
+                    {
+                        grid.MaxVoxel.Value = data;
+                        grid.MaxVoxel.Position.X = grid.XCoords[indexX];
+                        grid.MaxVoxel.Position.Y = grid.XCoords[indexY];
+                        grid.MaxVoxel.Position.Z = grid.XCoords[indexZ];
+                    }
+                    if (data < grid.MinVoxel.Value)
+                    {
+                        grid.MinVoxel.Value = data;
+                        grid.MinVoxel.Position.X = grid.XCoords[indexX];
+                        grid.MinVoxel.Position.Y = grid.XCoords[indexY];
+                        grid.MinVoxel.Position.Z = grid.XCoords[indexZ];
+                    }
                 }
             }
             grid.XRange = new Range((double)grid.XCoords[0], (double)grid.XCoords[grid.XCoords.Length-1]);
@@ -48,7 +63,8 @@ namespace RT.Core.IO.Loaders
             grid.ZRange = new Range(grid.ZCoords[0], grid.ZCoords[grid.ZCoords.Length - 1]);
 
             doseObject.Grid = grid;
-            doseObject.Grid.ComputeMax();
+            doseObject.Grid.ValueUnit = Unit.Egs;
+            //doseObject.Grid.ComputeMax();
             return doseObject;
         }
 

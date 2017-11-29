@@ -133,6 +133,25 @@ namespace RT.Core.Geometry
             };
         }
 
+        public Voxel ComputeMin()
+        {
+            Point3d posn = new Point3d();
+            float min = float.MaxValue;
+            for (int i = 0; i < Data.Length; i++)
+            {
+                if (Data[i] < min)
+                {
+                    min = Data[i];
+                    posn = GetPosition(i);
+                }
+            }
+            return new Voxel()
+            {
+                Position = posn,
+                Value = min,
+            };
+        }
+
         public Range XRange
         {
             get

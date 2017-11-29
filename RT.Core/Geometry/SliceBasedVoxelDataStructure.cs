@@ -128,6 +128,12 @@ namespace RT.Core.Geometry
                 ZRange.Maximum = slice.ZRange.Maximum;
 
             _slices.Add(slice);
+            Voxel sliceMax = slice.ComputeMax();
+            if (sliceMax.Value > this.MaxVoxel.Value)
+                MaxVoxel = sliceMax;
+            Voxel sliceMin = slice.ComputeMin();
+            if (sliceMin.Value < this.MinVoxel.Value)
+                MinVoxel = sliceMin;
         }
 
         public void ComputeMax()

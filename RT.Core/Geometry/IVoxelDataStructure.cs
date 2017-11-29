@@ -19,8 +19,11 @@ namespace RT.Core.Geometry
         Range ZRange { get; set; }
 
         float DefaultPhysicalValue { get; set; }
+        Unit ValueUnit { get; set; }
+        float Scaling { get; set; }
 
         Voxel MaxVoxel { get; set; }
+        Voxel MinVoxel { get; set; }
         void ComputeMax();
     }
 }

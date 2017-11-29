@@ -53,13 +53,29 @@ namespace RT.Core.IO.Loaders
                         //Rescale back to actual HUs
                         dataArray[k] = dataArray[k] * tempHeaderInfo.RescaleSlope + tempHeaderInfo.RescaleIntercept;
                         grid.Data[currXIndex, currYIndex, currZIndex] = dataArray[k];
+
+                        if (dataArray[k] > grid.MaxVoxel.Value)
+                        {
+                            grid.MaxVoxel.Value = dataArray[k];
+                            grid.MaxVoxel.Position.X = grid.XCoords[currXIndex];
+                            grid.MaxVoxel.Position.Y = grid.YCoords[currYIndex];
+                            grid.MaxVoxel.Position.Z = grid.ZCoords[currZIndex];
+                        }
+                        if(dataArray[k] < grid.MinVoxel.Value)
+                        {
+                            grid.MinVoxel.Value = dataArray[k];
+                            grid.MinVoxel.Position.X = grid.XCoords[currXIndex];
+                            grid.MinVoxel.Position.Y = grid.YCoords[currYIndex];
+                            grid.MinVoxel.Position.Z = grid.ZCoords[currZIndex];
+                        }
                     }
                 }
             }
             grid.XRange = new Range(grid.XCoords[0], grid.XCoords[grid.XCoords.Length - 1]);
             grid.YRange = new Range(grid.YCoords[0], grid.YCoords[grid.YCoords.Length - 1]);
             grid.ZRange = new Range(grid.ZCoords[0], grid.ZCoords[grid.ZCoords.Length - 1]);
-            grid.ComputeMax();
+            
+            //grid.ComputeMax();
             return grid;
         }
 
