@@ -126,12 +126,12 @@ namespace RT.Core.Utilities.RTMath
         /// <summary>
         /// Copies this vector into another vector
         /// </summary>
-        /// <param name="point3f"></param>
-        public void CopyTo(Point3d point3f)
+        /// <param name="point3d"></param>
+        public void CopyTo(Point3d point3d)
         {
-            point3f.X = X;
-            point3f.Y = Y;
-            point3f.Z = Z;
+            point3d.X = X;
+            point3d.Y = Y;
+            point3d.Z = Z;
         }
 
         public static Point3d operator +(Point3d p1, Point3d p2)

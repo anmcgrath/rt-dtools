@@ -36,7 +36,7 @@ namespace DicomPanel.Core
 
         public DicomImageObject PrimaryImage { get; set; }
         public DicomImageObject SecondaryImage { get; set; }
-        private List<RenderableImage> AdditionalImages { get; set; }
+        public List<RenderableImage> AdditionalImages { get; set; }
 
         public List<IDoseObject> ContouredDoses { get; set; }
         

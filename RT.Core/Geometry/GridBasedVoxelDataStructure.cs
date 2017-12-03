@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RT.Core.Utilities.RTMath;
+using RT.Core.ROIs;
 
 namespace RT.Core.Geometry
 {
@@ -175,6 +176,25 @@ namespace RT.Core.Geometry
                             MaxVoxel.Position.Y = y;
                             MaxVoxel.Position.Z = z;
                         }
+                    }
+                }
+            }
+        }
+
+        private Voxel enumeratorVoxel = new Voxel();
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < XCoords.Length; i++)
+            {
+                for (int j = 0; j < YCoords.Length; j++)
+                {
+                    for (int k = 0; k < ZCoords.Length; k++)
+                    {
+                        enumeratorVoxel.Position.X = XCoords[i];
+                        enumeratorVoxel.Position.Y = YCoords[j];
+                        enumeratorVoxel.Position.Z = ZCoords[k];
+                        enumeratorVoxel.Value = Data[i, j, k];
+                        yield return enumeratorVoxel;
                     }
                 }
             }

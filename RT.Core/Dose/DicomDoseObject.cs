@@ -13,8 +13,6 @@ namespace RT.Core.Dose
     public class DicomDoseObject:DicomObject, IDoseObject
     {
         public IVoxelDataStructure Grid { get; set; }
-        public float Scaling { get; set; }
-        public string Units { get; set; }
 
         //Change this to proper normalisation
         public double NormalisationIsodose = 100;

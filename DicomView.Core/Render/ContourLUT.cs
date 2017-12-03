@@ -19,6 +19,8 @@ namespace DicomPanel.Core.Render
         public void Compute(float value, byte[] output)
         {
             var val = (int)(Math.Round((value / Max) * bins));
+            if (val < 0)
+                val = 0;
             output[0] = blue[val];
             output[1] = green[val];
             output[2] = red[val];

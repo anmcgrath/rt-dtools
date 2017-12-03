@@ -89,5 +89,16 @@ namespace RT.Core.Geometry
         {
             return (Minimum + Maximum) / 2;
         }
+
+        /// <summary>
+        /// Returns a range that covers both ranfges
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public Range Combine(Range range)
+        {
+            Range newRange = new Range(Math.Min(Minimum, range.Minimum), Math.Max(Maximum, range.Maximum));
+            return newRange;
+        }
     }
 }

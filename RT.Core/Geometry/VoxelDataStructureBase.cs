@@ -58,6 +58,16 @@ namespace RT.Core.Geometry
             Interpolate(positionCache, voxel);
         }
 
+        public bool ContainsPoint(double x, double y, double z)
+        {
+            return XRange.Contains(x) && YRange.Contains(y) && ZRange.Contains(z);
+        }
+
+        public bool ContainsPoint(Point3d point)
+        {
+            return ContainsPoint(point.X, point.Y, point.Z);
+        }
+
         public abstract void Interpolate(Point3d position, Voxel voxel);
 
     }

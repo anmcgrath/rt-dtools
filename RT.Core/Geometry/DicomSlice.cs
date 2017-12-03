@@ -1,5 +1,6 @@
 ﻿using RT.Core.Utilities.RTMath;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RT.Core.Geometry
 {
-    class DicomSlice
+    class DicomSlice:IEnumerable
     {
         public DicomSlice(int rows, int columns)
         {
@@ -81,14 +82,15 @@ namespace RT.Core.Geometry
                 return Data[row * (Columns) + column];
         }
 
+        private Point3d positionPointCache = new Point3d();
         private Point3d GetPosition(int index)
         {
             int column = index % Columns;
             int row = (index - column) / (Columns);
-            return new Point3d(
-                ComputePx(row, column),
-                ComputePy(row, column),
-                ComputePz(row, column));
+            positionPointCache.X = ComputePx(row, column);
+            positionPointCache.Y = ComputePy(row, column);
+            positionPointCache.Z = ComputePz(row, column);
+            return positionPointCache;
         }
 
         public void Set(int row, int column, float value)
@@ -150,6 +152,18 @@ namespace RT.Core.Geometry
                 Position = posn,
                 Value = min,
             };
+        }
+
+        private Voxel enumeratorVoxel = new Voxel();
+        public IEnumerator GetEnumerator()
+        {
+            for(int i = 0; i < Data.Length; i++)
+            {
+                Point3d posn = GetPosition(i);
+                posn.CopyTo(enumeratorVoxel.Position);
+                enumeratorVoxel.Value = Data[i];
+                yield return enumeratorVoxel;
+            }
         }
 
         public Range XRange

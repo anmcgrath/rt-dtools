@@ -13,7 +13,6 @@ namespace RT.Core.Dose
     {
         public string FileName { get; set; }
         public string Name { get; set; }
-        public float Scaling { get; set; } = 1;
         public IVoxelDataStructure Grid { get; set; }
 
         public EgsDoseObject(string file)

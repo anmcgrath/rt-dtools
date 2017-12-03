@@ -6,12 +6,12 @@ namespace RT.Core.Utilities.RTMath
 {
     public class Histogram<T> where T:IComparable
     {
-        public Histogram()
+        public Histogram(T min, T max, int numberOfBins)
         {
             
         }
 
-        public void Create(IEnumerable<T> data, T max, T min)
+        public void CreateFromData(IEnumerable<T> data, T max, T min)
         {
             foreach(var dataPoint in data)
             {
@@ -23,6 +23,8 @@ namespace RT.Core.Utilities.RTMath
         {
 
         }
+
+        //public T bins[];
 
     }
 }

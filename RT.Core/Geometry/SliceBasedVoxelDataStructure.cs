@@ -147,6 +147,17 @@ namespace RT.Core.Geometry
             }
             MaxVoxel = max;
         }
+
+        public IEnumerator GetEnumerator()
+        {
+            for(int i = 0; i < _slices.Count; i++)
+            {
+                foreach(Voxel voxel in _slices[i])
+                {
+                    yield return voxel;
+                }
+            }
+        }
     }
     
 }

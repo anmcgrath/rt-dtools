@@ -42,10 +42,10 @@
                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Dose.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Scaling:</TextBlock>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Dose.Scaling}" IsEnabled="False"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.Scaling}" IsEnabled="False"/>
 
                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Units:</TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Dose.Units}" IsEnabled="False"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.ValueUnit}" IsEnabled="False"/>
                     
                 </Grid>
             </GroupBox>
@@ -68,6 +68,29 @@
 
                     <TextBlock Text="LUT:" Grid.Row="3" Grid.Column="0"></TextBlock>
                     <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LUTTypes}" SelectedItem="{Binding SelectedDose.LUTType}" SelectionChanged="ComboBox_SelectionChanged" Tag="{Binding SelectedDose}"></ComboBox>
+
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Math">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0">Dose 1:</TextBlock>
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose1}" DisplayMemberPath="Dose.Name"></ComboBox>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0">Dose 1:</TextBlock>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose2}" DisplayMemberPath="Dose.Name"></ComboBox>
+
+                    <Button Grid.Row="2" Grid.Column="1" Command="{Binding SubtractCommand}">Subtract</Button>
 
                 </Grid>
             </GroupBox>

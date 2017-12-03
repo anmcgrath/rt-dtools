@@ -130,6 +130,11 @@ namespace RTDicomViewer.ViewModel
                 CoronalPanelModel.RemoveROIs(x.RemovedRois);
             });
 
+            MessengerInstance.Register<NotificationMessage>(this, x =>
+             {
+                 MessageBox.Show(x.Notification);
+             });
+
             //When the dose render options are changed...
             MessengerInstance.Register<DoseRenderQualityChanged>(this, x =>
             {
