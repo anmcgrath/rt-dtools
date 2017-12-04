@@ -6,9 +6,10 @@ namespace RT.Core.Geometry
 {
     public enum Unit
     {
-        Relative,
+        Percent,
         Gy,
         HU,
         Egs,
+        Gamma,
     }
 }

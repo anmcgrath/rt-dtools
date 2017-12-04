@@ -35,6 +35,18 @@ namespace RT.Core.Geometry
 
         public float DefaultPhysicalValue { get; set; }
 
+        public int NumberOfVoxels => CountVoxels();
+
+        private int CountVoxels()
+        {
+            int count = 0;
+            foreach(var slice in _slices)
+            {
+                count += slice.Data.Length;
+            }
+            return count;
+        }
+
         public SliceBasedVoxelDataStructure():base()
         {
             _positionCache = new Point4d(0,0,0,1);

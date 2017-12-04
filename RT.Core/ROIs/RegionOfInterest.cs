@@ -68,6 +68,16 @@ namespace RT.Core.ROIs
         }
 
         /// <summary>
+        /// Finds whether a point is inside the ROI, not interpolating between ROI slices
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool ContainsPointNonInterpolated(Point3d point)
+        {
+            return ContainsPointNonInterpolated(point.X, point.Y, point.Z);
+        }
+
+        /// <summary>
         /// Finds whether a point is inside the ROI, by interpolating between ROI slices
         /// Only use this if you are checking a SINGLE point, otheriwse use ContainsXYCoordsInterpolated
         /// </summary>
@@ -84,6 +94,8 @@ namespace RT.Core.ROIs
 
             return mask.ContainsPoint(x, y);
         }
+
+
 
         /// <summary>
         /// Bulk processes whether an array of x and y coords are inside the roi, with interpolation

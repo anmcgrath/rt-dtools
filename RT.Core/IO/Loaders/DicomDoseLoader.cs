@@ -15,11 +15,12 @@ namespace RT.Core.IO.Loaders
         public void Load(DicomFile[] files, DicomDoseObject dicomObject)
         {
             DicomFile file0 = files[0];
-            dicomObject.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
             var gridLoader = new GridBasedStructureDicomLoader();
             dicomObject.Grid = gridLoader.Load(files);
+            dicomObject.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
             dicomObject.Grid.Scaling = file0.Dataset.Get<float>(DicomTag.DoseGridScaling, 1.0f);
             dicomObject.Grid.ValueUnit = unitFromString(file0.Dataset.Get<string>(DicomTag.DoseUnits, "Relative"));
+            dicomObject.Grid.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
         }
 
         private Unit unitFromString(string unit)
@@ -27,9 +28,9 @@ namespace RT.Core.IO.Loaders
             switch(unit.ToLower())
             {
                 case "gy": return Unit.Gy;
-                case "relative":return Unit.Relative;
+                case "relative":return Unit.Percent;
             }
-            return Unit.Relative;
+            return Unit.Percent;
         }
     }
 }

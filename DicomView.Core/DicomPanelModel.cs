@@ -188,6 +188,11 @@ namespace DicomPanel.Core
                     overlay.Render(this, context);
                 }
             }
+
+            if(Camera.IsAxial)
+            {
+                context.DrawString("Z: " + Math.Round(Camera.Position.Z, 2) + " mm", 0, .9, 12, DicomColors.Yellow);
+            }
         }
 
         public void InvalidateOverlays()

@@ -63,6 +63,9 @@ namespace RTDicomViewer.ViewModel
         public RelayCommand CreateNewBeamCommand => new RelayCommand(
             () => { CreateNewBeam(); });
 
+        public RelayCommand OpenHistogramWindowCommand => new RelayCommand(
+            () => { var window = new HistogramCreatorWindowView(); window.Owner = Application.Current.MainWindow; window.Show(); });
+
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.

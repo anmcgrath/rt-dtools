@@ -14,8 +14,15 @@
             <ListView Height="120" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedDose}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <WrapPanel>
-                            <TextBlock Text="{Binding Dose.Name}"/>
+                        <WrapPanel Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:DoseObjectDisplayView}}">
+                            <TextBlock Text="{Binding Dose.Grid.Name}"/>
+                            <WrapPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteDoseCommand, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Dose, RelativeSource={
+                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+                                </ContextMenu>
+                            </WrapPanel.ContextMenu>
                         </WrapPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -39,13 +46,13 @@
                     </Grid.ColumnDefinitions>
                     
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Dose.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.Name,UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Scaling:</TextBlock>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.Scaling}" IsEnabled="False"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedDose.Dose.Grid.Scaling}"/>
 
                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Units:</TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.ValueUnit}" IsEnabled="False"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDose.Dose.Grid.ValueUnit}" IsReadOnly="True"/>
                     
                 </Grid>
             </GroupBox>
@@ -85,10 +92,10 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0">Dose 1:</TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose1}" DisplayMemberPath="Dose.Name"></ComboBox>
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose1}" DisplayMemberPath="Dose.Grid.Name"></ComboBox>
 
                     <TextBlock Grid.Row="1" Grid.Column="0">Dose 1:</TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose2}" DisplayMemberPath="Dose.Name"></ComboBox>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose2}" DisplayMemberPath="Dose.Grid.Name"></ComboBox>
 
                     <Button Grid.Row="2" Grid.Column="1" Command="{Binding SubtractCommand}">Subtract</Button>
 

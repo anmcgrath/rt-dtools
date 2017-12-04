@@ -18,7 +18,7 @@ namespace RT.Core.ROIs
 
         public Range XRange { get; set; }
         public Range YRange { get; set; }
-        public double GridSpacing { get; set; } = 1; //mm
+        public double GridSpacing { get; set; } = .8; //mm
 
         public int Rows { get; set; }
         public int Columns { get; set; }

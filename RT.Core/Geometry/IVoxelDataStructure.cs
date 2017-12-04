@@ -30,6 +30,9 @@ namespace RT.Core.Geometry
         Voxel MinVoxel { get; set; }
         void ComputeMax();
 
+        int NumberOfVoxels { get; }
+        string Name { get; set; }
+
         //Histogramf CreateHistogram(RegionOfInterest roi);
         //Histogramf CreateHistogram();
 

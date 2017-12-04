@@ -8,8 +8,8 @@
         xmlns:dcm="clr-namespace:DicomPanel.Wpf;assembly=DicomPanel.Wpf"
         xmlns:mv="clr-namespace:RTDicomViewer.View.MainWindow"
         xmlns:oxy="http://oxyplot.org/wpf"
-        xmlns:av="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:th="clr-namespace:RTDicomViewer.Themes"
+        xmlns:util="clr-namespace:RTDicomViewer.View.MainWindow.UtilityView"
         x:Class="RTDicomViewer.MainWindow"
     xmlns:cc="clr-namespace:RTDicomViewer.View.CustomControls"
         mc:Ignorable="d"
@@ -36,33 +36,12 @@
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Dose statistics..." Command="{Binding OpenDoseStatisticsCommand}"/>
+                <MenuItem Header="Histograms" Command="{Binding OpenHistogramWindowCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
-
-        <!--<av:DockingManager>
-            <av:LayoutRoot>
-                <av:LayoutPanel>
-                    <av:LayoutAnchorablePane>
-                            <av:LayoutAnchorable Title="Axial" CanAutoHide="False" CanClose="False" CanHide="False">
-                                <dcm:DicomPanelView Margin="6 2 2 2" Grid.Column="0" Grid.Row="0" Model="{Binding Path=DataContext.AxialPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                            </av:LayoutAnchorable>
-                    </av:LayoutAnchorablePane>
-                    <av:LayoutAnchorablePane>
-                        <av:LayoutAnchorable>
-                            <dcm:DicomPanelView Margin="6 2 2 2" Grid.Column="1" Grid.Row="0" Model="{Binding Path=DataContext.SagittalPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                        </av:LayoutAnchorable>
-                    </av:LayoutAnchorablePane>
-                    <av:LayoutAnchorablePane>
-                        <av:LayoutAnchorable>
-                            <dcm:DicomPanelView Margin="6 2 2 6" Grid.Column="0" Grid.Row="1" Model="{Binding Path=DataContext.CoronalPanelModel,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}"/>
-                        </av:LayoutAnchorable>
-                    </av:LayoutAnchorablePane>
-                </av:LayoutPanel>
-            </av:LayoutRoot>
-        </av:DockingManager>-->
 
         <Grid DockPanel.Dock="Top" Background="#FFEBE9ED">
             <Grid.ColumnDefinitions>
@@ -130,9 +109,11 @@
 
                     <cc:TileControl.BottomRight>
                         <cc:TilerControlItem>
-                            <Border Background="Black"/>
+                            <util:UtilityView/>
                         </cc:TilerControlItem>
                     </cc:TileControl.BottomRight>
+                    
+                    
 
                 </cc:TileControl>
 

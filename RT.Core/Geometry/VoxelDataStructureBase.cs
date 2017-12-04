@@ -26,6 +26,8 @@ namespace RT.Core.Geometry
         /// </summary>
         public Unit ValueUnit { get; set; }
 
+        public string Name { get; set; }
+
         public VoxelDataStructureBase()
         {
             XRange = new Range();

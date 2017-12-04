@@ -16,6 +16,7 @@ namespace RT.Core.IO.Loaders
         {
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
             doseObject.Name = Path.GetFileName(fileName);
+            grid.Name = Path.GetFileName(fileName);
             double max = 0;
 
             int SizeX, SizeY, SizeZ;

@@ -15,7 +15,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using RTDicomViewer.ViewModel.Dialogs;
 using RTDicomViewer.ViewModel.MainWindow;
+using RTDicomViewer.ViewModel.MainWindow.UtilityView;
 
 namespace RTDicomViewer.ViewModel
 {
@@ -50,6 +52,8 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<ImageObjectDisplayViewModel>();
             SimpleIoc.Default.Register<AnalyseDisplayViewModel>();
             SimpleIoc.Default.Register<PlanViewModel>();
+            SimpleIoc.Default.Register<HistogramCreaterWindowViewModel>();
+            SimpleIoc.Default.Register<HistogramViewModel>();
         }
 
         public MainViewModel Main
@@ -105,6 +109,22 @@ namespace RTDicomViewer.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<PlanViewModel>();
+            }
+        }
+
+        public HistogramCreaterWindowViewModel HistogramCreaterWindowViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HistogramCreaterWindowViewModel>();
+            }
+        }
+
+        public HistogramViewModel HistogramViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HistogramViewModel>();
             }
         }
 

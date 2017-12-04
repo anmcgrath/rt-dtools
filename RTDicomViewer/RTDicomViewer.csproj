@@ -135,9 +135,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BoolInverterConverter.cs" />
     <Compile Include="Converters\ContourTypeConverter.cs" />
     <Compile Include="Converters\DicomColorConverter.cs" />
     <Compile Include="IO\FileOpener.cs" />
+    <Compile Include="Message\AddHistogramsMessage.cs" />
     <Compile Include="Message\DoseObjectRenderMessage.cs" />
     <Compile Include="Message\DoseRenderQualityChanged.cs" />
     <Compile Include="Message\ProgressMessage.cs" />
@@ -149,10 +151,12 @@
     <Compile Include="Utilities\DoseGridWrapper.cs" />
     <Compile Include="Utilities\DoseRenderOptions.cs" />
     <Compile Include="Utilities\DoseRenderType.cs" />
+    <Compile Include="Utilities\HistogramBuilder.cs" />
     <Compile Include="Utilities\LUTType.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />
+    <Compile Include="ViewModel\Dialogs\HistogramCreaterWindowViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\ProgressDialogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\AnalyseDisplayViewModel.cs" />
@@ -163,12 +167,16 @@
     <Compile Include="ViewModel\MainWindow\PlanViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\POIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\UtilityView\HistogramViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\CustomControls\TileControl.xaml.cs">
       <DependentUpon>TileControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomControls\TilerControlItem.xaml.cs">
       <DependentUpon>TilerControlItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialogs\HistogramCreatorWindowView.xaml.cs">
+      <DependentUpon>HistogramCreatorWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialogs\ProgressDialogView.xaml.cs">
       <DependentUpon>ProgressDialogView.xaml</DependentUpon>
@@ -196,6 +204,12 @@
     </Compile>
     <Compile Include="View\MainWindow\ROIObjectDisplayView.xaml.cs">
       <DependentUpon>ROIObjectDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\UtilityView\HistogramView.xaml.cs">
+      <DependentUpon>HistogramView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\UtilityView\UtilityView.xaml.cs">
+      <DependentUpon>UtilityView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Workspace\Workspace.cs" />
     <Compile Include="Workspace\WorkspaceItemCollection.cs" />
@@ -228,6 +242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomControls\TilerControlItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialogs\HistogramCreatorWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -264,6 +282,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainWindow\ROIObjectDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\UtilityView\HistogramView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow\UtilityView\UtilityView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -34,6 +34,22 @@ namespace RTDicomViewer.ViewModel.MainWindow
         public bool IsComputing { get { return _isComputing; } set { _isComputing = value; RaisePropertyChanged("SubtractCommand"); } }
         private bool _isComputing;
 
+        public RelayCommand<IDoseObject> DeleteDoseCommand => new RelayCommand<IDoseObject>(x =>
+        {
+            //TODO: Can't delete if it's involved in a calculation..
+            var result = MessageBox.Show("Are you sure you wish to delete this dose object?");
+            if (result == MessageBoxResult.Yes)
+            {
+                if (x is EgsDoseObject)
+                {
+                    MessengerInstance.Send(new RTObjectDeletedMessage<EgsDoseObject>((EgsDoseObject)x));
+                }else if(x is DicomDoseObject)
+                {
+                    MessengerInstance.Send(new RTObjectAddedMessage<DicomDoseObject>((DicomDoseObject)x));
+                }
+            }
+        });
+
         public ObservableCollection<LUTType> LUTTypes { get; set; }
 
         public RelayCommand SubtractCommand => new RelayCommand(() =>
@@ -51,7 +67,15 @@ namespace RTDicomViewer.ViewModel.MainWindow
             LUTTypes = new ObservableCollection<LUTType>() { LUTType.Contour, LUTType.Heat };
             MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this, x => AddNewDose(x.Value));
             MessengerInstance.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => AddNewDose(x.Value));
+            MessengerInstance.Register<RTObjectDeletedMessage<EgsDoseObject>>(this, x => RemoveDose(x.Value));
             MessengerInstance.Register<DoseRenderQualityChanged>(this, x => OnContourListChanged(x.Options.ContourInfo.ToList()));
+        }
+
+        public void RemoveDose(IDoseObject dose)
+        {
+            DoseGridWrapper wrapper = Doses.Where(b => b.Dose == dose).FirstOrDefault();
+            if (wrapper != null)
+                Doses.Remove(wrapper);
         }
 
         public void AddNewDose(IDoseObject dose)
@@ -161,8 +185,15 @@ namespace RTDicomViewer.ViewModel.MainWindow
                     return contourLUT;
                 case LUTType.Heat:
                     var heatLUT = new HeatLUT();
-                    heatLUT.Level = .5f;
-                    heatLUT.Window = 1;
+                    if (dose.Grid.ValueUnit == Unit.Gamma)
+                    {
+                        heatLUT.Level = .5f;
+                        heatLUT.Window = 1;
+                    }else
+                    {
+                        heatLUT.Level = 0.6f * dose.Grid.MaxVoxel.Value;
+                        heatLUT.Window = 0.8f * dose.Grid.MaxVoxel.Value;
+                    }
                     return heatLUT;
             }
             return null;
@@ -181,31 +212,10 @@ namespace RTDicomViewer.ViewModel.MainWindow
                 newDoseObject.Grid = math.Gamma(SelectedMathDose1.Dose.Grid, SelectedMathDose2.Dose.Grid);
                 //newDoseObject.Grid = math.Subtract(SelectedMathDose1.Dose.Grid, SelectedMathDose2.Dose.Grid);
             });
+            newDoseObject.Grid.ValueUnit = Unit.Gamma;
+            newDoseObject.Grid.Name = "Gamma Result";
             IsComputing = false;
-            this.AddNewDose(newDoseObject);
-
-            GridBasedVoxelDataStructure grid = (GridBasedVoxelDataStructure)newDoseObject.Grid;
-            int num = 0;
-            int total = 0;
-            for(int i = 0; i < grid.XCoords.Length; i++)
-            {
-                for(int j = 0; j < grid.YCoords.Length; j++)
-                {
-                    for(int k = 0; k < grid.ZCoords.Length; k++)
-                    {
-                        //if (ptv.ContainsPointNonInterpolated(grid.XCoords[i], grid.YCoords[j], grid.ZCoords[k]))
-                        //{
-                        var val = grid.Data[i, j, k];
-                        if(val >= 1)
-                             num++;
-                        if(val != -1)
-                            total++;
-                        //}
-                    }
-                }
-            }
-            MessageBox.Show("num: " + num + ", total:" + total);
-
+            MessengerInstance.Send<RTObjectAddedMessage<DicomDoseObject>>(new RTObjectAddedMessage<DicomDoseObject>(newDoseObject));
         }
     }
 }

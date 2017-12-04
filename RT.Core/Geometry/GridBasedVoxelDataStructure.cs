@@ -40,6 +40,7 @@ namespace RT.Core.Geometry
         /// Returned when the interpolation cannot find a value at the point
         /// </summary>
         public float DefaultPhysicalValue { get; set; }
+        public int NumberOfVoxels { get { return XCoords.Length * YCoords.Length * ZCoords.Length; } }
 
         public GridBasedVoxelDataStructure()
         {
