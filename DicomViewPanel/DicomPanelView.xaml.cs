@@ -53,7 +53,6 @@ namespace DicomPanel.Wpf
             this.Loaded += DicomPanelView_Loaded;
 
             this.SizeChanged += WorldViewControl_SizeChanged;
-            this.MouseWheel += DicomPanelView_MouseWheel;
         }
 
         private void DicomPanelView_Loaded(object sender, RoutedEventArgs e)

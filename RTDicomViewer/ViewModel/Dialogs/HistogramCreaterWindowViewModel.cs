@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using RT.Core.Dose;
 using RT.Core.Geometry;
 using RT.Core.Imaging;
@@ -20,7 +21,7 @@ namespace RTDicomViewer.ViewModel.Dialogs
         public ObservableCollection<SelectableObject<IVoxelDataStructure>> Data { get; set; }
         public ObservableCollection<RegionOfInterest> ROIs { get; set; }
 
-        public HistogramBuilder HistogramBuilder { get; set; }
+        public IHistogramBuilder HistogramBuilder { get; set; }
 
         public RegionOfInterest SelectedROI { get { return _selectedROI; } set { _selectedROI = value; RaisePropertyChanged("SelectedROI"); } }
         private RegionOfInterest _selectedROI { get; set; }
@@ -36,10 +37,11 @@ namespace RTDicomViewer.ViewModel.Dialogs
         });
 
 
-        public HistogramCreaterWindowViewModel()
+        public HistogramCreaterWindowViewModel(IHistogramBuilder histogramBuilder)
         {
             Data = new ObservableCollection<SelectableObject<IVoxelDataStructure>>();
             ROIs = new ObservableCollection<RegionOfInterest>();
+            HistogramBuilder = histogramBuilder;
 
             SelectedData = new List<IVoxelDataStructure>();
 
@@ -61,10 +63,9 @@ namespace RTDicomViewer.ViewModel.Dialogs
 
         public async void BuildHistograms()
         {
-            var builder = new HistogramBuilder();
-            builder.UseROI = this.LimitHistograms && SelectedROI != null;
-            builder.ROI = this.SelectedROI;
-            var histograms = await builder.FromGrids(SelectedData);
+            HistogramBuilder.UseROI = this.LimitHistograms && SelectedROI != null;
+            HistogramBuilder.ROI = this.SelectedROI;
+            var histograms = await HistogramBuilder.FromGrids(SelectedData);
             MessengerInstance.Send(new AddHistogramsMessage(histograms));
         }
 

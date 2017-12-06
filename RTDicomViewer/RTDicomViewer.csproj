@@ -139,6 +139,7 @@
     <Compile Include="Converters\ContourTypeConverter.cs" />
     <Compile Include="Converters\DicomColorConverter.cs" />
     <Compile Include="IO\FileOpener.cs" />
+    <Compile Include="IO\IFileOpener.cs" />
     <Compile Include="Message\AddHistogramsMessage.cs" />
     <Compile Include="Message\DoseObjectRenderMessage.cs" />
     <Compile Include="Message\DoseRenderQualityChanged.cs" />
@@ -152,12 +153,15 @@
     <Compile Include="Utilities\DoseRenderOptions.cs" />
     <Compile Include="Utilities\DoseRenderType.cs" />
     <Compile Include="Utilities\HistogramBuilder.cs" />
+    <Compile Include="Utilities\IHistogramBuilder.cs" />
     <Compile Include="Utilities\LUTType.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
     <Compile Include="Utilities\SelectableObject.cs" />
     <Compile Include="Utilities\SelectableObjectEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\HistogramCreaterWindowViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\IProgressService.cs" />
     <Compile Include="ViewModel\Dialogs\ProgressDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\ProgressItem.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\AnalyseDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\DoseObjectDisplayViewModel.cs" />
@@ -178,6 +182,7 @@
     <Compile Include="View\Dialogs\HistogramCreatorWindowView.xaml.cs">
       <DependentUpon>HistogramCreatorWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Dialogs\IProgressView.cs" />
     <Compile Include="View\Dialogs\ProgressDialogView.xaml.cs">
       <DependentUpon>ProgressDialogView.xaml</DependentUpon>
     </Compile>

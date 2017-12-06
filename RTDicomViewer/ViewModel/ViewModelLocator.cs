@@ -15,6 +15,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using RTDicomViewer.Utilities;
+using RTDicomViewer.View.Dialogs;
 using RTDicomViewer.ViewModel.Dialogs;
 using RTDicomViewer.ViewModel.MainWindow;
 using RTDicomViewer.ViewModel.MainWindow.UtilityView;
@@ -54,6 +56,9 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<PlanViewModel>();
             SimpleIoc.Default.Register<HistogramCreaterWindowViewModel>();
             SimpleIoc.Default.Register<HistogramViewModel>();
+            SimpleIoc.Default.Register<IProgressService, ProgressDialogViewModel>();
+            SimpleIoc.Default.Register<IHistogramBuilder, HistogramBuilder>();
+            SimpleIoc.Default.Register<IProgressView, ProgressDialogView>();
         }
 
         public MainViewModel Main
@@ -125,6 +130,14 @@ namespace RTDicomViewer.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<HistogramViewModel>();
+            }
+        }
+
+        public ProgressDialogViewModel ProgressDialogViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ProgressDialogViewModel>();
             }
         }
 

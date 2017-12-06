@@ -8,7 +8,7 @@ namespace RT.Core.Eval
 {
     public class GridMath
     {
-        public IVoxelDataStructure Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated)
+        public IVoxelDataStructure Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress)
         {
             float distTol = 2;//mm
             float doseTol = 2;//%
@@ -19,7 +19,7 @@ namespace RT.Core.Eval
 
             var newGrid = CreateBlank(reference);
             //Create a sorted list of offsets with a certain diameter and step size
-            var offsets = CreateOffsets(10, distTol/15);
+            var offsets = CreateOffsets(10, distTol/10);
 
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
@@ -87,6 +87,7 @@ namespace RT.Core.Eval
 
                     }
                 }
+                progress.Report((int)(100*((double)i / (double)newGrid.XCoords.Length)));
             }
 
             return newGrid;

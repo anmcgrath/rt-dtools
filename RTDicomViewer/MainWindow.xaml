@@ -87,14 +87,14 @@
             </TabControl>
 
             <Grid Grid.Column="2" Grid.Row="1">
-                
+
                 <cc:TileControl Margin="5 0 0 0">
                     <cc:TileControl.TopLeft>
                         <cc:TilerControlItem>
                             <dcm:DicomPanelView Model="{Binding DataContext.AxialPanelModel, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}, Mode=FindAncestor}}"/>
                         </cc:TilerControlItem>
                     </cc:TileControl.TopLeft>
-                    
+
                     <cc:TileControl.TopRight>
                         <cc:TilerControlItem>
                             <dcm:DicomPanelView Model="{Binding DataContext.CoronalPanelModel, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}, Mode=FindAncestor}}"/>
@@ -112,8 +112,8 @@
                             <util:UtilityView/>
                         </cc:TilerControlItem>
                     </cc:TileControl.BottomRight>
-                    
-                    
+
+
 
                 </cc:TileControl>
 

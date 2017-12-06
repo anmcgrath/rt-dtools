@@ -1,8 +1,11 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using RT.Core.Geometry;
 using RT.Core.ROIs;
 using RT.Core.Utilities.RTMath;
 using RTDicomViewer.Message;
+using RTDicomViewer.ViewModel.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,52 +15,72 @@ using System.Windows.Threading;
 
 namespace RTDicomViewer.Utilities
 {
-    public class HistogramBuilder
+    public class HistogramBuilder:ViewModelBase,IHistogramBuilder
     {
         public bool AutomaticMinMax { get; set; } = true;
         public int BinCount { get; set; } = 15;
-        public float Max { get; set; } = 10;
-        public float Min { get; set; } = 0;
+        public float Max { get { return _max; } set { _max = value; RaisePropertyChanged("Max"); } }
+        private float _max = 10;
+        public float Min { get { return _min; } set { _min = value; RaisePropertyChanged("Min"); } }
+        private float _min = 0;
         public RegionOfInterest ROI { get; set; }
         public bool UseROI { get; set; }
+        private IProgressService progressService;
+
+        public HistogramBuilder(IProgressService progress)
+        {
+            progressService = progress;
+        }
 
         public async Task<List<Histogramf>> FromGrids(IEnumerable<IVoxelDataStructure> grids)
         {
-            Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this, Progress.Begin, 0, true, "Creating Histogram"));
+            //Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this, Progress.Begin, 0, false, "Creating Histogram"));
+            var progressItem = progressService.CreateNew("Creating Histogram(s)...", false);
+
+            var progress = new Progress<int>(x => { progressItem.ProgressAmount = (x) / grids.Count(); });
             List<Histogramf> histograms = new List<Histogramf>();
             await Task.Run(()
             =>
             {
-                histograms = buildHistograms(grids);
+                histograms = buildHistograms(grids, progress);
             });
-            Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this, Progress.End, "Creating Histogram"));
+            progressService.End(progressItem);
+
             return histograms;
         }
 
-        private List<Histogramf> buildHistograms(IEnumerable<IVoxelDataStructure> grids)
+        private List<Histogramf> buildHistograms(IEnumerable<IVoxelDataStructure> grids, IProgress<int> progress)
         {
             if (AutomaticMinMax)
                 SetMinMax(grids);
 
             List<Histogramf> histograms = new List<Histogramf>();
             foreach (var grid in grids)
-                histograms.Add(buildHistogram(grid));
+                histograms.Add(buildHistogram(grid, progress));
             
             return histograms;
         }
 
-        private Histogramf buildHistogram(IVoxelDataStructure grid)
+        private Histogramf buildHistogram(IVoxelDataStructure grid, IProgress<int> progress)
         {
             Histogramf histogram = new Histogramf(Min, Max, BinCount);
 
+            int numberOfVoxels = grid.NumberOfVoxels;
+            int updateNumber = numberOfVoxels / 20;
+            int voxelNum = 0;
             foreach(Voxel voxel in grid)
             {
+                voxelNum++;
                 if (!(grid.ValueUnit == Unit.Gamma && voxel.Value == -1))
                 {
                     if (UseROI && ROI.ContainsPointNonInterpolated(voxel.Position))
                         histogram.AddDataPoint(voxel.Value * grid.Scaling);
                     else if (!UseROI)
                         histogram.AddDataPoint(voxel.Value * grid.Scaling);
+                }
+                if (voxelNum % updateNumber == 0)
+                {
+                    progress.Report((int)(100 * ((double)voxelNum / (double)numberOfVoxels)));
                 }
             }
             return histogram;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using RTDicomViewer.ViewModel.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +19,17 @@ namespace RTDicomViewer.View.Dialogs
     /// <summary>
     /// Interaction logic for ProgressDialogView.xaml
     /// </summary>
-    public partial class ProgressDialogView : Window
+    public partial class ProgressDialogView : Window, IProgressView
     {
+
         public ProgressDialogView()
         {
             InitializeComponent();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }

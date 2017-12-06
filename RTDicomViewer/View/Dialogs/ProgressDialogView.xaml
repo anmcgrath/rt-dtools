@@ -6,19 +6,17 @@
         xmlns:local="clr-namespace:RTDicomViewer.View.Dialogs"
         xmlns:vm="clr-namespace:RTDicomViewer.ViewModel.Dialogs"
         mc:Ignorable="d"
-         WindowStyle="None" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" BorderBrush="DimGray" BorderThickness="1"  Height="60" Width="380" Style="{StaticResource {x:Type Window}}" SizeToContent="Height" Background="#333333">
-    <Window.DataContext>
-        <vm:ProgressDialogViewModel/>
-    </Window.DataContext>
+         WindowStyle="None" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Height="60" Width="380" SizeToContent="Height" MouseDown="Window_MouseDown" Visibility="{Binding Visibility}" >
     <StackPanel>
-        <ItemsControl ItemsSource="{Binding ObjectProgressStatuses}">
+        <ItemsControl ItemsSource="{Binding ObjectProgressItems}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <WrapPanel Margin="4">
-                        <TextBlock Foreground="Gray" Margin="2" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Title}"/>
-                        <ProgressBar Margin="2" Value="{Binding CumulativeProgressAmount}" IsIndeterminate="{Binding IsIndeterminate}" Height="22" Width="182"/>
-                        <Button Width="70" Margin="2" IsEnabled="False">Cancel</Button>
-                    </WrapPanel>
+                    <GroupBox Header="{Binding Title}">
+                        <WrapPanel Margin="4">
+                            <ProgressBar Margin="2" Value="{Binding ProgressAmount}" IsIndeterminate="{Binding IsIndeterminate}" Height="22" Width="262"/>
+                            <Button Width="70" Margin="2" IsEnabled="False">Cancel</Button>
+                        </WrapPanel>
+                    </GroupBox>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

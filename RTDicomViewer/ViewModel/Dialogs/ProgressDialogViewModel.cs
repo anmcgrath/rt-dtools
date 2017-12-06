@@ -1,60 +1,44 @@
-﻿using RTDicomViewer.Message;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using RTDicomViewer.Message;
+using RTDicomViewer.View.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace RTDicomViewer.ViewModel.Dialogs
 {
-    public class ProgressDialogViewModel
+    public class ProgressDialogViewModel:ViewModelBase,IProgressService
     {
-        public ObservableCollection<ObjectProgressStatus> ObjectProgressStatuses { get; set; }
+        public ObservableCollection<ProgressItem> ObjectProgressItems { get; set; }
+        public IProgressView View;
 
-        public ProgressDialogViewModel()
+        public ProgressDialogViewModel(IProgressView view)
         {
-            ObjectProgressStatuses = new ObservableCollection<ObjectProgressStatus>();
+            ObjectProgressItems = new ObservableCollection<ProgressItem>();
+            View = view;
         }
 
-        public void Apply(ProgressMessage msg)
+        public ProgressItem CreateNew(string title, bool isIndeterminate)
         {
-            var ops = ObjectProgressStatuses.Where((x) => { return x.Object == msg.Sender; }).FirstOrDefault();
-            if(ops == null)
-            {
-                if(msg.ProgressType == Progress.Begin)
-                {
-                    var newOps = new ObjectProgressStatus(msg.Sender);
-                    newOps.IsIndeterminate = msg.IsIndeterminate;
-                    newOps.CumulativeProgressAmount = msg.ProgressValue;
-                    newOps.Title = msg.Title;
-                    ObjectProgressStatuses.Add(newOps);
-                }
-            }else
-            {
-                if(msg.ProgressType == Progress.End)
-                {
-                    ObjectProgressStatuses.Remove(ops);
-                    ops = null;
-                }else if(msg.ProgressType == Progress.Progress)
-                {
-                    ops.CumulativeProgressAmount = msg.ProgressValue;
-                    ops.Title = msg.Title;
-                    ops.IsIndeterminate = msg.IsIndeterminate;
-                }
-            }
+            ProgressItem item = new ProgressItem();
+            item.Title = title;
+            item.IsIndeterminate = isIndeterminate;
+            ObjectProgressItems.Add(item);
+            View?.Show();
+            return item; 
         }
-    }
 
-    public class ObjectProgressStatus
-    {
-        public object Object;
-        public double CumulativeProgressAmount { get; set; }
-        public string Title { get; set; }
-        public bool IsIndeterminate { get; set; }
-        public ObjectProgressStatus(object obj)
+        public void End(ProgressItem item)
         {
-            Object = obj;
+            ObjectProgressItems.Remove(item);
+            if (ObjectProgressItems.Count == 0)
+                View?.Hide();
         }
+
     }
 }

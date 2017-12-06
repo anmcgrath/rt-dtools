@@ -1,4 +1,7 @@
-﻿using RTDicomViewer.ViewModel;
+﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
+using RTDicomViewer.View.Dialogs;
+using RTDicomViewer.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +26,7 @@ namespace RTDicomViewer
     {
         public MainWindow()
         {
+            DispatcherHelper.Initialize();
             InitializeComponent();
             this.Closed += MainWindow_Closed;
             this.Loaded += MainWindow_Loaded;
@@ -30,8 +34,7 @@ namespace RTDicomViewer
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            MainViewModel dc = (MainViewModel)DataContext;
-            dc.progressDialogView.Owner = this;
+            SimpleIoc.Default.GetInstance<IProgressView>().Owner = this;
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)

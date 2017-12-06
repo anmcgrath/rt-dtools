@@ -13,7 +13,7 @@
     </UserControl.DataContext>
     <Grid Background="Black"
           x:Name="Grid"
-          Mouse.MouseWheel="DicomPanelView_MouseWheel"
+          MouseWheel="DicomPanelView_MouseWheel"
           Mouse.MouseDown="DicomPanelView_MouseDown"
           Mouse.MouseMove="DicomPanelView_MouseMove"
           Mouse.MouseUp="DicomPanelView_MouseUp"

@@ -1,4 +1,5 @@
 ﻿using Autodesk.Maya;
+using GalaSoft.MvvmLight.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -16,7 +17,7 @@ namespace RTDicomViewer
     {
         public void App_Startup(object sender, StartupEventArgs args)
         {
-            MayaTheme.Initialize(this);
+            
         }
     }
 }

@@ -24,6 +24,7 @@ using DicomPanel.Core;
 using RTDicomViewer.Utilities;
 using System.Linq;
 using System.Collections.Generic;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace RTDicomViewer.ViewModel
 {
@@ -107,22 +108,6 @@ namespace RTDicomViewer.ViewModel
                 CoronalPanelModel.SetPrimaryImage(null);
             });
 
-            //When a dose is selected, render it
-            MessengerInstance.Register<DoseObjectRenderMessage>(this, x =>
-            {
-                if (x.RemoveDose)
-                {
-                    AxialPanelModel.RemoveDose(x.DoseObject);
-                    SagittalPanelModel.RemoveDose(x.DoseObject);
-                    CoronalPanelModel.RemoveDose(x.DoseObject);
-                }
-                else
-                {
-                    AxialPanelModel.AddDose(x.DoseObject);
-                    SagittalPanelModel.AddDose(x.DoseObject);
-                    CoronalPanelModel.AddDose(x.DoseObject);
-                }
-            });
             MessengerInstance.Register<ROIsObjectRenderMessage>(this, x =>
             {
                 AxialPanelModel.AddROIs(x.AddedRois);
@@ -144,38 +129,16 @@ namespace RTDicomViewer.ViewModel
                 ChangeDoseRenderOptions(x.Options);
             });
 
-            //Handle showing or closing loading dialog windows below
-            MessengerInstance.Register<ProgressMessage>(this, HandleProgressMessage);
-
             Workspace.Workspace.Current.Axial = AxialPanelModel;
             Workspace.Workspace.Current.Coronal = CoronalPanelModel;
             Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
-        }
 
-        private ProgressDialogViewModel progressDialogViewModel = new ProgressDialogViewModel();
-        public ProgressDialogView progressDialogView = new ProgressDialogView();
-        public void HandleProgressMessage(ProgressMessage message)
-        {
-            if (progressDialogView.DataContext != progressDialogViewModel)
-                progressDialogView.DataContext = progressDialogViewModel;
-
-            progressDialogViewModel.Apply(message);
-
-            if(message.ProgressType == Progress.Begin)
-            {
-                progressDialogView.Show();
-            }
-            if (message.ProgressType == Progress.End && progressDialogViewModel.ObjectProgressStatuses.Count == 0)
-            {
-                progressDialogView.Hide();
-            }
+            SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
         }
 
         public void OnClose()
         {
             MessengerInstance.Unregister(this);
-            progressDialogView.Close();
-            progressDialogView = null;
         }
 
         public void OpenDoseStatistics()

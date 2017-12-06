@@ -8,11 +8,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Ioc;
+using RTDicomViewer.ViewModel.Dialogs;
 
 namespace RTDicomViewer.IO
 {
     public class FileOpener
     {
+        public FileOpener(IProgressService progressService)
+        {
+
+        }
+
         /// <summary>
         /// Opens a file dialog window and opens a DICOM file
         /// </summary>
@@ -26,7 +33,8 @@ namespace RTDicomViewer.IO
             if(openFileDialog.ShowDialog() == true)
             {
                 T openedObject = default(T);
-                Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this,Progress.Begin,"Loading " + typeof(T) + "..." ));
+                var progressService = SimpleIoc.Default.GetInstance<IProgressService>();
+                var pi = progressService.CreateNew("Loading File...", true);
 
                 await Task.Run(async () =>
                 {
@@ -41,7 +49,7 @@ namespace RTDicomViewer.IO
                 if (openedObject != null)
                     Messenger.Default.Send(new RTDicomViewer.Message.RTObjectAddedMessage<T>(openedObject));
 
-                Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this,Progress.End, "Loading Complete."));
+                progressService.End(pi);
             }
         }
 
