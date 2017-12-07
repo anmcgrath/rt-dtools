@@ -8,15 +8,18 @@ using Dicom;
 
 namespace RT.Core.IO.Loaders
 {
-    public class DicomImageLoader
+    public class DicomImageLoader:BaseDicomLoader
     {
-        public void Load(DicomFile[] files, DicomImageObject dicomObject)
+        public void Load(DicomFile[] files, DicomImageObject dicomObject, IProgress<double> progress)
         {
+            base.Load(files, dicomObject, progress);
+
             var gridLoader = new GridBasedStructureDicomLoader();
-            dicomObject.Grid = gridLoader.Load(files);
+            dicomObject.Grid = gridLoader.Load(files, progress);
             dicomObject.Grid.DefaultPhysicalValue = -1024;
             dicomObject.Grid.Scaling = 1;
             dicomObject.Grid.ValueUnit = Geometry.Unit.HU;
+            dicomObject.Grid.Name = dicomObject.Modality + ": " + dicomObject.PatientName;
 
             try
             {

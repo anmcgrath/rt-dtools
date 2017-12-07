@@ -12,7 +12,7 @@ namespace RT.Core.IO.Loaders
     public class EgsDoseLoader
     {
 
-        public EgsDoseObject Load(string fileName, EgsDoseObject doseObject)
+        public EgsDoseObject Load(string fileName, EgsDoseObject doseObject, IProgress<double> progress)
         {
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
             doseObject.Name = Path.GetFileName(fileName);
@@ -35,7 +35,8 @@ namespace RT.Core.IO.Loaders
                 fillCoords(grid.YCoords, SizeY, reader);
                 fillCoords(grid.ZCoords, SizeZ, reader);
 
-                for (int i = 0; i < SizeX * SizeY * SizeZ; i++)
+                int Size = SizeX * SizeY * SizeZ;
+                for (int i = 0; i < Size; i++)
                 {
                     int indexX = i % SizeX;
                     int indexZ = (int)(i / (SizeX * SizeY));
@@ -57,6 +58,9 @@ namespace RT.Core.IO.Loaders
                         grid.MinVoxel.Position.Y = grid.XCoords[indexY];
                         grid.MinVoxel.Position.Z = grid.XCoords[indexZ];
                     }
+                    //only report progress every 5%.
+                    if(i%(Size/20)==0)
+                        progress.Report(100*(double)i / (double)(Size));
                 }
             }
             grid.XRange = new Range((double)grid.XCoords[0], (double)grid.XCoords[grid.XCoords.Length-1]);

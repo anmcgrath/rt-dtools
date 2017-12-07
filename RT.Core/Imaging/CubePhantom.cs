@@ -37,6 +37,7 @@ namespace RT.Core.Imaging
                 grid.ZCoords[i] = grid.ZRange.Minimum + i * zSpacing;
             grid.GridSpacing = new Utilities.RTMath.Point3d(xSpacing, ySpacing, zSpacing);
             this.Grid = grid;
+            this.Grid.Name = "Cube Phantom";
 
         }
     }

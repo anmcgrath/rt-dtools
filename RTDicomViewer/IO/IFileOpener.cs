@@ -12,5 +12,6 @@ namespace RTDicomViewer.IO
         void BeginOpenEgsDoseAsync();
         void BeginOpenStructuresAsync();
         void BeginOpenImagesAsync();
+        void BeginOpenDicomPlanAsync();
     }
 }

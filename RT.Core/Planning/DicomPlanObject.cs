@@ -15,11 +15,6 @@ namespace RT.Core.Planning
         public string Name { get; set; }
         public string Label { get; set; }
         public double TotalMU { get { double total = 0; foreach (Beam beam in Beams) { total += beam.MU; } return total; } }
-        public DicomPlanObject(params DicomFile[] files):base(files)
-        {
-            Beams = new List<Beam>();
-            var loader = new PlanLoader();
-            loader.Load(files, this);
-        }
+        public DicomPlanObject() { }
     }
 }

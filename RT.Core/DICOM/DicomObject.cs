@@ -23,10 +23,5 @@ namespace RT.Core.DICOM
         public string StudyDescription { get; set; }
 
         public DicomObject() { }
-        public DicomObject(params DicomFile[] files)
-        {
-            var loader = new BaseDicomLoader();
-            loader.Load(files, this);
-        }
     }
 }

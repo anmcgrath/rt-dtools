@@ -34,20 +34,21 @@ namespace RTDicomViewer.ViewModel
         public DicomPanelModel AxialPanelModel { get; set; }
         public DicomPanelModel CoronalPanelModel { get; set; }
         public DicomPanelModel SagittalPanelModel { get; set; }
+        private IFileOpener FileOpener { get; set; }
 
         public ToolBox ToolBox = new ToolBox();
 
         public RelayCommand OpenImageCommand => new RelayCommand(
-            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomImageObject>(true, "Open DICOM Images"); });
+            () => { FileOpener.BeginOpenImagesAsync(); });
 
         public RelayCommand OpenDicomDoseCommand => new RelayCommand(
-            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomDoseObject>(false, "Open DICOM Dose"); });
+            () => { FileOpener.BeginOpenDicomDoseAsync(); });
 
         public RelayCommand OpenEgsDoseCommand => new RelayCommand(
-            () => { var fo = new FileOpener(); fo.BeginOpenEgsAsync(); });
+            () => { FileOpener.BeginOpenEgsDoseAsync(); });
 
         public RelayCommand OpenStructureSetCommand => new RelayCommand(
-            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<StructureSet>(false, "Open Structure Set"); });
+            () => { FileOpener.BeginOpenStructuresAsync(); });
 
         public RelayCommand OpenDoseStatisticsCommand => new RelayCommand(
             () => { OpenDoseStatistics(); });
@@ -56,7 +57,7 @@ namespace RTDicomViewer.ViewModel
             () => { CreateCubePhantom(); });
 
         public RelayCommand OpenDicomPlanCommand => new RelayCommand(
-            () => { var fo = new FileOpener(); fo.BeginOpenDicomAsync<DicomPlanObject>(false, "Open RT Plan"); });
+            () => { FileOpener.BeginOpenDicomPlanAsync(); });
 
         public RelayCommand CreateNewPOICommand => new RelayCommand(
             () => { CreateNewPOI(); });
@@ -71,9 +72,10 @@ namespace RTDicomViewer.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel()
+        public MainViewModel(IFileOpener fileOpener)
         {
             Workspace.Workspace.Init();
+            FileOpener = fileOpener;
 
             AxialPanelModel = new DicomPanelModel();
             AxialPanelModel.Camera.SetAxial();

@@ -20,6 +20,8 @@ namespace RT.Core.Utilities.RTMath
 
         private void init(float min, float max, int numberOfBins)
         {
+            if (min == max)
+                numberOfBins = 1;
             Counts = new int[numberOfBins];
             Min = min;
             Max = max;
@@ -54,7 +56,10 @@ namespace RT.Core.Utilities.RTMath
 
         private int getBinNumber(float dataPoint)
         {
-            return (int)(((dataPoint - Min) / (Max - Min)) * (Counts.Length - 1));
+            if (Max == Min)
+                return 0;
+            else
+                return (int)(((dataPoint - Min) / (Max - Min)) * (Counts.Length - 1));
         }
 }
 }

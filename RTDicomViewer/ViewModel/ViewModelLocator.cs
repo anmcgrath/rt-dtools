@@ -15,6 +15,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using RTDicomViewer.IO;
 using RTDicomViewer.Utilities;
 using RTDicomViewer.View.Dialogs;
 using RTDicomViewer.ViewModel.Dialogs;
@@ -59,6 +60,7 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<IProgressService, ProgressDialogViewModel>();
             SimpleIoc.Default.Register<IHistogramBuilder, HistogramBuilder>();
             SimpleIoc.Default.Register<IProgressView, ProgressDialogView>();
+            SimpleIoc.Default.Register<IFileOpener, FileOpener>();
         }
 
         public MainViewModel Main

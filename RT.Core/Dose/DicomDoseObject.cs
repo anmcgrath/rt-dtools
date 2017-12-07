@@ -17,12 +17,6 @@ namespace RT.Core.Dose
         //Change this to proper normalisation
         public double NormalisationIsodose = 100;
 
-        public DicomDoseObject(params DicomFile[] files):base(files)
-        {
-            var loader = new DicomDoseLoader();
-            loader.Load(files, this);
-        }
-
         public DicomDoseObject() { }
 
         public float GetNormalisationAmount()

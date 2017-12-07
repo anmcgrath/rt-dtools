@@ -17,10 +17,5 @@ namespace RT.Core.Imaging
         public ILUT LUT { get; set; } = new GrayScaleLUT();
 
         public DicomImageObject() { }
-        public DicomImageObject(params DicomFile[] files):base(files)
-        {
-            var loader = new DicomImageLoader();
-            loader.Load(files,this);
-        }
     }
 }

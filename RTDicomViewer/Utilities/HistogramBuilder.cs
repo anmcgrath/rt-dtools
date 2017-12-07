@@ -37,7 +37,7 @@ namespace RTDicomViewer.Utilities
             //Messenger.Default.Send<ProgressMessage>(new ProgressMessage(this, Progress.Begin, 0, false, "Creating Histogram"));
             var progressItem = progressService.CreateNew("Creating Histogram(s)...", false);
 
-            var progress = new Progress<int>(x => { progressItem.ProgressAmount = (x) / grids.Count(); });
+            var progress = new Progress<int>(x => { progressItem.ProgressAmount = (x); });
             List<Histogramf> histograms = new List<Histogramf>();
             await Task.Run(()
             =>
@@ -55,8 +55,12 @@ namespace RTDicomViewer.Utilities
                 SetMinMax(grids);
 
             List<Histogramf> histograms = new List<Histogramf>();
+            //Grid number solely for reporting progress
+
             foreach (var grid in grids)
+            {
                 histograms.Add(buildHistogram(grid, progress));
+            }
             
             return histograms;
         }
@@ -66,6 +70,7 @@ namespace RTDicomViewer.Utilities
             Histogramf histogram = new Histogramf(Min, Max, BinCount);
 
             int numberOfVoxels = grid.NumberOfVoxels;
+            //Only report every 5%
             int updateNumber = numberOfVoxels / 20;
             int voxelNum = 0;
             foreach(Voxel voxel in grid)

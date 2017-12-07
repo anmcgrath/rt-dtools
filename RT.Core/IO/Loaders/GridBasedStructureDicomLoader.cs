@@ -13,7 +13,7 @@ namespace RT.Core.IO.Loaders
 {
     public class GridBasedStructureDicomLoader
     {
-        public GridBasedVoxelDataStructure Load(DicomFile[] dicomFiles)
+        public GridBasedVoxelDataStructure Load(DicomFile[] dicomFiles, IProgress<double> progress)
         {
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
             DicomFile[] files = SortOnZIncreasing(dicomFiles);
@@ -68,7 +68,10 @@ namespace RT.Core.IO.Loaders
                             grid.MinVoxel.Position.Y = grid.YCoords[currYIndex];
                             grid.MinVoxel.Position.Z = grid.ZCoords[currZIndex];
                         }
+
                     }
+
+                    progress.Report(100 * ((((double)j / (double)tempHeaderInfo.GridFrameOffsetVector.Length) / files.Length) + ((double)i / (double)files.Length)));
                 }
             }
             grid.XRange = new Range(grid.XCoords[0], grid.XCoords[grid.XCoords.Length - 1]);

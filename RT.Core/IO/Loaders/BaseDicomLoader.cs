@@ -12,7 +12,7 @@ namespace RT.Core.IO.Loaders
     public class BaseDicomLoader
     {
         public BaseDicomLoader() { }
-        public void Load(DicomFile[] files, DicomObject dicomObject)
+        protected void Load(DicomFile[] files, DicomObject dicomObject, IProgress<double> progress)
         {
             dicomObject.FileNames = new string[files.Length];
             for(int i = 0; i < files.Length; i++)

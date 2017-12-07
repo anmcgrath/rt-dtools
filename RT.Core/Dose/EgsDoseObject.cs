@@ -15,11 +15,7 @@ namespace RT.Core.Dose
         public string Name { get; set; }
         public IVoxelDataStructure Grid { get; set; }
 
-        public EgsDoseObject(string file)
-        {
-            var loader = new EgsDoseLoader();
-            loader.Load(file, this);
-        }
+        public EgsDoseObject() { }
 
         public float GetNormalisationAmount()
         {

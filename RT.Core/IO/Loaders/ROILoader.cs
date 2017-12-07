@@ -7,10 +7,11 @@ using System.Collections.Generic;
 
 namespace RT.Core.IO.Loaders
 {
-    public class ROILoader
+    public class ROILoader:BaseDicomLoader
     {
-        public void Load(DicomFile[] files, StructureSet structureSet)
+        public void Load(DicomFile[] files, StructureSet structureSet, IProgress<double> progress)
         {
+            base.Load(files, structureSet, progress);
             DicomFile file = files[0];
 
             structureSet.Name = file.Dataset.Get<string>(DicomTag.StructureSetLabel, "");
@@ -25,8 +26,16 @@ namespace RT.Core.IO.Loaders
             List<RegionOfInterest> rois = new List<RegionOfInterest>();
 
             DicomSequence s = file.Dataset.Get<DicomSequence>(DicomTag.ROIContourSequence);
+
+            //Track the item number to report progress
+            double total = s.Items.Count;
+            double num = 0;
+
             foreach (DicomDataset item in s.Items)
             {
+                num++;
+                progress.Report(100 * num / total);
+
                 RegionOfInterest roi = new RegionOfInterest();
                 int[] color = item.Get<int[]>(DicomTag.ROIDisplayColor,new int[] { 0, 0, 0 });
                 roi.Color = DicomColor.FromRgb(color[0],color[1],color[2]);
@@ -45,6 +54,7 @@ namespace RT.Core.IO.Loaders
                 }
 
                 double xmin = double.MaxValue, ymin = double.MaxValue, zmin = double.MaxValue, xmax = double.MinValue, ymax = double.MinValue, zmax = double.MinValue;
+
 
                 foreach (DicomDataset contourSlice in roi_definitions.Items)
                 {
