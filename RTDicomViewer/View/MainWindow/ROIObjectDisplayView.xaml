@@ -13,14 +13,14 @@
         <c:DicomColorConverter x:Key="dicomColorConverter"/>
         <c:ContourTypeConverter x:Key="contourTypeConverter"/>
     </UserControl.Resources>
-    <TreeView Style="{StaticResource {x:Type TreeView}}" ItemsSource="{Binding StructureSets}">
+    <TreeView MinHeight="180" Style="{StaticResource {x:Type TreeView}}" ItemsSource="{Binding StructureSets}">
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                 <WrapPanel>
                     <Image Margin="0 0 3 0" Width="15" Height="15" Source="{Binding Value.Type,Converter={StaticResource contourTypeConverter}}"/>
                     <CheckBox Margin="0" Content="{Binding Value.Name}" CommandParameter="{Binding .}" IsChecked="{Binding IsSelected}"  BorderThickness="1">
                         <CheckBox.BorderBrush>
-                            <SolidColorBrush Color="{Binding Value.Color,Converter={StaticResource dicomColorConverter}}"/>
+                            <SolidColorBrush Color="{Binding Value.Color,Converter={StaticResource dicomColorConverter},FallbackValue=Black}"/>
                         </CheckBox.BorderBrush>
                     </CheckBox>
                 </WrapPanel>
@@ -28,6 +28,7 @@
         </TreeView.ItemTemplate>
         <TreeView.ItemContainerStyle>
             <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                <Setter Property="IsExpanded" Value="True"/>
                 <!--<Setter Property="ContextMenu" Value="{StaticResource DoseContextMenu}"/>-->
             </Style>
         </TreeView.ItemContainerStyle>

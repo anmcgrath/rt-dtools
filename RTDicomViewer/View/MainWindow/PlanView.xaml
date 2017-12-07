@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding PlanDisplay, Source={StaticResource Locator}}">
-    <StackPanel>
+    <StackPanel IsEnabled="False">
         <GroupBox Header="Beam">
             <StackPanel>
                 <ListView Height="120" ItemsSource="{Binding Beams}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedBeam}">

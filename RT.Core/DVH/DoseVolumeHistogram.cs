@@ -22,6 +22,17 @@ namespace RT.Core.DVH
             DoseObject = dose;
             ROIObject = roi;
             NBins = nbins;
+
+            Dose = new float[NBins];
+            for(int i = 0; i < Dose.Length; i++)
+            {
+                Dose[i] = i;
+            }
+            CumulativeVolume = new float[NBins];
+            for(int i = 0; i < Dose.Length; i++)
+            {
+                CumulativeVolume[i] = 1;
+            }
         }
 
         public void Compute()

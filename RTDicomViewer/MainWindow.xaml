@@ -32,7 +32,7 @@
             <MenuItem Header="Edit">
                 <MenuItem Header="Insert cube phantom..." Command="{Binding CreateCubePhantomCommand}"/>
                 <MenuItem Header="Insert new POI..." Command="{Binding CreateNewPOICommand}"/>
-                <MenuItem Header="Insert new Beam..." Command="{Binding CreateNewBeamCommand}"/>
+                <MenuItem Header="Insert new Beam..." Command="{Binding CreateNewBeamCommand}" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Dose statistics..." Command="{Binding OpenDoseStatisticsCommand}"/>
@@ -61,12 +61,12 @@
                 <TabItem Header="Structures">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <Expander Header="POIs" ScrollViewer.VerticalScrollBarVisibility="Visible" IsExpanded="True">
-                                <mv:POIObjectDisplayView/>
-                            </Expander>
-                            <Expander Header="Structure sets" ScrollViewer.VerticalScrollBarVisibility="Visible" IsExpanded="True">
+                            <GroupBox Header="Structure sets" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                 <mv:ROIObjectDisplayView/>
-                            </Expander>
+                            </GroupBox>
+                            <GroupBox Header="POIs" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <mv:POIObjectDisplayView/>
+                            </GroupBox>
                         </StackPanel>
                     </ScrollViewer>
                 </TabItem>

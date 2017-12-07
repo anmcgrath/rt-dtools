@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding POIDisplay, Source={StaticResource Locator}}">
-    <ListView ItemsSource="{Binding PointsOfInterest}" >
+    <ListView ItemsSource="{Binding PointsOfInterest}" MinHeight="180" >
         <ListView.ItemTemplate>
             <DataTemplate>
                 <WrapPanel>

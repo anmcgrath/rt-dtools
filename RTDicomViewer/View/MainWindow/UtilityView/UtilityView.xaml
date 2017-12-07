@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow.UtilityView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <local:HistogramView>
+    <local:DVHView>
         
-    </local:HistogramView>
+    </local:DVHView>
 </UserControl>
