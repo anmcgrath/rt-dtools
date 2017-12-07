@@ -105,15 +105,15 @@ namespace RT.Core.IO.Loaders
             return dataArray;
         }
 
-        private  double[] GetCoords(DicomFile[] files, int size, double rowDir, double colDir, double position, int scale)
+        private float[] GetCoords(DicomFile[] files, int size, double rowDir, double colDir, double position, int scale)
         {
             PixelDataInfo tempHeader = new PixelDataInfo(files[0]);
-            double[] coords = new double[size];
+            float[] coords = new float[size];
             if (rowDir != 0 || colDir != 0)
             {
                 for (int i = 0; i < size; i++)
                 {
-                    coords[i] = position + i * rowDir * tempHeader.PixelSpacing[1] + i * colDir * tempHeader.PixelSpacing[0];
+                    coords[i] = (float)(position + i * rowDir * tempHeader.PixelSpacing[1] + i * colDir * tempHeader.PixelSpacing[0]);
                 }
             }
             else
@@ -122,12 +122,12 @@ namespace RT.Core.IO.Loaders
                 {
                     for (int i = 0; i < size; i++)
                     {
-                        coords[i] = position + tempHeader.GridFrameOffsetVector[i];
+                        coords[i] = (float)(position + tempHeader.GridFrameOffsetVector[i]);
                     }
                 }
                 for (int i = 0; i < files.Length; i++)
                 {
-                    coords[i] = position + i * tempHeader.SliceThickness;
+                    coords[i] = (float)(position + i * tempHeader.SliceThickness);
                 }
             }
             return coords;

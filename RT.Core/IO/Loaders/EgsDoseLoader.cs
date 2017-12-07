@@ -26,9 +26,9 @@ namespace RT.Core.IO.Loaders
                 SizeY = (int)ReadDouble(reader);
                 SizeZ = (int)ReadDouble(reader);
 
-                grid.XCoords = new double[SizeX];
-                grid.YCoords = new double[SizeY];
-                grid.ZCoords = new double[SizeZ];
+                grid.XCoords = new float[SizeX];
+                grid.YCoords = new float[SizeY];
+                grid.ZCoords = new float[SizeZ];
                 grid.Data = new float[SizeX, SizeY, SizeZ];
 
                 fillCoords(grid.XCoords, SizeX, reader);
@@ -113,7 +113,7 @@ namespace RT.Core.IO.Loaders
             return numberString;
         }
 
-        private void fillCoords(double[] coords, int size, TextReader reader)
+        private void fillCoords(float[] coords, int size, TextReader reader)
         {
             double prevNumber = 0;
             double number = 0;
@@ -126,7 +126,7 @@ namespace RT.Core.IO.Loaders
                     continue;
                 }
                 // Take the centre of the voxel as our coord location as 3ddose files list the voxel boundaries
-                coords[i - 1] = 10 * (prevNumber + number) / 2;
+                coords[i - 1] = (float)(10 * (prevNumber + number) / 2);
                 if (i != size)
                 {
                     prevNumber = number;

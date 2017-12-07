@@ -13,12 +13,12 @@ namespace RT.Core.Utilities.RTMath
                 xd = 0;
             else
                 xd = (x - x0) / (x1 - x0);
-            double yd;
+            float yd;
             if (y1 == y0)
                 yd = 0;
             else
                 yd = (y - y0) / (y1 - y0);
-            double zd;
+            float zd;
             if (z1 == z0)
                 zd = 0;
             else
@@ -27,9 +27,9 @@ namespace RT.Core.Utilities.RTMath
             float c01 = v001 * (1 - xd) + v101 * xd;
             float c10 = v010 * (1 - xd) + v110 * xd;
             float c11 = v011 * (1 - xd) + v111 * xd;
-            float c0 = (float)(c00 * (1 - yd) + c10 * yd);
-            float c1 = (float)(c01 * (1 - yd) + c11 * yd);
-            float c = (float)(c0 * (1 - zd) + c1 * zd);
+            float c0 = (c00 * (1 - yd) + c10 * yd);
+            float c1 = (c01 * (1 - yd) + c11 * yd);
+            float c = (c0 * (1 - zd) + c1 * zd);
 
             return c;
         }

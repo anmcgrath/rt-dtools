@@ -140,6 +140,7 @@
     <Compile Include="Converters\DicomColorConverter.cs" />
     <Compile Include="IO\FileOpener.cs" />
     <Compile Include="IO\IFileOpener.cs" />
+    <Compile Include="Message\AddDVHMessage.cs" />
     <Compile Include="Message\AddHistogramsMessage.cs" />
     <Compile Include="Message\DoseObjectRenderMessage.cs" />
     <Compile Include="Message\DoseRenderQualityChanged.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="ViewModel\MainWindow\PlanViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\POIObjectDisplayViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\ROIObjectDisplayViewModel.cs" />
+    <Compile Include="ViewModel\MainWindow\UtilityView\DVHViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\UtilityView\HistogramViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\CustomControls\TileControl.xaml.cs">
@@ -209,6 +211,9 @@
     </Compile>
     <Compile Include="View\MainWindow\ROIObjectDisplayView.xaml.cs">
       <DependentUpon>ROIObjectDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow\UtilityView\DVHView.xaml.cs">
+      <DependentUpon>DVHView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow\UtilityView\HistogramView.xaml.cs">
       <DependentUpon>HistogramView.xaml</DependentUpon>
@@ -290,6 +295,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\MainWindow\UtilityView\DVHView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow\UtilityView\HistogramView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -348,7 +357,9 @@
   <ItemGroup>
     <Resource Include="Resources\poi.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MessengerInstance\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.0\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.0\build\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

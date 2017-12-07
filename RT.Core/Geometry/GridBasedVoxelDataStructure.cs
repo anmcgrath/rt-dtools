@@ -14,15 +14,15 @@ namespace RT.Core.Geometry
         /// <summary>
         /// X Coordinates (LR orientation)
         /// </summary>
-        public double[] XCoords { get; set; }
+        public float[] XCoords { get; set; }
         /// <summary>
         /// Y Coordinates (AP orientation)
         /// </summary>
-        public double[] YCoords { get; set; }
+        public float[] YCoords { get; set; }
         /// <summary>
         /// X Coordinates (Inf-Sup orientation)
         /// </summary>
-        public double[] ZCoords { get; set; }
+        public float[] ZCoords { get; set; }
         /// <summary>
         /// The voxel data, access through Data[x,y,z]
         /// </summary>
@@ -68,24 +68,24 @@ namespace RT.Core.Geometry
                 {
                     ix0 = (int)((position.X - XCoords[0]) / GridSpacing.X);
                     ix1 = (ix0 == XCoords.Length - 1) ? ix0 : ix0 + 1;
-                    x0 = (float)XCoords[ix0];
-                    x1 = (float)XCoords[ix1];
+                    x0 = XCoords[ix0];
+                    x1 = XCoords[ix1];
                     iy0 = (int)((position.Y - YCoords[0]) / GridSpacing.Y);
                     iy1 = (iy0 == YCoords.Length - 1) ? iy0 : iy0 + 1;
-                    y0 = (float)YCoords[iy0];
-                    y1 = (float)YCoords[iy1];
+                    y0 = YCoords[iy0];
+                    y1 = YCoords[iy1];
                     if (GridSpacing.Z != 0)
                     {
                         iz0 = (int)((position.Z - ZCoords[0]) / GridSpacing.Z);
                         iz1 = iz0 == ZCoords.Length - 1 ? iz0 : iz0 + 1;
-                        z0 = (float)ZCoords[iz0];
-                        z1 = (float)ZCoords[iz1];
+                        z0 = ZCoords[iz0];
+                        z1 = ZCoords[iz1];
                     }
                     else
                     {
                         iz0 = 0; iz1 = 0;
-                        z0 = (float)ZCoords[iz0];
-                        z1 = (float)ZCoords[iz1];
+                        z0 = ZCoords[iz0];
+                        z1 = ZCoords[iz1];
                     }
                 }
                 else
@@ -128,7 +128,7 @@ namespace RT.Core.Geometry
         /// <param name="value"></param>
         /// <param name="array"></param>
         /// <returns></returns>
-        protected Tuple<double, double, int, int> binarySearchForSurroundingCoords(double value, double[] array)
+        protected Tuple<double, double, int, int> binarySearchForSurroundingCoords(double value, float[] array)
         {
             if (value < array[0] || value > array[array.Length - 1])
                 return new Tuple<double, double, int, int>(0, 0, 0, 0);

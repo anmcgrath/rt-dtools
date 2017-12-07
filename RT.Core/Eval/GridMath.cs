@@ -19,7 +19,7 @@ namespace RT.Core.Eval
 
             var newGrid = CreateBlank(reference);
             //Create a sorted list of offsets with a certain diameter and step size
-            var offsets = CreateOffsets(10, distTol/10);
+            var offsets = CreateOffsets(distTol * 2, distTol/10);
 
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
@@ -164,9 +164,9 @@ namespace RT.Core.Eval
             newGrid.XRange = new Range(grid.XRange.Minimum, grid.XRange.Maximum);
             newGrid.YRange = new Range(grid.YRange.Minimum, grid.YRange.Maximum);
             newGrid.ZRange = new Range(grid.ZRange.Minimum, grid.ZRange.Maximum);
-            newGrid.XCoords = new double[grid.XCoords.Length]; grid.XCoords.CopyTo(newGrid.XCoords, 0);
-            newGrid.YCoords = new double[grid.YCoords.Length]; grid.YCoords.CopyTo(newGrid.YCoords, 0);
-            newGrid.ZCoords = new double[grid.ZCoords.Length]; grid.ZCoords.CopyTo(newGrid.ZCoords, 0);
+            newGrid.XCoords = new float[grid.XCoords.Length]; grid.XCoords.CopyTo(newGrid.XCoords, 0);
+            newGrid.YCoords = new float[grid.YCoords.Length]; grid.YCoords.CopyTo(newGrid.YCoords, 0);
+            newGrid.ZCoords = new float[grid.ZCoords.Length]; grid.ZCoords.CopyTo(newGrid.ZCoords, 0);
             newGrid.Scaling = 1;
             newGrid.Data = new float[newGrid.XCoords.Length, newGrid.YCoords.Length, newGrid.ZCoords.Length];
             newGrid.ConstantGridSpacing = grid.ConstantGridSpacing;
@@ -192,15 +192,15 @@ namespace RT.Core.Eval
             int lenX = (int)Math.Round((grid.XRange.Length / grid.GridSpacing.X))+1;
             int lenY = (int)Math.Round((grid.YRange.Length / grid.GridSpacing.Y))+1;
             int lenZ = (int)Math.Round((grid.ZRange.Length / grid.GridSpacing.Z))+1;
-            grid.XCoords = new double[lenX];
-            grid.YCoords = new double[lenY];
-            grid.ZCoords = new double[lenZ];
+            grid.XCoords = new float[lenX];
+            grid.YCoords = new float[lenY];
+            grid.ZCoords = new float[lenZ];
             for (int i = 0; i < lenX; i++)
-                grid.XCoords[i] = grid.XRange.Minimum + i * grid.GridSpacing.X;
+                grid.XCoords[i] = (float)(grid.XRange.Minimum + i * grid.GridSpacing.X);
             for (int j = 0; j < lenY; j++)
-                grid.YCoords[j] = grid.YRange.Minimum + j * grid.GridSpacing.Y;
+                grid.YCoords[j] = (float)(grid.YRange.Minimum + j * grid.GridSpacing.Y);
             for (int k = 0; k < lenZ; k++)
-                grid.ZCoords[k] = grid.ZRange.Minimum + k * grid.GridSpacing.Z;
+                grid.ZCoords[k] = (float)(grid.ZRange.Minimum + k * grid.GridSpacing.Z);
 
             grid.Data = new float[lenX, lenY, lenZ];
             return grid;
