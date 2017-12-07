@@ -60,7 +60,7 @@ namespace RTDicomViewer.ViewModel
             () => { FileOpener.BeginOpenDicomPlanAsync(); });
 
         public RelayCommand CreateNewPOICommand => new RelayCommand(
-            () => { CreateNewPOI(); });
+            () => { CreateNewPOI(); MessengerInstance.Send<AddDVHMessage>(new AddDVHMessage(new List<RT.Core.DVH.DoseVolumeHistogram>() { new RT.Core.DVH.DoseVolumeHistogram(null, null), })); });
 
         public RelayCommand CreateNewBeamCommand => new RelayCommand(
             () => { CreateNewBeam(); });
@@ -136,6 +136,8 @@ namespace RTDicomViewer.ViewModel
             Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
 
             SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
+
+            
         }
 
         public void OnClose()
