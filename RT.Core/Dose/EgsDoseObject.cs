@@ -14,12 +14,6 @@ namespace RT.Core.Dose
         public string FileName { get; set; }
         public string Name { get; set; }
         public IVoxelDataStructure Grid { get; set; }
-
         public EgsDoseObject() { }
-
-        public float GetNormalisationAmount()
-        {
-            return Grid.MaxVoxel.Value;
-        }
     }
 }

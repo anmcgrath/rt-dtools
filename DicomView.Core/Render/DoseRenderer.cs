@@ -15,7 +15,7 @@ namespace DicomPanel.Core.Render
         /// <summary>
         /// The maximum number of grid points to use when interpolating dose for the marching squares algorithm
         /// </summary>
-        public int MaxNumberOfGridPoints { get; set; } = 100;
+        public int MaxNumberOfGridPoints { get; set; } = 80;
 
         public DoseRenderer()
         {
@@ -38,13 +38,16 @@ namespace DicomPanel.Core.Render
             if (doseObject == null || doseObject.Grid == null)
                 return;
 
+            if (doseObject.Grid.GetNormalisationAmount() == 0)
+                return;
+
             //Translates screen to world points and vice versa
             var ms = new MarchingSquares();
             List<PlanarPolygon> polygons = new List<PlanarPolygon>();
+            var interpolatedDoseGrid = new InterpolatedDoseGrid(doseObject, MaxNumberOfGridPoints, camera, screenRect);
 
-            foreach(ContourInfo contourInfo in ContourInfo)
+            foreach (ContourInfo contourInfo in ContourInfo)
             {
-                var interpolatedDoseGrid = new InterpolatedDoseGrid(doseObject, MaxNumberOfGridPoints, camera, screenRect);
                 var contour = ms.GetContour(interpolatedDoseGrid.Data, interpolatedDoseGrid.Rows, interpolatedDoseGrid.Columns, interpolatedDoseGrid.Coords, contourInfo.Threshold, contourInfo.Color);
                 //var polygon = contour.ToPlanarPolygon(camera);
 

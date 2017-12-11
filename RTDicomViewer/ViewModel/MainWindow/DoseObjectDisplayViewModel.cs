@@ -150,11 +150,12 @@ namespace RTDicomViewer.ViewModel.MainWindow
                 Workspace.Workspace.Current.Axial.RemoveImage(doseWrapper.RenderableImage);
                 Workspace.Workspace.Current.Sagittal.RemoveImage(doseWrapper.RenderableImage);
                 Workspace.Workspace.Current.Coronal.RemoveImage(doseWrapper.RenderableImage);
-                Workspace.Workspace.Current.Axial.Invalidate();
-                Workspace.Workspace.Current.Sagittal.Invalidate();
-                Workspace.Workspace.Current.Coronal.Invalidate();
                 doseWrapper.RenderableImage = null;
             }
+
+            Workspace.Workspace.Current.Axial.Invalidate();
+            Workspace.Workspace.Current.Sagittal.Invalidate();
+            Workspace.Workspace.Current.Coronal.Invalidate();
         }
 
         private RenderableImage getNewRenderableImage(DoseGridWrapper doseWrapper)
@@ -184,7 +185,8 @@ namespace RTDicomViewer.ViewModel.MainWindow
             {
                 case LUTType.Contour:
                     var contourLUT = new ContourLUT();
-                    contourLUT.Create(contourList, dose.Grid.MaxVoxel.Value);
+                    var norm = dose.Grid.GetNormalisationAmount();
+                    contourLUT.Create(contourList, dose.Grid.MaxVoxel.Value * dose.Grid.Scaling, dose.Grid.GetNormalisationAmount());
                     return contourLUT;
                 case LUTType.Heat:
                     var heatLUT = new HeatLUT();
@@ -194,8 +196,8 @@ namespace RTDicomViewer.ViewModel.MainWindow
                         heatLUT.Window = 1;
                     }else
                     {
-                        heatLUT.Level = 0.6f * dose.Grid.MaxVoxel.Value;
-                        heatLUT.Window = 0.8f * dose.Grid.MaxVoxel.Value;
+                        heatLUT.Level = 0.6f * dose.Grid.MaxVoxel.Value * dose.Grid.Scaling;
+                        heatLUT.Window = 0.8f * dose.Grid.MaxVoxel.Value * dose.Grid.Scaling;
                     }
                     return heatLUT;
             }

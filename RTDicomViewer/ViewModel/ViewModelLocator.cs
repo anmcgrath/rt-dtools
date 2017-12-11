@@ -62,6 +62,8 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<IProgressView, ProgressDialogView>();
             SimpleIoc.Default.Register<IFileOpener, FileOpener>();
             SimpleIoc.Default.Register<DVHViewModel>();
+            SimpleIoc.Default.Register<DVHObjectDisplayViewModel>();
+            SimpleIoc.Default.Register<IDVHBuilder, DVHBuilder>();
         }
 
         public MainViewModel Main
@@ -152,6 +154,13 @@ namespace RTDicomViewer.ViewModel
             }
         }
 
+        public DVHObjectDisplayViewModel DVHObjectDisplayViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<DVHObjectDisplayViewModel>();
+            }
+        }
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

@@ -10,6 +10,5 @@ namespace RT.Core.Dose
     public interface IDoseObject
     {
         IVoxelDataStructure Grid { get; set; }
-        float GetNormalisationAmount();
     }
 }

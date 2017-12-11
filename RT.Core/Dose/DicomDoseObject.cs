@@ -13,15 +13,6 @@ namespace RT.Core.Dose
     public class DicomDoseObject:DicomObject, IDoseObject
     {
         public IVoxelDataStructure Grid { get; set; }
-
-        //Change this to proper normalisation
-        public double NormalisationIsodose = 100;
-
         public DicomDoseObject() { }
-
-        public float GetNormalisationAmount()
-        {
-            return Grid.MaxVoxel.Value * ((float) NormalisationIsodose / 100);
-        }
     }
 }

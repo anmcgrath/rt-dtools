@@ -46,16 +46,16 @@ namespace DicomPanel.Core.Render
             if (image.Grid == null)
                 return;
 
-            // This render function loops through each pixel in the camera's FOV,
-            // converts the location to a location in the patient coordinate system,
-            // then store in a byte array to render to the image layer.
-
             // Get the direction we move in each iteration from the top left of the camera
             Rectd screenRect = camera.GetBoundingScreenRect(image.Grid.XRange,image.Grid.YRange,image.Grid.ZRange,image.ScreenRect);
             //Rectd screenRect = new Rectd(0,0,1,1);
 
             if (screenRect == null)
                 return;
+
+            //align the screenRect position to a pixel to avoid shifting artefacts.
+            screenRect.X -= (screenRect.X) % (1.0f / context.Width);
+            screenRect.Y -= (screenRect.Y) % (1.0f / context.Height);
 
             Point3d initPosn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
             Point3d posn = camera.ConvertScreenToWorldCoords(screenRect.Y, screenRect.X);
@@ -88,6 +88,7 @@ namespace DicomPanel.Core.Render
             byte[] bgr = new byte[3];
             Voxel interpolatedVoxel = new Voxel();
             double val1, val2, val3;
+            var norm = image.Grid.GetNormalisationAmount();
 
             for (int r = startingRow; r < rows+startingRow; r += 1)
             {
@@ -97,7 +98,7 @@ namespace DicomPanel.Core.Render
                 for (int c = startingCol; c < cols+startingCol; c += 1)
                 {
                     image.Grid.Interpolate(px, py, pz, interpolatedVoxel);
-                    value = interpolatedVoxel.Value;
+                    value = interpolatedVoxel.Value * image.Grid.Scaling;
                     image.LUT.Compute(value, bgr);
 
                     blue = (byte)(bgr[0]);

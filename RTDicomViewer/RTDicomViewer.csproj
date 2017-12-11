@@ -153,7 +153,9 @@
     <Compile Include="Utilities\DoseGridWrapper.cs" />
     <Compile Include="Utilities\DoseRenderOptions.cs" />
     <Compile Include="Utilities\DoseRenderType.cs" />
+    <Compile Include="Utilities\DVHBuilder.cs" />
     <Compile Include="Utilities\HistogramBuilder.cs" />
+    <Compile Include="Utilities\IDVHBuilder.cs" />
     <Compile Include="Utilities\IHistogramBuilder.cs" />
     <Compile Include="Utilities\LUTType.cs" />
     <Compile Include="Utilities\MultiSelectableObjectEventArgs.cs" />
@@ -175,6 +177,9 @@
     <Compile Include="ViewModel\MainWindow\UtilityView\DVHViewModel.cs" />
     <Compile Include="ViewModel\MainWindow\UtilityView\HistogramViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\CustomControls\LUTController.xaml.cs">
+      <DependentUpon>LUTController.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomControls\TileControl.xaml.cs">
       <DependentUpon>TileControl.xaml</DependentUpon>
     </Compile>
@@ -244,6 +249,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Styles_White.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\LUTController.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

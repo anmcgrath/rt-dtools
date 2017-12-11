@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="RTDicomViewer.View.CustomControls.LUTController"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RTDicomViewer.View.CustomControls"
+             mc:Ignorable="d" 
+             MouseMove="canvas_MouseMove">
+    <StackPanel>
+    <TextBox Text="{Binding UpperValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="30" Margin="2" Background="#333333" Foreground="White" BorderBrush="#555555" FontSize="10"/>
+        <Border Height="102" Width="14" BorderBrush="#777777" BorderThickness="1">
+        <Canvas Height="100" Width="12" x:Name="canvas" MouseUp="canvas_MouseUp" MouseMove="canvas_MouseMove" Background="CornflowerBlue">
+            <Image></Image>
+            <Polygon Canvas.Top="0" Canvas.Left="0" x:Name="topTriangleShape" MouseMove="topTriangleShape_MouseMove" MouseUp="topTriangleShape_MouseUp" MouseDown="topTriangleShape_MouseDown" Cursor="Hand" Points="0,0 12,0 12,4 0,4" Fill="#333333"/>
+
+                <Polygon Canvas.Top="96" Canvas.Left="0" x:Name="bottomHandle" MouseMove="topTriangleShape_MouseMove" MouseUp="topTriangleShape_MouseUp" MouseDown="topTriangleShape_MouseDown" Cursor="Hand" Points="0,0 12,0 12,4 0,4" Fill="#333333"/>
+            </Canvas>
+        </Border>
+    </StackPanel>
+</UserControl>

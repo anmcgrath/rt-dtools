@@ -43,14 +43,17 @@ namespace RTDicomViewer.ViewModel.MainWindow.UtilityView
         {
             LineSeries series = new LineSeries();
 
-            /*series.Color = OxyPlot.OxyColor.FromArgb(
-                (byte)dvh.ROIObject.Color.A, 
-                (byte)dvh.ROIObject.Color.R, 
-                (byte)dvh.ROIObject.Color.G, 
-                (byte)dvh.ROIObject.Color.B);*/
+            if (dvh.ROIObject?.Color != null)
+            {
+                series.Color = OxyPlot.OxyColor.FromArgb(
+                    (byte)dvh.ROIObject.Color.A,
+                    (byte)dvh.ROIObject.Color.R,
+                    (byte)dvh.ROIObject.Color.G,
+                    (byte)dvh.ROIObject.Color.B);
+            }
             for(int i = 0; i < dvh.Dose.Length; i++)
             {
-                series.Points.Add(new DataPoint(dvh.Dose[i], dvh.CumulativeVolume[i]));
+                series.Points.Add(new DataPoint(dvh.Dose[i], 100*(dvh.CumulativeVolume[i]/dvh.TotalVolume)));
             }
             return series;
         }

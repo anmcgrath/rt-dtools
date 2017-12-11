@@ -60,7 +60,7 @@ namespace RTDicomViewer.ViewModel
             () => { FileOpener.BeginOpenDicomPlanAsync(); });
 
         public RelayCommand CreateNewPOICommand => new RelayCommand(
-            () => { CreateNewPOI(); MessengerInstance.Send<AddDVHMessage>(new AddDVHMessage(new List<RT.Core.DVH.DoseVolumeHistogram>() { new RT.Core.DVH.DoseVolumeHistogram(null, null), })); });
+            () => { CreateNewPOI(); });
 
         public RelayCommand CreateNewBeamCommand => new RelayCommand(
             () => { CreateNewBeam(); });
@@ -101,6 +101,7 @@ namespace RTDicomViewer.ViewModel
                 AxialPanelModel.SetPrimaryImage(x.Value);
                 SagittalPanelModel.SetPrimaryImage(x.Value);
                 CoronalPanelModel.SetPrimaryImage(x.Value);
+                InvalidateAll();
             });
 
             MessengerInstance.Register<RTObjectDeletedMessage<DicomImageObject>>(this, x =>
@@ -108,6 +109,8 @@ namespace RTDicomViewer.ViewModel
                 AxialPanelModel.SetPrimaryImage(null);
                 SagittalPanelModel.SetPrimaryImage(null);
                 CoronalPanelModel.SetPrimaryImage(null);
+                InvalidateAll();
+
             });
 
             MessengerInstance.Register<ROIsObjectRenderMessage>(this, x =>
@@ -136,8 +139,13 @@ namespace RTDicomViewer.ViewModel
             Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
 
             SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
+        }
 
-            
+        private void InvalidateAll()
+        {
+            AxialPanelModel.Invalidate();
+            SagittalPanelModel.Invalidate();
+            CoronalPanelModel.Invalidate();
         }
 
         public void OnClose()
@@ -148,6 +156,7 @@ namespace RTDicomViewer.ViewModel
         public void OpenDoseStatistics()
         {
             var doseStatsWindow = new DVHObjectDisplayView();
+            doseStatsWindow.Owner = Application.Current.MainWindow;
             doseStatsWindow.Show();
         }
 
@@ -191,7 +200,10 @@ namespace RTDicomViewer.ViewModel
         {
             foreach(var dose in Workspace.Workspace.Current.Doses.GetList())
             {
-                dose.NormalisationIsodose = options.NormalisationIsodose;
+                dose.Grid.NormalisationType = options.NormalisationType;
+                dose.Grid.NormalisationPercent = options.NormalisationIsodose;
+                dose.Grid.NormalisationPOI = options.POI;
+                dose.Grid.RelativeNormalisationOption = options.RelativeNormalisationOption;
             }
             AxialPanelModel.DoseRenderer.MaxNumberOfGridPoints = options.RenderQuality;
             CoronalPanelModel.DoseRenderer.MaxNumberOfGridPoints = options.RenderQuality;
@@ -201,9 +213,7 @@ namespace RTDicomViewer.ViewModel
             CoronalPanelModel.DoseRenderer.ContourInfo = options.ContourInfo.ToList();
             SagittalPanelModel.DoseRenderer.ContourInfo = options.ContourInfo.ToList();
 
-            AxialPanelModel.Invalidate();
-            CoronalPanelModel.Invalidate();
-            SagittalPanelModel.Invalidate();
+            InvalidateAll();
         }
     }
 

@@ -29,7 +29,7 @@ namespace DicomPanel.Core.Render.Contouring
             var dx = boundingRect.Width / maxNumberOfGrids;
 
             Point2d screenPoint = new Point2d(boundingRect.X, boundingRect.Y);
-            var normalisationAmount = doseObject.GetNormalisationAmount();
+            var normalisationAmount = doseObject.Grid.GetNormalisationAmount();
 
             Coords = new double[Rows][][];
             Data = new float[Rows][];
@@ -48,7 +48,8 @@ namespace DicomPanel.Core.Render.Contouring
                     Coords[row][col] = new double[3] { pt.X, pt.Y, pt.Z };
 
                     doseObject.Grid.Interpolate(pt, voxel);
-                    Data[row][col] = 100 * voxel.Value / normalisationAmount;
+
+                    Data[row][col] = (voxel.Value * doseObject.Grid.Scaling) / normalisationAmount;
                 }
             }
         }

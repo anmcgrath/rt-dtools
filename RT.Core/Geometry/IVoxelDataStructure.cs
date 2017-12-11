@@ -1,4 +1,6 @@
-﻿using RT.Core.ROIs;
+﻿using RT.Core.Dose;
+using RT.Core.Planning;
+using RT.Core.ROIs;
 using RT.Core.Utilities.RTMath;
 using System;
 using System.Collections;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RT.Core.Geometry
 {
-    public interface IVoxelDataStructure:IEnumerable
+    public interface IVoxelDataStructure : IEnumerable
     {
         Voxel Interpolate(double x, double y, double z);
         Voxel Interpolate(Point3d position);
@@ -33,9 +35,16 @@ namespace RT.Core.Geometry
         int NumberOfVoxels { get; }
         string Name { get; set; }
 
+        double NormalisationPercent { get; set; }
+        NormalisationType NormalisationType { get; set; }
+        RelativeNormalisationOption RelativeNormalisationOption { get; set; }
+        PointOfInterest NormalisationPOI { get; set; }
+
+        float GetNormalisationAmount();
+
         //Histogramf CreateHistogram(RegionOfInterest roi);
         //Histogramf CreateHistogram();
 
-        
+
     }
 }

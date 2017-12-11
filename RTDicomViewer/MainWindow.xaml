@@ -8,6 +8,7 @@
         xmlns:dcm="clr-namespace:DicomPanel.Wpf;assembly=DicomPanel.Wpf"
         xmlns:mv="clr-namespace:RTDicomViewer.View.MainWindow"
         xmlns:oxy="http://oxyplot.org/wpf"
+    xmlns:controls="clr-namespace:RTDicomViewer.View.CustomControls"
         xmlns:th="clr-namespace:RTDicomViewer.Themes"
         xmlns:util="clr-namespace:RTDicomViewer.View.MainWindow.UtilityView"
         x:Class="RTDicomViewer.MainWindow"
@@ -91,7 +92,9 @@
                 <cc:TileControl Margin="5 0 0 0">
                     <cc:TileControl.TopLeft>
                         <cc:TilerControlItem>
-                            <dcm:DicomPanelView Model="{Binding DataContext.AxialPanelModel, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}, Mode=FindAncestor}}"/>
+                            <Grid>
+                                <dcm:DicomPanelView Model="{Binding DataContext.AxialPanelModel, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}, Mode=FindAncestor}}"/>
+                            </Grid>
                         </cc:TilerControlItem>
                     </cc:TileControl.TopLeft>
 

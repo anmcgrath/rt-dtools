@@ -170,6 +170,11 @@ namespace RT.Core.ROIs
             if (!(index - 1 > RegionOfInterestSlices.Count - 1) && !(index - 1 < 0))
                 return RegionOfInterestSlices[index - 1];
 
+            if (Math.Abs(RegionOfInterestSlices[0].ZCoord - z) <= 1)
+                return RegionOfInterestSlices[0];
+            if (Math.Abs(RegionOfInterestSlices[RegionOfInterestSlices.Count - 1].ZCoord - z) <= 1)
+                return RegionOfInterestSlices[RegionOfInterestSlices.Count - 1];
+
             return null;
         }
 

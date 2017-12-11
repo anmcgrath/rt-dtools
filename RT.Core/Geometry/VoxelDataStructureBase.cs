@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RT.Core.Utilities.RTMath;
+using RT.Core.Dose;
+using RT.Core.Planning;
 
 namespace RT.Core.Geometry
 {
@@ -72,5 +74,23 @@ namespace RT.Core.Geometry
 
         public abstract void Interpolate(Point3d position, Voxel voxel);
 
+        public double NormalisationPercent { get; set; } = 100;
+        public NormalisationType NormalisationType { get; set; } = NormalisationType.Relative;
+        public RelativeNormalisationOption RelativeNormalisationOption { get; set; }
+        public PointOfInterest NormalisationPOI { get; set; }
+
+        public float GetNormalisationAmount()
+        {
+            if (NormalisationType == NormalisationType.Absolute)
+                return 1;
+            if (NormalisationType == NormalisationType.Relative)
+            {
+                if (RelativeNormalisationOption == RelativeNormalisationOption.Max)
+                    return MaxVoxel.Value * Scaling * ((float)NormalisationPercent / (100*100));
+                else if (RelativeNormalisationOption == RelativeNormalisationOption.POI && NormalisationPOI != null)
+                    return this.Interpolate(NormalisationPOI.Position).Value * Scaling * ((float)NormalisationPercent / (100* 100));
+            }
+            return 1;
+        }
     }
 }

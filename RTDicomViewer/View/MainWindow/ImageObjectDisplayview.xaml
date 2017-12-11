@@ -9,13 +9,11 @@
     <ItemsControl ItemsSource="{Binding Images}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Border MaxWidth="180" BorderThickness="2" BorderBrush="Gray" Background="Black" Margin="10 10 0 0" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
-                    <StackPanel Orientation="Vertical">
-                        <Image Source="{Binding Value.ImagePreview}"/>
-                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.PatientName}" TextWrapping="Wrap"/>
-                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.StudyDescription}" TextWrapping="Wrap"/>
-                    </StackPanel>
-                    <Border.ContextMenu>
+                <StackPanel Orientation="Horizontal" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
+                    <Image Source="{Binding Value.ImagePreview}"/>
+                    <TextBlock TextAlignment="Center" Text="{Binding Value.Image.Grid.Name}" TextWrapping="Wrap"/>
+                    <TextBlock TextAlignment="Center" Text="{Binding Value.Image.StudyDescription}" TextWrapping="Wrap"/>
+                    <StackPanel.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Set as Primary" Command="{Binding Path=PlacementTarget.Tag.SetPrimaryCommand, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
@@ -29,8 +27,17 @@
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
                         </ContextMenu>
-                    </Border.ContextMenu>
-                </Border>
+                    </StackPanel.ContextMenu>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#0000FF"/>
+                            </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                </StackPanel>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

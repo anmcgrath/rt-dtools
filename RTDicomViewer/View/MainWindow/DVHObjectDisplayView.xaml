@@ -6,38 +6,42 @@
              xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
              xmlns:vm="clr-namespace:RTDicomViewer.ViewModel.MainWindow"
               xmlns:c="clr-namespace:RTDicomViewer.Converters"
-             mc:Ignorable="d" Title="Dose Volume Histograms"
-             d:DesignHeight="300" Style="{StaticResource {x:Type Window}}" Width="781.218" >
-    <TreeView>
-        <TreeViewItem ItemsSource="{Binding RegionOfInterests}">
-            <TreeViewItem.Header>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Width="150">Dose Volume Histograms</TextBlock>
-                    <TextBlock Width="200" TextAlignment="Center">Minimum (cGy)</TextBlock>
-                    <TextBlock Width="200" TextAlignment="Center">Maximum (cGy)</TextBlock>
-                    <TextBlock Width="200" TextAlignment="Center">Mean (cGy)</TextBlock>
-                </StackPanel>
-            </TreeViewItem.Header>
-            <TreeViewItem.DataContext>
-                <vm:DVHObjectDisplayViewModel/>
-            </TreeViewItem.DataContext>
-            <TreeViewItem.Resources>
-                <c:DicomColorConverter x:Key="dicomColorConverter"/>
-            </TreeViewItem.Resources>
-            <TreeViewItem.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <WrapPanel>
-                        <Line StrokeThickness="1" StrokeDashArray="2 2" X1="0" X2="20" Y1="0" Y2="0" Stroke="{Binding Value.ROIObject.Color, Converter={StaticResource dicomColorConverter}}" Margin="-30 5 0 0"/>
-                        <CheckBox Margin="0" Content="{Binding Value.Name}" CommandParameter="{Binding .}" IsChecked="{Binding IsSelected}"  BorderThickness="1">
-                        </CheckBox>
-                    </WrapPanel>
-                </HierarchicalDataTemplate>
-            </TreeViewItem.ItemTemplate>
-            <TreeViewItem.ItemContainerStyle>
-                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                    <!--<Setter Property="ContextMenu" Value="{StaticResource DoseContextMenu}"/>-->
-                </Style>
-            </TreeViewItem.ItemContainerStyle>
-        </TreeViewItem>
-    </TreeView>
+             mc:Ignorable="d" Title="Dose Volume Histograms" DataContext="{Binding DVHObjectDisplayViewModel, Source={StaticResource Locator}}" Width="500" Height="350" >
+    <Window.Resources>
+        <c:DicomColorConverter x:Key="colorConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding RegionOfInterests}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Value.Name}" FontWeight="Bold">
+                                <CheckBox.Background>
+                                    <SolidColorBrush Color="{Binding Value.Color,Converter={StaticResource colorConverter},FallbackValue=Black}"/>
+                                </CheckBox.Background>
+                            </CheckBox>
+                            <ItemsControl ItemsSource="{Binding Children}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Margin="20 0 0 0" IsChecked="{Binding IsSelected}" Content="{Binding Value.DoseObject.Grid.Name}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right">
+            <Button Width="70" Margin="3">Close</Button>
+        </WrapPanel>
+    </Grid>
+ 
 </Window>

@@ -17,9 +17,12 @@ namespace RTDicomViewer.ViewModel.MainWindow
     {
         public ObservableCollection<SelectableObject<RegionOfInterest, DoseVolumeHistogram>> RegionOfInterests { get; set; }
         public List<IDoseObject> Doses { get; set; }
+        private DVHBuilder DVHBuilder;
 
-        public DVHObjectDisplayViewModel()
+        public DVHObjectDisplayViewModel(IDVHBuilder dvhBuilder)
         {
+            DVHBuilder = DVHBuilder;
+
             RegionOfInterests = new ObservableCollection<SelectableObject<RegionOfInterest, DoseVolumeHistogram>>();
             Doses = new List<IDoseObject>();
 
@@ -31,6 +34,15 @@ namespace RTDicomViewer.ViewModel.MainWindow
 
             MessengerInstance.Register<RTObjectAddedMessage<EgsDoseObject>>(this,
                 x => AddDoseObject(x.Value));
+
+            foreach(var ss in Workspace.Workspace.Current.StructureSets.GetList())
+            {
+                AddStructureSet(ss);
+            }
+            foreach(var dose in Workspace.Workspace.Current.Doses.GetList())
+            {
+                AddDoseObject(dose);
+            }
         }
 
         private void AddStructureSet(StructureSet structureSet)
@@ -65,6 +77,21 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
             var selectedDVhs = e.SelectedObjects;
             var unselectedDVHs = e.UnselectedObjects;
+
+            var firstDVH = selectedDVhs.FirstOrDefault()?.Value;
+            var dvhsToAdd = new List<DoseVolumeHistogram>();
+            foreach(var roi in RegionOfInterests)
+            {
+                foreach(var dvh in roi.Children)
+                {
+                    if (dvh.IsSelected)
+                    {
+                        dvh.Value.Compute();
+                        dvhsToAdd.Add(dvh.Value);
+                    }
+                }
+            }
+            MessengerInstance.Send<AddDVHMessage>(new AddDVHMessage(dvhsToAdd));
         }
     }
 }

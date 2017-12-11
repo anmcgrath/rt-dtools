@@ -15,8 +15,9 @@ namespace RT.Core.DVH
         public RegionOfInterest ROIObject { get; set; }
         public float TotalVolume { get; set; }
         public int NBins { get; set; }
+        public bool IsComputed { get; set; }
 
-        public DoseVolumeHistogram(IDoseObject dose, RegionOfInterest roi) : this(dose, roi, 100) { }
+        public DoseVolumeHistogram(IDoseObject dose, RegionOfInterest roi) : this(dose, roi, 200) { }
         public DoseVolumeHistogram(IDoseObject dose, RegionOfInterest roi, int nbins)
         {
             DoseObject = dose;
@@ -37,8 +38,12 @@ namespace RT.Core.DVH
 
         public void Compute()
         {
-            ComputeDifferential();
-            ComputeCumulative();
+            if (!IsComputed)
+            {
+                ComputeDifferential();
+                ComputeCumulative();
+                IsComputed = true;
+            }
         }
 
         private void ComputeDifferential()
@@ -46,12 +51,12 @@ namespace RT.Core.DVH
             Dose = new float[NBins];
             DifferentialVolume = new float[NBins];
 
-            float dDose = DoseObject.Grid.MaxVoxel.Value / NBins;
+            float dDose = DoseObject.Grid.MaxVoxel.Value * DoseObject.Grid.Scaling / NBins;
 
             for (int i = 0; i < Dose.Length; i++)
                 Dose[i] = i * dDose;
 
-            float dx = 1, dy = 1, dz = 1;
+            float dx = .5f, dy = .5f, dz = 1;
             for (double z = ROIObject.ZRange.Minimum - dz; z <= ROIObject.ZRange.Maximum + dz; z += dz)
             {
                 for (double x = ROIObject.XRange.Minimum - dx; x <= ROIObject.XRange.Maximum + dx; x += dx)
@@ -61,7 +66,7 @@ namespace RT.Core.DVH
                         bool pointInside = ROIObject.ContainsPointNonInterpolated(x, y, z);
                         if (pointInside)
                         {
-                            float dose = DoseObject.Grid.Interpolate(x, y, z).Value;
+                            float dose = DoseObject.Grid.Interpolate(x, y, z).Value * DoseObject.Grid.Scaling;
                             DifferentialVolume[(int)(dose / dDose)] += dx * dy * dz;
                             TotalVolume += dx * dy * dz;
                         }

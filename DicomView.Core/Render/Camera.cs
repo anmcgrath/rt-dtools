@@ -26,6 +26,12 @@ namespace DicomPanel.Core.Render
         private Point3d _worldCoordsCache { get; set; }
 
         /// <summary>
+        /// Whether the camera has been moved since the last render
+        /// </summary>
+
+        public bool IsInvalidated { get; set; }
+
+        /// <summary>
         /// The camera's x and y FOV in mm
         /// </summary>
         private Point2d FOV { get; set; }
@@ -57,6 +63,7 @@ namespace DicomPanel.Core.Render
             cacheWorldToScreenVariables();
             colDirLength = ColDir.Length();
             rowDirLength = RowDir.Length();
+            this.IsInvalidated = true;
         }
 
         public Point3d GetTopLeftPosition()

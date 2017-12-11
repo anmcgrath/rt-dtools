@@ -30,6 +30,7 @@ namespace DicomPanel.Core.Toolbox
                 new PointInfoTool(),
                 new RotateTool(),
                 new SpyglassTool(),
+                new MovePOITool(),
             };
             SelectedTool = Tools[0];
         }

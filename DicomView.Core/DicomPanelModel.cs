@@ -92,8 +92,11 @@ namespace DicomPanel.Core
             RoiRenderContext?.EndRender();
             OverlayContext?.EndRender();
 
-            OverlayContext?.DrawString("" + sw.ElapsedMilliseconds + " ms", 0, 0, 12, DicomColors.Yellow);
+            Camera.IsInvalidated = false;
             sw.Stop();
+
+            OverlayContext?.DrawString("" + sw.ElapsedMilliseconds + " ms", 0, 0, 12, DicomColors.Yellow);
+            
 
         }
 
@@ -206,34 +209,29 @@ namespace DicomPanel.Core
         {
             PrimaryImage = image;
             ResetCameraToImageCentre();
-            Invalidate();
         }
 
         public void SetSecondaryImage(DicomImageObject image)
         {
             SecondaryImage = image;
-            Invalidate();
         }
 
         public void AddDose(IDoseObject dose)
         {
             if (!ContouredDoses.Contains(dose))
                 ContouredDoses.Add(dose);
-            Invalidate();
         }
 
         public void RemoveDose(IDoseObject dose)
         {
             if (ContouredDoses.Contains(dose))
                 ContouredDoses.Remove(dose);
-            Invalidate();
         }
 
         public void AddImage(RenderableImage image)
         {
             if(!AdditionalImages.Contains(image))
                 AdditionalImages.Add(image);
-            Invalidate();
         }
 
         public void RemoveImage(RenderableImage image)
@@ -258,25 +256,21 @@ namespace DicomPanel.Core
         public void AddPOI(PointOfInterest poi)
         {
             POIs.Add(poi);
-            Invalidate();
         }
 
         public void RemovePOI(PointOfInterest poi)
         {
             POIs.Remove(poi);
-            Invalidate();
         }
 
         public void AddBeam(Beam beam)
         {
             Beams.Add(beam);
-            Invalidate();
         }
 
         public void RemoveBeam(Beam beam)
         {
             Beams.Remove(beam);
-            Invalidate();
         }
 
         public void RemoveROIs(IEnumerable<RegionOfInterest> rois)
