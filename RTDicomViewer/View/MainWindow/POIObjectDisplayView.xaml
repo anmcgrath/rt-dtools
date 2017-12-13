@@ -23,6 +23,6 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Button Width="70" Margin="3" HorizontalAlignment="Left" Command="{Binding MovePOICommand}">Move POI</Button>
+        <ToggleButton IsChecked="{Binding ToolIsActive, Mode=OneWay}" Width="70" Margin="3" HorizontalAlignment="Left" Command="{Binding MovePOICommand}">Move POI</ToggleButton>
     </StackPanel>
 </UserControl>

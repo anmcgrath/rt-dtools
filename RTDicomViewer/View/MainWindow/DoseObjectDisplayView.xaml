@@ -12,25 +12,52 @@
     <GroupBox Header="Dose">
         <StackPanel>
             <ListView Height="120" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedDose}">
-                <ListView.ItemTemplate>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="30">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding RenderLines}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="30">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding RenderDoseWash}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="" DisplayMemberBinding="{Binding Dose.Grid.Name}"/>
+                    </GridView>
+                </ListView.View>
+                <!--<ListView.ItemTemplate>
                     <DataTemplate>
-                        <WrapPanel Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:DoseObjectDisplayView}}">
+                        <Grid Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:DoseObjectDisplayView}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Dose.Grid.Name}"/>
-                            <WrapPanel.ContextMenu>
+
+                            <CheckBox Grid.Column="1" IsChecked="{Binding RenderLines}"/>
+                            <CheckBox Grid.Column="2" IsChecked="{Binding RenderDoseWash}"/>
+
+                            <Grid.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteDoseCommand, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Dose, RelativeSource={
                 RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
                                 </ContextMenu>
-                            </WrapPanel.ContextMenu>
-                        </WrapPanel>
+                            </Grid.ContextMenu>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <!--<Setter Property="ContextMenu" Value="{StaticResource DoseContextMenu}"/>-->
                     </Style>
-                </ListView.ItemContainerStyle>
+                </ListView.ItemContainerStyle>-->
             </ListView>
 
             <GroupBox Header="Properties">
@@ -69,12 +96,12 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <CheckBox IsChecked="{Binding SelectedDose.RenderLines}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Checked="CheckBox_Checked" Margin="2" Unchecked="CheckBox_Checked" Tag="{Binding SelectedDose}">Render Isodose Lines</CheckBox>
+                    <CheckBox IsChecked="{Binding SelectedDose.RenderLines}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Tag="{Binding SelectedDose}">Render Isodose Lines</CheckBox>
                     
-                    <CheckBox IsChecked="{Binding SelectedDose.RenderDoseWash}" Margin="2" Tag="{Binding SelectedDose}" x:Name="renderDoseWashCheckBox" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Render Dose Color wash</CheckBox>
+                    <CheckBox IsChecked="{Binding SelectedDose.RenderDoseWash}" Margin="2" Tag="{Binding SelectedDose}" x:Name="renderDoseWashCheckBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Render Dose Color wash</CheckBox>
 
                     <TextBlock Text="LUT:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"></TextBlock>
-                    <ComboBox Margin="2" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LUTTypes}" SelectedItem="{Binding SelectedDose.LUTType}" SelectionChanged="ComboBox_SelectionChanged" Tag="{Binding SelectedDose}"></ComboBox>
+                    <ComboBox Margin="2" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LUTTypes}" SelectedItem="{Binding SelectedDose.LUTType, Mode=TwoWay}"></ComboBox>
 
                 </Grid>
             </GroupBox>
@@ -82,22 +109,11 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0">Dose 1:</TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose1}" DisplayMemberPath="Dose.Grid.Name"></ComboBox>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0">Dose 1:</TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedMathDose2}" DisplayMemberPath="Dose.Grid.Name"></ComboBox>
-
-                    <Button Grid.Row="2" Grid.Column="1" Command="{Binding SubtractCommand}">Subtract</Button>
+                    <WrapPanel Grid.Row="2" Grid.Column="1">
+                        <Button Width="70" Grid.Row="2" Margin="2" Grid.Column="1" Command="{Binding GammaCommand}">Gamma...</Button>
+                    </WrapPanel>
 
                 </Grid>
             </GroupBox>

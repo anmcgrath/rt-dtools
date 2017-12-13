@@ -12,6 +12,7 @@ namespace RT.Core.Utilities.RTMath
         public int[] Counts;
         private float Min { get; set; }
         private float Max { get; set; }
+        public int NumberOfBins { get; set; }
 
         public Histogramf(float min, float max, int numberOfBins)
         {
@@ -20,9 +21,10 @@ namespace RT.Core.Utilities.RTMath
 
         private void init(float min, float max, int numberOfBins)
         {
+            NumberOfBins = numberOfBins;
             if (min == max)
                 numberOfBins = 1;
-            Counts = new int[numberOfBins];
+            Counts = new int[numberOfBins + 1];
             Min = min;
             Max = max;
         }
@@ -39,8 +41,8 @@ namespace RT.Core.Utilities.RTMath
 
         public float[] GetBinLabels()
         {
-            float[] binLabels = new float[Counts.Length];
-            float StepSize = (Max - Min) / Counts.Length;
+            float[] binLabels = new float[Counts.Length + 1];
+            float StepSize = (Max - Min) / NumberOfBins;
             for(int i = 0; i < Counts.Length; i++)
             {
                 binLabels[i] = Min + i * StepSize;
@@ -59,7 +61,7 @@ namespace RT.Core.Utilities.RTMath
             if (Max == Min)
                 return 0;
             else
-                return (int)(((dataPoint - Min) / (Max - Min)) * (Counts.Length - 1));
+                return (int)(((dataPoint - Min) / (Max - Min)) * (NumberOfBins));
         }
 }
 }

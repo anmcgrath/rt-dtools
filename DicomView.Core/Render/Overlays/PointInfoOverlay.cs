@@ -29,9 +29,9 @@ namespace DicomPanel.Core.Render.Overlays
             if (model?.PrimaryImage != null)
                 overlayStrings.Add($"Primary Image: {Math.Round((float)(model?.PrimaryImage.Grid.Interpolate(Position).Value*model?.PrimaryImage.Grid.Scaling),2)} {model?.PrimaryImage.Grid.ValueUnit}");
             if (model?.SecondaryImage != null)
-                overlayStrings.Add($"Primary Image: {Math.Round((float)(model?.SecondaryImage.Grid.Interpolate(Position).Value*model?.PrimaryImage.Grid.Scaling),2)} {model?.SecondaryImage.Grid.ValueUnit}");
+                overlayStrings.Add($"Secondary Image: {Math.Round((float)(model?.SecondaryImage.Grid.Interpolate(Position).Value*model?.PrimaryImage.Grid.Scaling),2)} {model?.SecondaryImage.Grid.ValueUnit}");
             foreach (var img in model?.AdditionalImages)
-                overlayStrings.Add($"{img.Name}: {Math.Round(img.Grid.Interpolate(Position).Value*img.Grid.Scaling,2)} {img.Grid.ValueUnit}");
+                overlayStrings.Add($"{Math.Round(img.Grid.Interpolate(Position).Value*img.Grid.Scaling,2)} {img.Grid.ValueUnit} [{Math.Round(((1.0/100.0)*img.Grid.Interpolate(Position).Value/img.Grid.GetNormalisationAmount()))}]% [{img.Grid.Name}]");
 
             int i = 0;
 

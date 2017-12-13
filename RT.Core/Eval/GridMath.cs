@@ -8,18 +8,15 @@ namespace RT.Core.Eval
 {
     public class GridMath
     {
-        public IVoxelDataStructure Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress)
+        public IVoxelDataStructure Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress, float distTol, float doseTol, float threshold)
         {
-            float distTol = 2;//mm
-            float doseTol = 2;//%
-            float threshold = 10;//%
             float thresholdDose = (threshold / 100) * reference.MaxVoxel.Value * reference.Scaling;
 
             doseTol = (doseTol / 100) * (reference.MaxVoxel.Value * reference.Scaling); //global gamma
 
             var newGrid = CreateBlank(reference);
             //Create a sorted list of offsets with a certain diameter and step size
-            var offsets = CreateOffsets(distTol * 2, distTol/10);
+            var offsets = CreateOffsets(distTol * 3, distTol/10.0, newGrid.GridSpacing);
 
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
@@ -36,7 +33,7 @@ namespace RT.Core.Eval
 
                         var refDose = reference.Interpolate(posn).Value * reference.Scaling;
                         var evalDose = evaluated.Interpolate(posn).Value * evaluated.Scaling;
-                        if (refDose < thresholdDose || evalDose < thresholdDose)
+                        if (refDose < thresholdDose && evalDose < thresholdDose)
                         {
                             newGrid.Data[i, j, k] = -1;
                             continue;
@@ -80,9 +77,9 @@ namespace RT.Core.Eval
                         float gamma = (float)Math.Sqrt((double)minGammaSquared);
 
                         newGrid.Data[i, j, k] = gamma;
-                        if (newGrid.MaxVoxel.Value > gamma)
+                        if (gamma > newGrid.MaxVoxel.Value)
                             newGrid.MaxVoxel.Value = gamma;
-                        if (newGrid.MinVoxel.Value < gamma)
+                        if (gamma < newGrid.MinVoxel.Value)
                             newGrid.MinVoxel.Value = gamma;
 
                     }
@@ -93,9 +90,22 @@ namespace RT.Core.Eval
             return newGrid;
         }
 
-        public List<Offset> CreateOffsets(float diameterMM, float stepMM)
+        public List<Offset> CreateOffsets(double diameterMM, double stepMM, Point3d gridSizes)
         {
             List<Offset> offsets = new List<Offset>();
+            //First surround with offset that correspond to grid points
+            for(double i = -gridSizes.X*2; i<gridSizes.X*2;i++)
+            {
+                for(double j = -gridSizes.Y*2; j < gridSizes.Y * 2; j++)
+                {
+                    for(double k = -gridSizes.Z*2; k < gridSizes.Z; k++)
+                    {
+                        offsets.Add(new Offset() { Displacement = new Point3d(i, j, k) });
+                    }
+                }
+            }
+
+
             int n = (int)((diameterMM) / stepMM);
             if (n % 2 != 0)
                 n++;

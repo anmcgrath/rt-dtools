@@ -25,6 +25,7 @@ using RTDicomViewer.Utilities;
 using System.Linq;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight.Ioc;
+using RTDicomViewer.Utilities.Testing;
 
 namespace RTDicomViewer.ViewModel
 {
@@ -139,6 +140,15 @@ namespace RTDicomViewer.ViewModel
             Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
 
             SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
+
+
+            var gammaRef = new DicomDoseObject();
+            gammaRef.Grid = new GammaReference();
+            MessengerInstance.Send(new RTObjectAddedMessage<DicomDoseObject>(gammaRef));
+
+            var gammaEval = new DicomDoseObject();
+            gammaEval.Grid = new GammaEval();
+            MessengerInstance.Send(new RTObjectAddedMessage<DicomDoseObject>(gammaEval));
         }
 
         private void InvalidateAll()

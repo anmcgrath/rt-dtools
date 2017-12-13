@@ -57,6 +57,7 @@ namespace RTDicomViewer.ViewModel
             SimpleIoc.Default.Register<PlanViewModel>();
             SimpleIoc.Default.Register<HistogramCreaterWindowViewModel>();
             SimpleIoc.Default.Register<HistogramViewModel>();
+            SimpleIoc.Default.Register<GammaWindowViewModel>();
             SimpleIoc.Default.Register<IProgressService, ProgressDialogViewModel>();
             SimpleIoc.Default.Register<IHistogramBuilder, HistogramBuilder>();
             SimpleIoc.Default.Register<IProgressView, ProgressDialogView>();
@@ -159,6 +160,14 @@ namespace RTDicomViewer.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<DVHObjectDisplayViewModel>();
+            }
+        }
+
+        public GammaWindowViewModel GammaViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GammaWindowViewModel>();
             }
         }
         public static void Cleanup()

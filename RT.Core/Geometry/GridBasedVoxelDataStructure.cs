@@ -46,6 +46,17 @@ namespace RT.Core.Geometry
         {
         }
 
+        public void SetVoxel(float x, float y, float z, float value)
+        {
+            if (ConstantGridSpacing)
+            {
+                int indexX = (int)((x - XCoords[0]) / GridSpacing.X);
+                int indexY = (int)((y - YCoords[0]) / GridSpacing.Y);
+                int indexZ = (int)((z - ZCoords[0]) / GridSpacing.Z);
+                Data[indexX, indexY, indexZ] = value;
+            }
+        }
+
 
         float x0, x1, y0, y1, z0, z1;
         int ix0, ix1, iy0, iy1, iz0, iz1;

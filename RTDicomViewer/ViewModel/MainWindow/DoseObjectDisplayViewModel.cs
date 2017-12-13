@@ -17,6 +17,7 @@ using RT.Core.Geometry;
 using RT.Core.ROIs;
 using System.Windows;
 using RTDicomViewer.ViewModel.Dialogs;
+using RTDicomViewer.View.Dialogs;
 
 namespace RTDicomViewer.ViewModel.MainWindow
 {
@@ -25,15 +26,6 @@ namespace RTDicomViewer.ViewModel.MainWindow
         public ObservableCollection<DoseGridWrapper> Doses { get; set; }
         public DoseGridWrapper SelectedDose { get { return _selectedDose; } set { _selectedDose = value; RaisePropertyChanged("SelectedDose");  } }
         private DoseGridWrapper _selectedDose;
-
-        public DoseGridWrapper SelectedMathDose1 { get { return _selectedMathDose1; } set { _selectedMathDose1 = value; RaisePropertyChanged("SelectedMathDose1"); RaisePropertyChanged("SubtractCommand"); } }
-        private DoseGridWrapper _selectedMathDose1;
-
-        public DoseGridWrapper SelectedMathDose2 { get { return _selectedMathDose2; } set { _selectedMathDose2 = value; RaisePropertyChanged("SelectedMathDose2"); RaisePropertyChanged("SubtractCommand"); } }
-        private DoseGridWrapper _selectedMathDose2;
-
-        public bool IsComputing { get { return _isComputing; } set { _isComputing = value; RaisePropertyChanged("SubtractCommand"); } }
-        private bool _isComputing;
 
         public RelayCommand<IDoseObject> DeleteDoseCommand => new RelayCommand<IDoseObject>(x =>
         {
@@ -51,17 +43,15 @@ namespace RTDicomViewer.ViewModel.MainWindow
             }
         });
 
+        public RelayCommand GammaCommand => new RelayCommand(() =>
+        {
+            var gammaWindow = new GammaWindowView();
+            gammaWindow.Owner = Application.Current.MainWindow;
+            gammaWindow.ShowDialog();
+        });
+
         public ObservableCollection<LUTType> LUTTypes { get; set; }
         private IProgressService progressVm;
-
-        public RelayCommand SubtractCommand => new RelayCommand(() =>
-        {
-            SubtractDoses();
-        },
-            ()=>
-            {
-                return !IsComputing && !(SelectedMathDose1 == null) && !(SelectedMathDose2 == null);
-            });
 
         public DoseObjectDisplayViewModel(IProgressService progressVm)
         {
@@ -78,7 +68,10 @@ namespace RTDicomViewer.ViewModel.MainWindow
         {
             DoseGridWrapper wrapper = Doses.Where(b => b.Dose == dose).FirstOrDefault();
             if (wrapper != null)
+            {
+                wrapper.PropertyChanged -= Wrapper_PropertyChanged;
                 Doses.Remove(wrapper);
+            }
         }
 
         public void AddNewDose(IDoseObject dose)
@@ -93,6 +86,19 @@ namespace RTDicomViewer.ViewModel.MainWindow
             Doses.Add(wrapper);
             SelectedDose = wrapper;
             OnRenderDoseChanged(wrapper);
+
+            wrapper.PropertyChanged += Wrapper_PropertyChanged;
+        }
+
+        private void Wrapper_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var doseWrapper = (DoseGridWrapper)sender;
+            if (e.PropertyName == "RenderDoseWash")
+                OnRenderDoseChanged(doseWrapper);
+            else if (e.PropertyName == "RenderLines")
+                OnRenderDoseChanged(doseWrapper);
+            else if (e.PropertyName == "LUTType")
+                OnLUTTypeChanged(doseWrapper);
         }
 
         public void OnContourListChanged(List<ContourInfo> contourList)
@@ -202,29 +208,6 @@ namespace RTDicomViewer.ViewModel.MainWindow
                     return heatLUT;
             }
             return null;
-        }
-
-        public async void SubtractDoses()
-        {
-            if (SelectedMathDose1 == null || SelectedMathDose2 == null)
-                return;
-            DicomDoseObject newDoseObject = new DicomDoseObject();
-            var math = new GridMath();
-            
-            IsComputing = true;
-            var progressItem = progressVm.CreateNew("Performing Gamma Calculation...", false);
-            var progress = new Progress<int>(x => { progressItem.ProgressAmount = x; });
-            await Task.Run(() =>
-            {
-                newDoseObject.Grid = math.Gamma(SelectedMathDose1.Dose.Grid, SelectedMathDose2.Dose.Grid, progress);
-                //newDoseObject.Grid = math.Subtract(SelectedMathDose1.Dose.Grid, SelectedMathDose2.Dose.Grid);
-            });
-            progressVm.End(progressItem);
-
-            newDoseObject.Grid.ValueUnit = Unit.Gamma;
-            newDoseObject.Grid.Name = "Gamma Result";
-            IsComputing = false;
-            MessengerInstance.Send<RTObjectAddedMessage<DicomDoseObject>>(new RTObjectAddedMessage<DicomDoseObject>(newDoseObject));
         }
     }
 }

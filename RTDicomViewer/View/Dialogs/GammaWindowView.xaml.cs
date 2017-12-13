@@ -1,6 +1,4 @@
-﻿using RTDicomViewer.Utilities;
-using RTDicomViewer.ViewModel.MainWindow;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RTDicomViewer.View.MainWindow
+namespace RTDicomViewer.View.Dialogs
 {
     /// <summary>
-    /// Interaction logic for DoseObjectDisplayView.xaml
+    /// Interaction logic for GammaWindowView.xaml
     /// </summary>
-    public partial class DoseObjectDisplayView : UserControl
+    public partial class GammaWindowView : Window
     {
-        public DoseObjectDisplayView()
+        public GammaWindowView()
         {
             InitializeComponent();
         }

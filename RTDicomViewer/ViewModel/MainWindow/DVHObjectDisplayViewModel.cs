@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace RTDicomViewer.ViewModel.MainWindow
 {
@@ -45,6 +46,10 @@ namespace RTDicomViewer.ViewModel.MainWindow
             }
         }
 
+        private void RemoveStructureSet(StructureSet structureSet)
+        {
+        }
+
         private void AddStructureSet(StructureSet structureSet)
         {
             foreach (RegionOfInterest roi in structureSet.ROIs)
@@ -69,7 +74,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
             foreach(SelectableObject<RegionOfInterest, DoseVolumeHistogram> selectableRegionOfInterest in RegionOfInterests)
             {
                 var dvh = new DoseVolumeHistogram(doseObject, selectableRegionOfInterest.Value);
-                selectableRegionOfInterest.Children.Add(new SelectableObject<DoseVolumeHistogram>(dvh));
+                selectableRegionOfInterest.AddChild(new SelectableObject<DoseVolumeHistogram>(dvh));
             }
         }
 
@@ -87,6 +92,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
                     if (dvh.IsSelected)
                     {
                         dvh.Value.Compute();
+                        Clipboard.SetText(dvh.Value.ToString());
                         dvhsToAdd.Add(dvh.Value);
                     }
                 }

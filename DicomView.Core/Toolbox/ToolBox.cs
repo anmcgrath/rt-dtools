@@ -8,6 +8,9 @@ namespace DicomPanel.Core.Toolbox
     {
         public ITool SelectedTool { get; set; }
         public List<ITool> Tools { get; set; }
+        public delegate void EventHandler(object sender, ToolSelectedEventArgs args);
+        public event EventHandler ToolSelected;
+
         /// <summary>
         /// Activated tools are activated alongside selected tools.
         /// </summary>
@@ -37,6 +40,9 @@ namespace DicomPanel.Core.Toolbox
 
         public void SelectTool(ITool tool)
         {
+            ITool oldTool = null;
+            ITool newTool = null;
+
             if (tool.IsActivatable)
             {
                 if (ActivatedTools.Contains(tool))
@@ -48,10 +54,16 @@ namespace DicomPanel.Core.Toolbox
             }
             else
             {
+                oldTool = SelectedTool;
+
                 SelectedTool?.Unselect();
-                 SelectedTool = tool;
+                SelectedTool = tool;
                 SelectedTool.Select();
+
+                newTool = SelectedTool;
             }
+
+            ToolSelected?.Invoke(this, new ToolSelectedEventArgs(oldTool, newTool));
         }
 
         public void SelectTool(string toolId)
