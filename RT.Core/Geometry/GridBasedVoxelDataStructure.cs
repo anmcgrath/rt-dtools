@@ -64,7 +64,7 @@ namespace RT.Core.Geometry
 
         private int getIndex(int ix, int iy, int iz)
         {
-            return ix + YCoords.Length * (iy + (ZCoords.Length * iz));
+            return ix + XCoords.Length * (iy + (YCoords.Length * iz));
         }
 
 
