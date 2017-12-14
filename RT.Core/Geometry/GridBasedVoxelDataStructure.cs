@@ -24,9 +24,9 @@ namespace RT.Core.Geometry
         /// </summary>
         public float[] ZCoords { get; set; }
         /// <summary>
-        /// The voxel data, access through Data[x,y,z]
+        /// The voxel data, access through Data[x + length(y) * (y + (length(z) * z)]
         /// </summary>
-        public float[,,] Data { get; set; }
+        public float[] Data { get; set; }
         /// <summary>
         /// Whether the grid spacing is constant in each direction
         /// </summary>
@@ -46,15 +46,25 @@ namespace RT.Core.Geometry
         {
         }
 
-        public void SetVoxel(float x, float y, float z, float value)
+        public void SetVoxelByCoords(float x, float y, float z, float value)
         {
             if (ConstantGridSpacing)
             {
                 int indexX = (int)((x - XCoords[0]) / GridSpacing.X);
                 int indexY = (int)((y - YCoords[0]) / GridSpacing.Y);
                 int indexZ = (int)((z - ZCoords[0]) / GridSpacing.Z);
-                Data[indexX, indexY, indexZ] = value;
+                Data[getIndex(indexX, indexY, indexZ)] = value;
             }
+        }
+
+        public void SetVoxelByIndices(int i, int j, int k, float value)
+        {
+            Data[getIndex(i, j, k)] = value;
+        }
+
+        private int getIndex(int ix, int iy, int iz)
+        {
+            return ix + YCoords.Length * (iy + (ZCoords.Length * iz));
         }
 
 
@@ -122,14 +132,14 @@ namespace RT.Core.Geometry
                     (float)position.X, (float)position.Y, (float)position.Z,
                     x0, y0, z0,
                     x1, y1, z1,
-                    Data[ix0, iy0, iz0],
-                    Data[ix1, iy0, iz0],
-                    Data[ix0, iy0, iz1],
-                    Data[ix1, iy0, iz1],
-                    Data[ix0, iy1, iz0],
-                    Data[ix1, iy1, iz0],
-                    Data[ix0, iy1, iz1],
-                    Data[ix1, iy1, iz1]);
+                    Data[getIndex(ix0, iy0, iz0)],
+                    Data[getIndex(ix1, iy0, iz0)],
+                    Data[getIndex(ix0, iy0, iz1)],
+                    Data[getIndex(ix1, iy0, iz1)],
+                    Data[getIndex(ix0, iy1, iz0)],
+                    Data[getIndex(ix1, iy1, iz0)],
+                    Data[getIndex(ix0, iy1, iz1)],
+                    Data[getIndex(ix1, iy1, iz1)]);
             }
         }
 
@@ -205,7 +215,7 @@ namespace RT.Core.Geometry
                         enumeratorVoxel.Position.X = XCoords[i];
                         enumeratorVoxel.Position.Y = YCoords[j];
                         enumeratorVoxel.Position.Z = ZCoords[k];
-                        enumeratorVoxel.Value = Data[i, j, k];
+                        enumeratorVoxel.Value = Data[getIndex(i, j, k)];
                         yield return enumeratorVoxel;
                     }
                 }

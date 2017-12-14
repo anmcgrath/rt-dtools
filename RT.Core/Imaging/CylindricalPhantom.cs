@@ -20,7 +20,7 @@ namespace RT.Core.Imaging
             var grid = new GridBasedVoxelDataStructure();
             grid.DefaultPhysicalValue = -1000;
             grid.ConstantGridSpacing = true;
-            grid.Data = new float[xRows, yRows, zRows];
+            grid.Data = new float[xRows * yRows * zRows];
             grid.XCoords = new float[xRows];
             grid.YCoords = new float[yRows];
             grid.ZCoords = new float[zRows];
@@ -47,10 +47,10 @@ namespace RT.Core.Imaging
                     {
                         if(grid.XCoords[j]*grid.XCoords[j] + grid.YCoords[k] * grid.YCoords[k] < radius * radius)
                         {
-                            grid.Data[j, k, i] = 0;
+                            grid.SetVoxelByIndices(i, j, k, 0);
                         }else
                         {
-                            grid.Data[j, k, i] = -1000;
+                            grid.SetVoxelByIndices(i, j, j, 0);
                         }
                     }
                 }

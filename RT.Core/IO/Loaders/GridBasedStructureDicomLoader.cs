@@ -25,7 +25,8 @@ namespace RT.Core.IO.Loaders
             grid.XCoords = GetCoords(files, (int)size.X, DicomHeader.RowDir.X, DicomHeader.ColDir.X, DicomHeader.ImagePositionPatient.X, 1);
             grid.YCoords = GetCoords(files, (int)size.Y, DicomHeader.RowDir.Y, DicomHeader.ColDir.Y, DicomHeader.ImagePositionPatient.Y, 1);
             grid.ZCoords = GetCoords(files, (int)size.Z, DicomHeader.RowDir.Z, DicomHeader.ColDir.Z, DicomHeader.ImagePositionPatient.Z, 1);
-            grid.Data = new float[(int)size.X / 1, (int)size.Y / 1, (int)size.Z / 1];
+
+            grid.Data = new float[(int)size.X * (int)size.Y * (int)size.Z];
 
             int currYIndex = 0;
             int currZIndex = 0;
@@ -52,7 +53,7 @@ namespace RT.Core.IO.Loaders
 
                         //Rescale back to actual HUs
                         dataArray[k] = dataArray[k] * tempHeaderInfo.RescaleSlope + tempHeaderInfo.RescaleIntercept;
-                        grid.Data[currXIndex, currYIndex, currZIndex] = dataArray[k];
+                        grid.SetVoxelByIndices(currXIndex, currYIndex, currZIndex, dataArray[k]);
 
                         if (dataArray[k] > grid.MaxVoxel.Value)
                         {

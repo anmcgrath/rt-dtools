@@ -21,70 +21,67 @@ namespace RT.Core.Eval
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
 
-            for(int i = 0; i < newGrid.XCoords.Length; i++)
+            int voxelNum = 0;
+            int totalVoxels = newGrid.NumberOfVoxels;
+            foreach (Voxel voxel in newGrid)
             {
-                for(int j = 0; j < newGrid.YCoords.Length; j++)
+                voxelNum++;
+
+                posn = voxel.Position;
+
+                var refDose = reference.Interpolate(posn).Value * reference.Scaling;
+                var evalDose = evaluated.Interpolate(posn).Value * evaluated.Scaling;
+                if (refDose < thresholdDose && evalDose < thresholdDose)
                 {
-                    for(int k = 0; k < newGrid.ZCoords.Length; k++)
-                    {
-                        posn.X =  newGrid.XCoords[i];
-                        posn.Y =  newGrid.YCoords[j];
-                        posn.Z =  newGrid.ZCoords[k];
-
-                        var refDose = reference.Interpolate(posn).Value * reference.Scaling;
-                        var evalDose = evaluated.Interpolate(posn).Value * evaluated.Scaling;
-                        if (refDose < thresholdDose && evalDose < thresholdDose)
-                        {
-                            newGrid.Data[i, j, k] = -1;
-                            continue;
-                        }
-
-                        //Set minGamma squared using a point with no offset (dose difference only).
-                        var dd = refDose - evalDose;
-
-                        float minGammaSquared = GammaSquared(dd * dd, 0, doseTol * doseTol, distTol * distTol);
-                        //Store the last distance we evaluated
-                        float lastDistSq = 0;
-
-                        //loop throught the sorted list of offsets
-                        for(int o = 1; o < offsets.Count; o++)
-                        {
-                            Offset offset = offsets[o];
-                            float distSq = (float)offset.DistanceSquared;
-
-                            //set posn2 to to the actual physical location in the grid we are interested in
-                            posn.Add(offset.Displacement, posn2);
-                            
-                            if (minGammaSquared < distSq / (distTol * distTol) && distSq > lastDistSq)
-                            {
-                                break; //there is no way gamma can get smaller since distance is increasing in each offset and future gamma will be dominated by the DTA portion.
-                            }
-
-                            //compute dose difference squared and then gamma squared
-                            refDose = reference.Interpolate(posn).Value * reference.Scaling;
-                            evalDose = evaluated.Interpolate(posn2).Value * evaluated.Scaling;
-
-                            float doseDiff = (refDose - evalDose);
-
-                            float gammaSquared = GammaSquared(doseDiff * doseDiff, distSq, doseTol * doseTol, distTol * distTol);
-
-                            if (gammaSquared < minGammaSquared)
-                                minGammaSquared = gammaSquared;
-
-                            lastDistSq = distSq;
-                        }
-
-                        float gamma = (float)Math.Sqrt((double)minGammaSquared);
-
-                        newGrid.Data[i, j, k] = gamma;
-                        if (gamma > newGrid.MaxVoxel.Value)
-                            newGrid.MaxVoxel.Value = gamma;
-                        if (gamma < newGrid.MinVoxel.Value)
-                            newGrid.MinVoxel.Value = gamma;
-
-                    }
+                    newGrid.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, -1);
+                    continue;
                 }
-                progress.Report((int)(100*((double)i / (double)newGrid.XCoords.Length)));
+
+                //Set minGamma squared using a point with no offset (dose difference only).
+                var dd = refDose - evalDose;
+
+                float minGammaSquared = GammaSquared(dd * dd, 0, doseTol * doseTol, distTol * distTol);
+                //Store the last distance we evaluated
+                float lastDistSq = 0;
+
+                //loop throught the sorted list of offsets
+                for (int o = 1; o < offsets.Count; o++)
+                {
+                    Offset offset = offsets[o];
+                    float distSq = (float)offset.DistanceSquared;
+
+                    //set posn2 to to the actual physical location in the grid we are interested in
+                    posn.Add(offset.Displacement, posn2);
+
+                    if (minGammaSquared < distSq / (distTol * distTol) && distSq > lastDistSq)
+                    {
+                        break; //there is no way gamma can get smaller since distance is increasing in each offset and future gamma will be dominated by the DTA portion.
+                    }
+
+                    //compute dose difference squared and then gamma squared
+                    refDose = reference.Interpolate(posn).Value * reference.Scaling;
+                    evalDose = evaluated.Interpolate(posn2).Value * evaluated.Scaling;
+
+                    float doseDiff = (refDose - evalDose);
+
+                    float gammaSquared = GammaSquared(doseDiff * doseDiff, distSq, doseTol * doseTol, distTol * distTol);
+
+                    if (gammaSquared < minGammaSquared)
+                        minGammaSquared = gammaSquared;
+
+                    lastDistSq = distSq;
+                }
+
+                float gamma = (float)Math.Sqrt((double)minGammaSquared);
+
+                newGrid.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, gamma);
+                if (gamma > newGrid.MaxVoxel.Value)
+                    newGrid.MaxVoxel.Value = gamma;
+                if (gamma < newGrid.MinVoxel.Value)
+                    newGrid.MinVoxel.Value = gamma;
+
+                if(((int)(100*(totalVoxels/voxelNum)))%5==0)
+                    progress.Report((int)(100 * ((double)voxelNum / (double)totalVoxels)));
             }
 
             return newGrid;
@@ -151,11 +148,11 @@ namespace RT.Core.Eval
                         v1.Value *= grid1.Scaling;
                         grid2.Interpolate(x, y, z, v2);
                         v2.Value *= grid2.Scaling;
-                        newGrid.Data[i, j, k] = 100 * (v1.Value - v2.Value) / (grid1.MaxVoxel.Value*grid1.Scaling);
+                        /*newGrid.Data[i, j, k] = 100 * (v1.Value - v2.Value) / (grid1.MaxVoxel.Value*grid1.Scaling);
                         if (newGrid.Data[i, j, k] > newGrid.MaxVoxel.Value)
                             newGrid.MaxVoxel.Value = newGrid.Data[i, j, k];
                         if (newGrid.Data[i, j, k] < newGrid.MinVoxel.Value)
-                            newGrid.MinVoxel.Value = newGrid.Data[i, j, k];
+                            newGrid.MinVoxel.Value = newGrid.Data[i, j, k];*/
                     }
                 }
             }
@@ -178,7 +175,7 @@ namespace RT.Core.Eval
             newGrid.YCoords = new float[grid.YCoords.Length]; grid.YCoords.CopyTo(newGrid.YCoords, 0);
             newGrid.ZCoords = new float[grid.ZCoords.Length]; grid.ZCoords.CopyTo(newGrid.ZCoords, 0);
             newGrid.Scaling = 1;
-            newGrid.Data = new float[newGrid.XCoords.Length, newGrid.YCoords.Length, newGrid.ZCoords.Length];
+            newGrid.Data = new float[newGrid.XCoords.Length * newGrid.YCoords.Length * newGrid.ZCoords.Length];
             newGrid.ConstantGridSpacing = grid.ConstantGridSpacing;
             newGrid.GridSpacing = new Point3d();
             grid.GridSpacing.CopyTo(newGrid.GridSpacing);
@@ -212,7 +209,7 @@ namespace RT.Core.Eval
             for (int k = 0; k < lenZ; k++)
                 grid.ZCoords[k] = (float)(grid.ZRange.Minimum + k * grid.GridSpacing.Z);
 
-            grid.Data = new float[lenX, lenY, lenZ];
+            grid.Data = new float[lenX * lenY * lenZ];
             return grid;
         }
     }

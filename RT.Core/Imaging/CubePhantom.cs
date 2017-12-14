@@ -10,7 +10,7 @@ namespace RT.Core.Imaging
         public CubePhantom()
         {
             this.PatientName = "CUBE^PHANTOM";
-            this.Name = "Cube Phantom";
+            this.Grid.Name = "Cube Phantom";
             this.Modality = "CT";
         }
 
@@ -22,7 +22,7 @@ namespace RT.Core.Imaging
             var grid = new GridBasedVoxelDataStructure();
             grid.DefaultPhysicalValue = -1000;
             grid.ConstantGridSpacing = true;
-            grid.Data = new float[xRows, yRows, zRows];
+            grid.Data = new float[xRows * yRows * zRows];
             grid.XCoords = new float[xRows];
             grid.YCoords = new float[yRows];
             grid.ZCoords = new float[zRows];

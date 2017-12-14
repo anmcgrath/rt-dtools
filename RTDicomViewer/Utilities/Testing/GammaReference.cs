@@ -18,7 +18,7 @@ namespace RTDicomViewer.Utilities.Testing
             XRange = new Range(-72, 71);
             YRange = new Range(-100, 100);
             ZRange = new Range(-63, 63);
-            Data = new float[144, 201, 127];
+            Data = new float[144 * 201 * 127];
             GridSpacing = new RT.Core.Utilities.RTMath.Point3d(1, 1, 1);
             for (int i = 0; i < XCoords.Length; i++)
                 XCoords[i] = (float)(XRange.Minimum + i * GridSpacing.X);
@@ -33,7 +33,7 @@ namespace RTDicomViewer.Utilities.Testing
             ConstantGridSpacing = true;
 
             this.Scaling = 1;
-            SetVoxel(0, 0, 0, 2);
+            SetVoxelByCoords(0, 0, 0, 2);
         }
     }
 }
