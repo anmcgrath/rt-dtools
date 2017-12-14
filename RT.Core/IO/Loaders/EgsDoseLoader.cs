@@ -15,7 +15,6 @@ namespace RT.Core.IO.Loaders
         public EgsDoseObject Load(string fileName, EgsDoseObject doseObject, IProgress<double> progress)
         {
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
-            doseObject.Name = Path.GetFileName(fileName);
             grid.Name = Path.GetFileName(fileName);
             double max = 0;
 
@@ -29,7 +28,7 @@ namespace RT.Core.IO.Loaders
                 grid.XCoords = new float[SizeX];
                 grid.YCoords = new float[SizeY];
                 grid.ZCoords = new float[SizeZ];
-                grid.Data = new float[SizeX, SizeY, SizeZ];
+                grid.Data = new float[SizeX * SizeY * SizeZ];
 
                 fillCoords(grid.XCoords, SizeX, reader);
                 fillCoords(grid.YCoords, SizeY, reader);
@@ -42,7 +41,7 @@ namespace RT.Core.IO.Loaders
                     int indexZ = (int)(i / (SizeX * SizeY));
                     int indexY = (int)(i / SizeX) - indexZ * (SizeY);
                     float data = ReadFloat(reader);
-                    grid.Data[indexX, indexY, indexZ] = data;
+                    grid.SetVoxelByIndices(indexX, indexY, indexZ, data);
 
                     if(data > grid.MaxVoxel.Value)
                     {

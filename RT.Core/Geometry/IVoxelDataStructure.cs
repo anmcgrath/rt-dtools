@@ -42,9 +42,6 @@ namespace RT.Core.Geometry
 
         float GetNormalisationAmount();
 
-        //Histogramf CreateHistogram(RegionOfInterest roi);
-        //Histogramf CreateHistogram();
-
 
     }
 }

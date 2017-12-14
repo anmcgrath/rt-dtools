@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace RT.Core.DICOM
 {
+    /// <summary>
+    /// Stores Info on the PixelData for a DICOM Object
+    /// </summary>
     public class PixelDataInfo
     {
         public Point3d RowDir { get; set; }

@@ -6,6 +6,9 @@ namespace RT.Core.DICOM
 { 
     public class DicomColors
     {
+        // These were taken from OxyPlot on Github
+
+
         /// <summary>
         /// The alice blue.
         /// </summary>

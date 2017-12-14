@@ -19,7 +19,7 @@ namespace RTDicomViewer.ViewModel.MainWindow
 
         public RelayCommand<DicomImageObject> DeleteImageCommand => new RelayCommand<DicomImageObject>(x =>
         {
-        if (MessageBox.Show("Are you sure you wish to delete the image set " + x.Name + "?", "Delete?", System.Windows.MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
+        if (MessageBox.Show("Are you sure you wish to delete the image set " + x.Grid.Name + "?", "Delete?", System.Windows.MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
                 sendDeleteImageMessage(x);
         },y=>
         {

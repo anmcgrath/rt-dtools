@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace RT.Core.Geometry
 {
+    /// <summary>
+    /// A data structure for storing slices of data, rather than storing data in a 3d grid.
+    /// Use case for this class is if the dicom slices are not orthogonal to x, y, z axis
+    /// and so it is likely more efficient to store the data like this.
+    /// </summary>
     public class SliceBasedVoxelDataStructure : VoxelDataStructureBase, IVoxelDataStructure
     {
         /// <summary>
@@ -71,6 +76,8 @@ namespace RT.Core.Geometry
             _positionCache.Z = position.Z;
             MatrixAInv.LeftMultiply(_positionCache, _indexCache);
 
+            //At the moment we only do nearest neighbour interpolation.
+
             int ic0 = (int)Math.Round(_indexCache.X);
             int ir0 = (int)Math.Round(_indexCache.Y);
             int ik0 = (int)Math.Round(_indexCache.Z);
@@ -96,6 +103,13 @@ namespace RT.Core.Geometry
                 getVoxel(ic1, ir1, ik1));*/
         }
 
+        /// <summary>
+        /// Returns the voxel specified by column, row and k indices
+        /// </summary>
+        /// <param name="ic">Column index</param>
+        /// <param name="ir">Row index</param>
+        /// <param name="ik">K index</param>
+        /// <returns></returns>
         private float getVoxel(int ic, int ir, int ik)
         {
             if (ik > _slices.Count - 1 || ik < 0)
@@ -109,6 +123,23 @@ namespace RT.Core.Geometry
             }
         }
 
+        /// <summary>
+        /// Add a slice of data
+        /// </summary>
+        /// <param name="sliceData">The array of data</param>
+        /// <param name="rows">Number of rows</param>
+        /// <param name="columns">Number of columns</param>
+        /// <param name="dr">Row spacing</param>
+        /// <param name="dc">Column spacing</param>
+        /// <param name="sx">Image position patient X</param>
+        /// <param name="sy">Image position patient Y</param>
+        /// <param name="sz">Image position patient Z</param>
+        /// <param name="xx">Projection of rows onto x</param>
+        /// <param name="xy">Projection of rows onto y</param>
+        /// <param name="xz">Projection of rows onto z</param>
+        /// <param name="yx">Projection of columns onto x</param>
+        /// <param name="yy">Projection of columns onto y</param>
+        /// <param name="yz">Projection of columns onto z</param>
         public void AddSlice(float[] sliceData, int rows, int columns, double dr, double dc, double sx, double sy, double sz, double xx, double xy, double xz, double yx, double yy, double yz)
         {
             DicomSlice slice = new DicomSlice(rows, columns);

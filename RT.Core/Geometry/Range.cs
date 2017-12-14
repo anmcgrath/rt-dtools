@@ -80,6 +80,11 @@ namespace RT.Core.Geometry
             return Minimum > range.Maximum;
         }
 
+        /// <summary>
+        /// Returns whether this range interesects another range at some point
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
         public bool Intersects(Range range)
         {
             return range.Contains(Minimum) || range.Contains(Maximum);
@@ -91,7 +96,7 @@ namespace RT.Core.Geometry
         }
 
         /// <summary>
-        /// Returns a range that covers both ranfges
+        /// Returns a range that covers both ranges
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>

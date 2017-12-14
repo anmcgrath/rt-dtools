@@ -130,7 +130,7 @@ namespace DicomPanel.Core
                 Grid = image.Grid,
                 Alpha = 0.5f,
                 BlendMode = blendMode,
-                Name = image.Name,
+                Name = image.Grid.Name,
                 LUT = image.LUT,
                 Scaling = 1,
                 Units = "HU",

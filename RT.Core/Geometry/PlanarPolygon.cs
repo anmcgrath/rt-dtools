@@ -56,13 +56,13 @@ namespace RT.Core.Geometry
                     intersectingXCoords.Add((y - y0) / m + x0);
                 }
             }
-            // Remove repeating x coords when we return as an array
+
             intersectingXCoords.Sort();
 
             if (intersectingXCoords.Count % 2 == 0)
                 return intersectingXCoords.ToArray();
             else
-                return intersectingXCoords.Distinct().ToArray();
+                return intersectingXCoords.Distinct().ToArray(); // Remove repeating x coords when we return as an array
         }
     }
 }

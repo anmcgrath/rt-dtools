@@ -52,7 +52,7 @@ namespace RTDicomViewer.Workspace
             StructureSets = new WorkspaceItemCollection<StructureSet>();
             Points = new WorkspaceItemCollection<PointOfInterest>();
 
-            Messenger.Default.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => Doses.Add(x.Value,x.Value.Name));
+            Messenger.Default.Register<RTObjectAddedMessage<DicomDoseObject>>(this, x => Doses.Add(x.Value,x.Value.Grid.Name));
             Messenger.Default.Register<RTObjectAddedMessage<PointOfInterest>>(this, 
                 x => Points.Add(x.Value, x.Value.Name));
             Messenger.Default.Register<RTObjectAddedMessage<DicomImageObject>>(this, 

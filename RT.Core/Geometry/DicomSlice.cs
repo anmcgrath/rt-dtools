@@ -83,6 +83,12 @@ namespace RT.Core.Geometry
         }
 
         private Point3d positionPointCache = new Point3d();
+
+        /// <summary>
+        /// Gets the position from the index in the Data array
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         private Point3d GetPosition(int index)
         {
             int column = index % Columns;
@@ -101,16 +107,34 @@ namespace RT.Core.Geometry
                 Data[row * (Columns) + column] = value;
         }
 
+        /// <summary>
+        /// Computes the x position from a row and column
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
         public double ComputePx(int row, int column)
         {
             return Yx * Dc * column + Xx * Dr * row + Sx;
         }
 
+        /// <summary>
+        /// Computes the y position from a row and column
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
         public double ComputePy(int row, int column)
         {
             return Yy * Dc * column + Xy * Dr * row + Sy;
         }
 
+        /// <summary>
+        /// Computes the z position from a row and column
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
         public double ComputePz(int row, int column)
         {
             return Yz * Dc * column + Xz * Dc * row + Sz;

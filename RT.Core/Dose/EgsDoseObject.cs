@@ -12,7 +12,6 @@ namespace RT.Core.Dose
     public class EgsDoseObject : IDoseObject
     {
         public string FileName { get; set; }
-        public string Name { get; set; }
         public IVoxelDataStructure Grid { get; set; }
         public EgsDoseObject() { }
     }

@@ -17,6 +17,12 @@ namespace RT.Core.Geometry
         public Voxel MaxVoxel { get; set; }
         public Voxel MinVoxel { get; set; }
         private Point3d positionCache;
+        private Voxel voxelCache;
+
+        public double NormalisationPercent { get; set; } = 100;
+        public NormalisationType NormalisationType { get; set; } = NormalisationType.Relative;
+        public RelativeNormalisationOption RelativeNormalisationOption { get; set; }
+        public PointOfInterest NormalisationPOI { get; set; }
 
         /// <summary>
         /// Converts actual value to value of type Unit
@@ -36,6 +42,7 @@ namespace RT.Core.Geometry
             YRange = new Range();
             ZRange = new Range();
             positionCache = new Point3d();
+            voxelCache = new Voxel();
             MaxVoxel = new Voxel() { Value = float.MinValue };
             MinVoxel = new Voxel() { Value = float.MaxValue };
         }
@@ -49,9 +56,8 @@ namespace RT.Core.Geometry
 
         public Voxel Interpolate(Point3d position)
         {
-            Voxel voxel = new Voxel();
-            Interpolate(position.X, position.Y, position.Z, voxel);
-            return voxel;
+            Interpolate(position.X, position.Y, position.Z, voxelCache);
+            return voxelCache;
         }
 
         public void Interpolate(double x, double y, double z, Voxel voxel)
@@ -73,11 +79,6 @@ namespace RT.Core.Geometry
         }
 
         public abstract void Interpolate(Point3d position, Voxel voxel);
-
-        public double NormalisationPercent { get; set; } = 100;
-        public NormalisationType NormalisationType { get; set; } = NormalisationType.Relative;
-        public RelativeNormalisationOption RelativeNormalisationOption { get; set; }
-        public PointOfInterest NormalisationPOI { get; set; }
 
         public float GetNormalisationAmount()
         {

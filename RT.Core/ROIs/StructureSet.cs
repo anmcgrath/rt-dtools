@@ -12,7 +12,7 @@ namespace RT.Core.ROIs
     public class StructureSet:DicomObject
     {
         public List<RegionOfInterest> ROIs { get; set; }
-
+        public string Name { get; set; }
         public StructureSet() { }
     }
 }

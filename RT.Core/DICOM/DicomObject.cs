@@ -18,7 +18,6 @@ namespace RT.Core.DICOM
         public string PatientName { get; set; }
         public string SeriesUid { get; set; }
         public string Modality { get; set; }
-        public string Name { get; set; }
         public string SeriesDescription { get; set; }
         public string StudyDescription { get; set; }
 
