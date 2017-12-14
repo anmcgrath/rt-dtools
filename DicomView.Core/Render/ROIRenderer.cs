@@ -32,7 +32,7 @@ namespace DicomPanel.Core.Render
                     double gridSpacing = 2;
                     var rows = (int)Math.Round((boundingRect.Height * camera.GetFOV().Y / gridSpacing)) + 1;
                     var cols = (int)Math.Round((boundingRect.Width * camera.GetFOV().X / gridSpacing)) + 1;
-                    var grid = new bool[rows, cols];
+                    var grid = new bool[rows * cols];
                     var cnorm = camera.ColDir.Length();
                     var rnorm = camera.RowDir.Length();
                     var cx = (cnorm * camera.ColDir.X) * gridSpacing / camera.Scale;
@@ -51,7 +51,7 @@ namespace DicomPanel.Core.Render
                             worldCoord.X = initPosn.X + cx * i + rx * j + cx + rx;
                             worldCoord.Y = initPosn.Y + cy * i + ry * j + cy + ry;
                             worldCoord.Z = initPosn.Z + cz * i + rz * j + cz + rz;
-                            grid[j, i] = roi.ContainsPointNonInterpolated(worldCoord.X, worldCoord.Y, worldCoord.Z);
+                            grid[j *cols + i] = roi.ContainsPointNonInterpolated(worldCoord.X, worldCoord.Y, worldCoord.Z);
                         }
                     }
 

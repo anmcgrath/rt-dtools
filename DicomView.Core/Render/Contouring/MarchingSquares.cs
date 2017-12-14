@@ -51,18 +51,18 @@ namespace DicomPanel.Core.Render.Contouring
             return vertices.ToArray();
         }
 
-        private bool getBoolValue(bool[,] grid, int row, int col, int rows, int cols)
+        private bool getBoolValue(bool[] grid, int row, int col, int rows, int cols)
         {
             if (row > rows - 1 || row < 0 || col < 0 || col > cols - 1)
                 return false;
-            return grid[row, col];
+            return grid[row * cols + col];
         }
 
         /// <summary>
         /// Returns a list of lines in the form [x0,y0,z0,x1,y1,z1]
         /// </summary>
         /// <returns></returns>
-        public double[] GetVertices(bool[,] grid, int rows, int columns, double x0, double y0, double z0, double rdx, double rdy, double rdz, double cdx, double cdy, double cdz)
+        public double[] GetVertices(bool[] grid, int rows, int columns, double x0, double y0, double z0, double rdx, double rdy, double rdz, double cdx, double cdy, double cdz)
         {
             List<double> vertices = new List<double>();
             bool A, B, C, D;
