@@ -23,5 +23,11 @@ namespace RTDicomViewer.View.Dialogs
         {
             InitializeComponent();
         }
+
+        private void GroupBox_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(e.LeftButton == MouseButtonState.Pressed)
+                this.DragMove();
+        }
     }
 }

@@ -10,7 +10,6 @@ namespace RT.Core.Imaging
         public CubePhantom()
         {
             this.PatientName = "CUBE^PHANTOM";
-            this.Grid.Name = "Cube Phantom";
             this.Modality = "CT";
         }
 

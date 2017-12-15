@@ -26,6 +26,8 @@ namespace RT.Core.Eval
             foreach (Voxel voxel in newGrid)
             {
                 voxelNum++;
+                if (voxelNum % (totalVoxels / 20) == 0)
+                    progress.Report((int)(100 * ((double)voxelNum / (double)totalVoxels)));
 
                 posn = voxel.Position;
 
@@ -79,9 +81,6 @@ namespace RT.Core.Eval
                     newGrid.MaxVoxel.Value = gamma;
                 if (gamma < newGrid.MinVoxel.Value)
                     newGrid.MinVoxel.Value = gamma;
-
-                if(((int)(100*(totalVoxels/voxelNum)))%5==0)
-                    progress.Report((int)(100 * ((double)voxelNum / (double)totalVoxels)));
             }
 
             return newGrid;
