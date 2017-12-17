@@ -14,21 +14,21 @@
             <ListView Height="120" ItemsSource="{Binding Doses}" SelectedItem="{Binding SelectedDose}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="30">
+                        <GridViewColumn Width="40" Header="Lines">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox HorizontalAlignment="Center" IsChecked="{Binding RenderLines}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="30">
+                        <GridViewColumn Width="40" Header="Wash">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding RenderDoseWash}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="" DisplayMemberBinding="{Binding Dose.Grid.Name}"/>
+                        <GridViewColumn Width="100" Header="" DisplayMemberBinding="{Binding Dose.Grid.Name}"/>
                     </GridView>
                 </ListView.View>
                 <!--<ListView.ItemTemplate>
@@ -96,7 +96,7 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <CheckBox IsChecked="{Binding SelectedDose.RenderLines}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Tag="{Binding SelectedDose}">Render Isodose Lines</CheckBox>
+                    <CheckBox IsChecked="{Binding SelectedDose.RenderLines}" Margin="2" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Tag="{Binding SelectedDose}">Render Isodose Lines</CheckBox>
                     
                     <CheckBox IsChecked="{Binding SelectedDose.RenderDoseWash}" Margin="2" Tag="{Binding SelectedDose}" x:Name="renderDoseWashCheckBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Render Dose Color wash</CheckBox>
 

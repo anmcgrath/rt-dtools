@@ -47,7 +47,7 @@
     <SolidColorBrush x:Key="TextBoxBackground" Color="{StaticResource DarkBackgroundColor}" />
     <SolidColorBrush x:Key="TextBoxDisabledForeground" Color="#8C8C8C" />
     <SolidColorBrush x:Key="TextBoxDisabledBackground" Color="{StaticResource DisabledBackgroundColor}" />
-    <SolidColorBrush x:Key="InactiveSelectionHighlightBrush" Color="#335C85"/>
+    <SolidColorBrush x:Key="InactiveSelectionHighlightBrush" Color="#FF338537"/>
 
     <SolidColorBrush x:Key="ComboBoxButtonNormalBackground" Color="#808080"/>
 
@@ -83,9 +83,9 @@
 
     <SolidColorBrush x:Key="ListBorder" Color="{StaticResource ForegroundColor}"/>
     <SolidColorBrush x:Key="ListBackground" Color="{StaticResource DarkBackgroundColor}"/>
-    <SolidColorBrush x:Key="SelectedListItem" Color="#2c528e"/>
+    <SolidColorBrush x:Key="SelectedListItem" Color="#FF449F5B"/>
     <SolidColorBrush x:Key="SelectedListItemForeground" Color="{StaticResource ForegroundColor}"/>
-    <SolidColorBrush x:Key="MouseOverListItem" Color="#426caf"/>
+    <SolidColorBrush x:Key="MouseOverListItem" Color="#FF42AF53"/>
 
     <SolidColorBrush x:Key="TreeViewBackground" Color="{StaticResource DarkBackgroundColor}"/>
     <SolidColorBrush x:Key="TreeViewDisabledForeground" Color="{StaticResource LightDisabledBackgroundColor}"/>
@@ -117,7 +117,7 @@
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
     <Geometry x:Key="ExpanderNormalArrow">M 1,1.5 L 4.5,5 L 8,1.5</Geometry>
     <Geometry x:Key="ExpanderCheckedArrow">M 1,4.5  L 4.5,1  L 8,4.5</Geometry>
-    <Geometry x:Key="TabItemRoundedCorner">M6.5,2.6C4.767,0.973 2.509,0 0,0 0,0 0,19 0,19L23,19z</Geometry>
+    <Geometry x:Key="RoundedCorner">M6.5,2.6C4.767,0.973 2.509,0 0,0 0,0 0,19 0,19L23,19z</Geometry>
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
@@ -234,12 +234,12 @@
                                     </Grid.RowDefinitions>
                                     <Border x:Name="Bd"
 									    Grid.Column="0"
-									    CornerRadius="3,0,0,0"
+									    CornerRadius="0,0,0,0"
 									    BorderBrush="{TemplateBinding BorderBrush}"
 									    BorderThickness="0"
 									    Background="{TemplateBinding Background}"
 									    Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter x:Name="Content" Margin="6,1,6,1" ContentSource="Header"
+                                        <ContentPresenter x:Name="Content" Margin="0" ContentSource="Header"
 										    HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
 										    RecognizesAccessKey="True"
 										    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -250,7 +250,6 @@
                                           Grid.Row="0"
                                           Width="24"
                                           Stretch="Fill"
-                                          Data="{StaticResource TabItemRoundedCorner}"
                                           Fill="{TemplateBinding Background}" />
                                 </Grid>
                             </Grid>

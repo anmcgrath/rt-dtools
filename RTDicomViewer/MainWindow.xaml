@@ -43,6 +43,7 @@
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
+        
 
         <Grid DockPanel.Dock="Top" Background="#FFEBE9ED">
             <Grid.ColumnDefinitions>

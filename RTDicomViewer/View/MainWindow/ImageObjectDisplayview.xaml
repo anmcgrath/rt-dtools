@@ -6,39 +6,46 @@
              xmlns:local="clr-namespace:RTDicomViewer.View.MainWindow"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding ImageDisplay, Source={StaticResource Locator}}">
-    <ItemsControl ItemsSource="{Binding Images}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
-                    <Image Source="{Binding Value.ImagePreview}"/>
-                    <TextBlock TextAlignment="Center" Text="{Binding Value.Image.Grid.Name}" TextWrapping="Wrap"/>
-                    <TextBlock TextAlignment="Center" Text="{Binding Value.Image.StudyDescription}" TextWrapping="Wrap"/>
-                    <StackPanel.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set as Primary" Command="{Binding Path=PlacementTarget.Tag.SetPrimaryCommand, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
 
-                            <MenuItem Header="Set as Secondary" Command="{Binding Path=PlacementTarget.Tag.SetSecondaryCommand, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+    <StackPanel>
+        <ListView ItemsSource="{Binding Images}" DisplayMemberPath="Value.Image.Grid.Name" Height="180">
+            
+        </ListView>    
+    
+        <ItemsControl ItemsSource="{Binding Images}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Tag="{Binding Path=DataContext,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:ImageObjectDisplayview}}">
+                        <Image Source="{Binding Value.ImagePreview}"/>
+                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.Grid.Name}" TextWrapping="Wrap"/>
+                        <TextBlock TextAlignment="Center" Text="{Binding Value.Image.StudyDescription}" TextWrapping="Wrap"/>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Set as Primary" Command="{Binding Path=PlacementTarget.Tag.SetPrimaryCommand, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
 
-                            <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteImageCommand, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
-                RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
-                        </ContextMenu>
-                    </StackPanel.ContextMenu>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#0000FF"/>
-                            </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+                                <MenuItem Header="Set as Secondary" Command="{Binding Path=PlacementTarget.Tag.SetSecondaryCommand, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+
+                                <MenuItem Header="Delete..." Command="{Binding Path=PlacementTarget.Tag.DeleteImageCommand, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding PlacementTarget.DataContext.Value.Image, RelativeSource={
+                    RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#0000FF"/>
+                                </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </UserControl>

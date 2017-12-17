@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+# Blend for Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDicomViewer", "RTDicomViewer\RTDicomViewer.csproj", "{43FF4591-FF3B-4378-833B-62BD4161A4B3}"
 EndProject
@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTDataTests", "RTDataTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DicomPanel.Wpf", "DicomViewPanel\DicomPanel.Wpf.csproj", "{A8D763EB-539D-4393-B9A3-E65EAAF517D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DicomPanel.Core", "DicomView.Core\DicomPanel.Core.csproj", "{CB10DBAD-D27D-481D-A11F-DF681796A5B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DicomPanel.Core", "DicomView.Core\DicomPanel.Core.csproj", "{CB10DBAD-D27D-481D-A11F-DF681796A5B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RT.Core", "RT.Core\RT.Core.csproj", "{EBB388B3-013C-4C29-802A-2C7E6D59954C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RT.Core", "RT.Core\RT.Core.csproj", "{EBB388B3-013C-4C29-802A-2C7E6D59954C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RT.MonteCarlo", "RT.MonteCarlo\RT.MonteCarlo.csproj", "{9C97D826-2B50-43E1-981B-1DEFED3BDDE7}"
 EndProject
