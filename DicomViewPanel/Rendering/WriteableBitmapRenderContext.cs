@@ -106,5 +106,17 @@ namespace DicomPanel.Wpf.Rendering
         {
             _bitmap.DrawEllipseCentered(transxi(x0), transyi(y0), transxi(radiusX/2), transyi(radiusY/2), DicomColorConverter.FromDicomColor(color));
         }
+
+        public void DrawLines(double[] vertices, DicomColor color)
+        {
+            var actualColor = WriteableBitmapExtensions.ConvertColor(DicomColorConverter.FromDicomColor(color));
+            using (var context = _bitmap.GetBitmapContext())
+            {
+                for (int i = 0; i < vertices.Length; i += 4)
+                {
+                    WriteableBitmapExtensions.DrawLine(context, context.Width, context.Height, transxi(vertices[i]), transyi(vertices[i + 1]), transxi(vertices[i + 2]), transyi(vertices[i + 3]),actualColor);
+                        }
+            }
+        }
     }
 }

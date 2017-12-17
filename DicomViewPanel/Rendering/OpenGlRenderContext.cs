@@ -36,6 +36,11 @@ namespace DicomPanel.Wpf.Rendering
             
         }
 
+        public void DrawLines(double[] vertices, DicomColor color)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DrawRect(double x0, double y0, double x1, double y1, DicomColor color)
         {
             

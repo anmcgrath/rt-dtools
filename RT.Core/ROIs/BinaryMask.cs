@@ -112,7 +112,6 @@ namespace RT.Core.ROIs
         {
             if (row < 0 || row > Rows - 1 || column < 0 || column > Columns - 1)
                 return false;
-            bool inside = InsideBinaryData[column + Columns * row];
             return InsideBinaryData[column + Columns * row];
         }
 

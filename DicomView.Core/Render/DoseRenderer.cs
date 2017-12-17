@@ -11,6 +11,9 @@ namespace DicomPanel.Core.Render
 {
     public class DoseRenderer
     {
+        private Point2d screenCoords1 = new Point2d();
+        private Point2d screenCoords2 = new Point2d();
+
         public List<ContourInfo> ContourInfo { get; set; }
         /// <summary>
         /// The maximum number of grid points to use when interpolating dose for the marching squares algorithm
@@ -56,21 +59,26 @@ namespace DicomPanel.Core.Render
                 Point3d worldPoint1 = new Point3d();
                 Point3d worldPoint2 = new Point3d();
 
-                for(int i = 0; i < contour.Vertices.Length; i+= 6)
-                {
-                    worldPoint1.X = contour.Vertices[i];
-                    worldPoint1.Y = contour.Vertices[i + 1];
-                    worldPoint1.Z = contour.Vertices[i + 2];
-                    worldPoint2.X = contour.Vertices[i + 3];
-                    worldPoint2.Y = contour.Vertices[i + 4];
-                    worldPoint2.Z = contour.Vertices[i + 5];
+                var screenVertices = getScreenVertices(contour.Vertices, camera);
 
-                    camera.ConvertWorldToScreenCoords(worldPoint1, screenPoint1);
-                    camera.ConvertWorldToScreenCoords(worldPoint2, screenPoint2);
-
-                    context.DrawLine(screenPoint1.X, screenPoint1.Y, screenPoint2.X, screenPoint2.Y, contour.Color, lineType);
-                }
+                context.DrawLines(screenVertices, contourInfo.Color);
             }
+        }
+
+        private double[] getScreenVertices(double[] vertices, Camera camera)
+        {
+            double[] screenVertices = new double[2 * vertices.Length / 3];
+
+            for (int i = 0, j = 0; i < vertices.Length; i += 6, j += 4)
+            {
+                camera.ConvertWorldToScreenCoords(vertices[i + 0], vertices[i + 1], vertices[i + 2], screenCoords1);
+                camera.ConvertWorldToScreenCoords(vertices[i + 3], vertices[i + 4], vertices[i + 5], screenCoords2);
+                screenVertices[j] = screenCoords1.X;
+                screenVertices[j + 1] = screenCoords1.Y;
+                screenVertices[j + 2] = screenCoords2.X;
+                screenVertices[j + 3] = screenCoords2.Y;
+            }
+            return screenVertices;
         }
     }
 }

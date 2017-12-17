@@ -28,7 +28,7 @@ namespace RT.Core.IO.Loaders
                 grid.XCoords = new float[SizeX];
                 grid.YCoords = new float[SizeY];
                 grid.ZCoords = new float[SizeZ];
-                grid.Data = new float[SizeX, SizeY, SizeZ];
+                grid.Data = new float[SizeX * SizeY * SizeZ];
 
                 fillCoords(grid.XCoords, SizeX, reader);
                 fillCoords(grid.YCoords, SizeY, reader);
@@ -41,7 +41,7 @@ namespace RT.Core.IO.Loaders
                     int indexZ = (int)(i / (SizeX * SizeY));
                     int indexY = (int)(i / SizeX) - indexZ * (SizeY);
                     float data = ReadFloat(reader);
-                    grid.SetVoxel(indexX, indexY, indexZ, data);
+                    grid.SetVoxelByIndices(indexX, indexY, indexZ, data);
 
                     if(data > grid.MaxVoxel.Value)
                     {

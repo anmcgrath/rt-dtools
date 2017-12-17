@@ -30,8 +30,8 @@ namespace DicomPanel.Core.Render
                 {
                     var initPosn = camera.ConvertScreenToWorldCoords(boundingRect.Y, boundingRect.X);
                     double gridSpacing = 2;
-                    var rows = (int)Math.Round((boundingRect.Height * camera.GetFOV().Y / gridSpacing)) + 1;
-                    var cols = (int)Math.Round((boundingRect.Width * camera.GetFOV().X / gridSpacing)) + 1;
+                    var rows = (int)Math.Round((boundingRect.Height * (camera.GetFOV().Y ) / gridSpacing)) + 1;
+                    var cols = (int)Math.Round((boundingRect.Width * (camera.GetFOV().X ) / gridSpacing)) + 1;
                     var grid = new bool[rows * cols];
                     var cnorm = camera.ColDir.Length();
                     var rnorm = camera.RowDir.Length();
@@ -56,16 +56,27 @@ namespace DicomPanel.Core.Render
                     }
 
                     double[] vertices = ms.GetVertices(grid, rows, cols, initPosn.X, initPosn.Y, initPosn.Z, rx, ry, rz, cx, cy, cz);
+                    double[] screenVertices = getScreenVertices(vertices, camera);
+                    context.DrawLines(screenVertices, roi.Color);
 
-
-                    for (int i = 0; i < vertices.Length; i += 6)
-                    {
-                        camera.ConvertWorldToScreenCoords(vertices[i + 0], vertices[i + 1], vertices[i + 2], screenCoords1);
-                        camera.ConvertWorldToScreenCoords(vertices[i + 3], vertices[i + 4], vertices[i + 5], screenCoords2);
-                        context.DrawLine(screenCoords1.X,screenCoords1.Y,screenCoords2.X,screenCoords2.Y, roi.Color);
-                    }
                 }
             }
+        }
+
+        private double[] getScreenVertices(double[] vertices, Camera camera)
+        {
+            double[] screenVertices = new double[2 * vertices.Length / 3];
+
+            for (int i = 0, j = 0; i < vertices.Length; i += 6, j += 4)
+            {
+                camera.ConvertWorldToScreenCoords(vertices[i + 0], vertices[i + 1], vertices[i + 2], screenCoords1);
+                camera.ConvertWorldToScreenCoords(vertices[i + 3], vertices[i + 4], vertices[i + 5], screenCoords2);
+                screenVertices[j] = screenCoords1.X;
+                screenVertices[j + 1] = screenCoords1.Y;
+                screenVertices[j + 2] = screenCoords2.X;
+                screenVertices[j + 3] = screenCoords2.Y;
+            }
+            return screenVertices;
         }
 
 

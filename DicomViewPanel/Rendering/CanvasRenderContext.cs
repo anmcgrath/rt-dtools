@@ -145,5 +145,13 @@ namespace DicomPanel.Wpf.Rendering
         {
             DrawLine(x0, y0, x1, y1, color, LineType.Normal);
         }
+
+        public void DrawLines(double[] vertices, DicomColor color)
+        {
+            for(int i = 0; i < vertices.Length; i+=4)
+            {
+                DrawLine(vertices[i], vertices[i + 1], vertices[i + 2], vertices[i + 3], color);
+            }
+        }
     }
 }

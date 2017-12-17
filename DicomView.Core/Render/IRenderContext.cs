@@ -19,6 +19,12 @@ namespace DicomPanel.Core.Render
         void DrawRect(double x0, double y0, double x1, double y1, DicomColor color);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vertices">Vertices in the form of [x0,y0,x1,y1]</param>
+        /// <param name="color"></param>
+        void DrawLines(double[] vertices, DicomColor color);
         void DrawEllipse(double x0, double y0, double radiusX, double radiusY, DicomColor color);
         void DrawString(string text, double x, double y, double size, DicomColor color);
         void EndRender();
