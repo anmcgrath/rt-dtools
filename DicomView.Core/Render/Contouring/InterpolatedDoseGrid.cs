@@ -30,6 +30,7 @@ namespace DicomPanel.Core.Render.Contouring
 
             Point2d screenPoint = new Point2d(boundingRect.X, boundingRect.Y);
             var normalisationAmount = doseObject.Grid.GetNormalisationAmount();
+            Point3d worldPoint = new Point3d();
 
             Coords = new double[Rows][][];
             Data = new float[Rows][];
@@ -44,10 +45,10 @@ namespace DicomPanel.Core.Render.Contouring
                     screenPoint.X = boundingRect.X + col * dx;
                     screenPoint.Y = boundingRect.Y + row * dy;
 
-                    var pt = camera.ConvertScreenToWorldCoords(screenPoint);
-                    Coords[row][col] = new double[3] { pt.X, pt.Y, pt.Z };
+                    camera.ConvertScreenToWorldCoords(screenPoint.Y, screenPoint.X, worldPoint);
+                    Coords[row][col] = new double[3] { worldPoint.X, worldPoint.Y, worldPoint.Z };
 
-                    doseObject.Grid.Interpolate(pt, voxel);
+                    doseObject.Grid.Interpolate(worldPoint, voxel);
 
                     Data[row][col] = (voxel.Value * doseObject.Grid.Scaling) / normalisationAmount;
                 }

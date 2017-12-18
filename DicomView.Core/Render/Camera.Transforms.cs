@@ -41,12 +41,12 @@ namespace DicomPanel.Core.Render
             _screenToWorldMatrix.A22 = Position.Z - (ColDir.Z * FOV.X * MMPerPixel / Scale + RowDir.Z * FOV.Y * MMPerPixel / Scale) / 2;
         }
 
-        public void ConvertScreenToWorldCoords(double y, double x, Point3d screenCoords)
+        public void ConvertScreenToWorldCoords(double y, double x, Point3d worldCoords)
         {
             _screenCoordsCache.X = x;
             _screenCoordsCache.Y = y;
             _screenCoordsCache.Z = 1;
-            ConvertScreenToWorldCoords(_screenCoordsCache, screenCoords);
+            ConvertScreenToWorldCoords(_screenCoordsCache, worldCoords);
         }
 
         /// <summary>
