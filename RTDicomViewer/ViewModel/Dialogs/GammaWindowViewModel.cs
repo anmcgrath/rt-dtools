@@ -84,11 +84,25 @@ namespace RTDicomViewer.ViewModel.Dialogs
             IsComputing = true;
             var progressItem = ProgressSerice.CreateNew("Performing Gamma Calculation...", false);
             var progress = new Progress<int>(x => { progressItem.ProgressAmount = x; });
+            VectorField vf = null;
+            GammaDistribution gamma = null;
             await Task.Run(() =>
             {
-                newDoseObject.Grid = math.Gamma(SelectedMathDose1.Grid, SelectedMathDose2.Grid, progress, (float)DtaTol, (float)DoseDiffTol, 10);
+                gamma = math.Gamma(SelectedMathDose1.Grid, SelectedMathDose2.Grid, progress, (float)DtaTol, (float)DoseDiffTol, 10);
+                vf = gamma.Vectors;
+                newDoseObject.Grid = gamma.Gamma;
             });
             ProgressSerice.End(progressItem);
+
+            var dd = new DicomDoseObject();
+            
+            dd.Grid = gamma.Jacobian;
+            dd.Grid.Name = "Jacobian";
+            MessengerInstance.Send<RTObjectAddedMessage<DicomDoseObject>>(new RTObjectAddedMessage<DicomDoseObject>(dd));
+
+            Workspace.Workspace.Current.Axial.VectorFields.Add(vf);
+            Workspace.Workspace.Current.Sagittal.VectorFields.Add(vf);
+            Workspace.Workspace.Current.Coronal.VectorFields.Add(vf);
 
             newDoseObject.Grid.ValueUnit = Unit.Gamma;
             newDoseObject.Grid.Name = "Gamma Result";

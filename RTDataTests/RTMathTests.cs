@@ -118,5 +118,21 @@ namespace RTDataTests
             Assert.AreEqual(r, 10);
         }
 
+        [TestMethod]
+        public void Matrix3dDeterminantTest()
+        {
+            Matrix3d m = new Matrix3d();
+            m.A00 = 6;
+            m.A10 = 4;
+            m.A20 = 2;
+            m.A01 = 1;
+            m.A11 = -2;
+            m.A21 = 8;
+            m.A02 = 1;
+            m.A12 = 5;
+            m.A22 = 7;
+            Assert.AreEqual(-306,m.Determinate());
+        }
+
     }
 }

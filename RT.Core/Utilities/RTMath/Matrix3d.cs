@@ -68,6 +68,12 @@ namespace RT.Core.Utilities.RTMath
             return result;
         }
 
+        public double Determinate()
+        {
+            double det = A00 * (A11 * A22 - A12 * A21) - A01 * (A10 * A22 - A12 * A20) + A02 * (A10 * A21 - A11 * A20);
+            return det;
+        }
+
 
         /// <summary>
         /// Left multiply a point by this matrix and return a new point as the result

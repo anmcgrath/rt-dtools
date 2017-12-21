@@ -62,8 +62,6 @@
       <HintPath>..\packages\OxyPlot.Wpf.2.0.0-unstable1013\lib\net452\OxyPlot.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="Syncfusion.Shared.Wpf, Version=15.3460.0.26, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
-    <Reference Include="Syncfusion.Tools.WPF, Version=15.3460.0.26, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -374,6 +372,10 @@
     <ProjectReference Include="..\RT.Core\RT.Core.csproj">
       <Project>{ebb388b3-013c-4c29-802a-2c7e6d59954c}</Project>
       <Name>RT.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RT.MonteCarlo\RT.MonteCarlo.csproj">
+      <Project>{9C97D826-2B50-43E1-981B-1DEFED3BDDE7}</Project>
+      <Name>RT.MonteCarlo</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

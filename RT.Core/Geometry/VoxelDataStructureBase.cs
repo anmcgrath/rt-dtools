@@ -78,6 +78,14 @@ namespace RT.Core.Geometry
             return ContainsPoint(point.X, point.Y, point.Z);
         }
 
+        public float this[Point3d point]
+        {
+            get
+            {
+                return Interpolate(point).Value;
+            }
+        }
+
         public abstract void Interpolate(Point3d position, Voxel voxel);
 
         public float GetNormalisationAmount()

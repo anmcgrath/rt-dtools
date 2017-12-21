@@ -35,6 +35,8 @@ namespace RT.Core.Geometry
         int NumberOfVoxels { get; }
         string Name { get; set; }
 
+        float this[Point3d point] { get; }
+
         double NormalisationPercent { get; set; }
         NormalisationType NormalisationType { get; set; }
         RelativeNormalisationOption RelativeNormalisationOption { get; set; }

@@ -18,6 +18,7 @@ using RT.Core.ROIs;
 using System.Windows;
 using RTDicomViewer.ViewModel.Dialogs;
 using RTDicomViewer.View.Dialogs;
+using RT.MonteCarlo.Phantom;
 
 namespace RTDicomViewer.ViewModel.MainWindow
 {
@@ -88,6 +89,19 @@ namespace RTDicomViewer.ViewModel.MainWindow
             OnRenderDoseChanged(wrapper);
 
             wrapper.PropertyChanged += Wrapper_PropertyChanged;
+
+
+            var options = new EgsPhantomCreatorOptions();
+            options.Grid = dose.Grid;
+            options.OutputFileName = @"C:\Users\thisu\Desktop\out.txt";
+            options.XRange = options.Grid.XRange;
+            options.YRange = options.Grid.YRange;
+            options.ZRange = options.Grid.ZRange;
+            options.Dx = 5;
+            options.Dy = 5;
+            options.Dz = 5;
+            var creator = new EgsPhantomCreator();
+            creator.Create(options);
         }
 
         private void Wrapper_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -202,8 +216,8 @@ namespace RTDicomViewer.ViewModel.MainWindow
                         heatLUT.Window = 1;
                     }else
                     {
-                        heatLUT.Level = 0.6f * dose.Grid.MaxVoxel.Value * dose.Grid.Scaling;
-                        heatLUT.Window = 0.8f * dose.Grid.MaxVoxel.Value * dose.Grid.Scaling;
+                        heatLUT.Level = 0;
+                        heatLUT.Window = 6;
                     }
                     return heatLUT;
             }

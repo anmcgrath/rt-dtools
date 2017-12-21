@@ -51,6 +51,32 @@ namespace DicomPanel.Core.Render.Contouring
             return vertices.ToArray();
         }
 
+        /// <summary>
+        /// Returns a list of lines in the form [x0,y0,z0,x1,y1,z1]
+        /// </summary>
+        /// <typeparam name="T">Data type</typeparam>
+        /// <param name="grid">The data grid</param>
+        /// <param name="coords">Coordinates corresponding 1:1 to the data grid</param>
+        /// <returns></returns>
+        public double[] GetVertices(bool[] grid, int rows, int columns, double[][][] coords)
+        {
+            List<double> vertices = new List<double>();
+            bool A, B, C, D;
+            for (int row = 1; row < rows; row++)
+            {
+                for (int col = 1; col < columns; col++)
+                {
+                    A = getBoolValue(grid, row - 1, col - 1, rows, columns);
+                    B = getBoolValue(grid, row - 1, col, rows, columns);
+                    C = getBoolValue(grid, row, col - 1, rows, columns);
+                    D = getBoolValue(grid, row, col, rows, columns);
+                    checkSquare(A, B, C, D, row, col, true, vertices, coords);
+                }
+            }
+
+            return vertices.ToArray();
+        }
+
         private bool getBoolValue(bool[] grid, int row, int col, int rows, int cols)
         {
             if (row > rows - 1 || row < 0 || col < 0 || col > cols - 1)
@@ -111,13 +137,33 @@ namespace DicomPanel.Core.Render.Contouring
             vTopRight[0] = x + cdx; vTopRight[1] = y + cdy; vTopRight[2] = z + cdz;
             vBottomRight[0] = x + cdx + rdx; vBottomRight[1] = y + cdy + rdy; vBottomRight[2] = z + cdz + rdz;
             vBottomLeft[0] = x + rdx; vBottomLeft[1] = y + rdy; vBottomLeft[2] = z + rdz;
-            //Vector<double> vA = Vector<double>.Build.Dense(new double[] { x, y, z });
-            //Vector<double> vB = Vector<double>.Build.Dense(new double[] { x+cdx, y+cdy, z+cdz });
-            //Vector<double> vD = Vector<double>.Build.Dense(new double[] { x+cdx+rdx, y+cdy+rdy, z+cdz+rdz });
-            //Vector<double> vC = Vector<double>.Build.Dense(new double[] { x+rdx, y+rdy, z+rdz });
-
 
             addVertices(vertices, lineType, A ? 10 : 0, B ? 10 : 0, C ? 10 : 0, D ? 10 : 0, 5);
+        }
+
+
+        private void checkSquare(bool A, bool B, bool C, bool D, int row, int col, bool threshold, List<double> vertices, double[][][] coords)
+        {
+            byte swb = 0, nwb = 0, neb = 0, seb = 0;
+            if (C  == threshold)
+                swb = 0b0000_0001;
+            if (D == threshold)
+                seb = 0b0000_0010;
+            if (B == threshold)
+                neb = 0b0000_0100;
+            if (A == threshold)
+                nwb = 0b0000_1000;
+            byte lineType = swb;
+            lineType |= seb;
+            lineType |= neb;
+            lineType |= nwb;
+
+            // The corner vectors
+            vTopLeft = coords[row - 1][col - 1];
+            vTopRight = coords[row - 1][col];
+            vBottomRight = coords[row][col];
+            vBottomLeft = coords[row][col - 1];
+            addVertices(vertices, lineType, A?10:0, B?10:0, C?10:0, D?10:0, 5);
         }
 
 

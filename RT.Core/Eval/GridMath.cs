@@ -8,8 +8,14 @@ namespace RT.Core.Eval
 {
     public class GridMath
     {
-        public IVoxelDataStructure Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress, float distTol, float doseTol, float threshold)
+        public GammaDistribution Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress, float distTol, float doseTol, float threshold)
         {
+            var gammaDistribution = new GammaDistribution();
+            VectorField vf = new VectorField();
+            var vfx = CreateBlank(reference);
+            var vfy = CreateBlank(reference);
+            var vfz = CreateBlank(reference);
+
             float thresholdDose = (threshold / 100) * reference.MaxVoxel.Value * reference.Scaling;
 
             doseTol = (doseTol / 100) * (reference.MaxVoxel.Value * reference.Scaling); //global gamma
@@ -20,6 +26,8 @@ namespace RT.Core.Eval
 
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
+
+            double dx = 0, dy = 0, dz = 0; // Keep track of where we are pointing.
 
             int voxelNum = 0;
             int totalVoxels = newGrid.NumberOfVoxels;
@@ -43,6 +51,8 @@ namespace RT.Core.Eval
                 var dd = refDose - evalDose;
 
                 float minGammaSquared = GammaSquared(dd * dd, 0, doseTol * doseTol, distTol * distTol);
+                dx = dy = dz = 0;
+
                 //Store the last distance we evaluated
                 float lastDistSq = 0;
 
@@ -60,6 +70,10 @@ namespace RT.Core.Eval
                         break; //there is no way gamma can get smaller since distance is increasing in each offset and future gamma will be dominated by the DTA portion.
                     }
 
+                    dx = offset.Displacement.X;
+                    dy = offset.Displacement.Y;
+                    dz = offset.Displacement.Z;
+
                     //compute dose difference squared and then gamma squared
                     refDose = reference.Interpolate(posn).Value * reference.Scaling;
                     evalDose = evaluated.Interpolate(posn2).Value * evaluated.Scaling;
@@ -76,14 +90,61 @@ namespace RT.Core.Eval
 
                 float gamma = (float)Math.Sqrt((double)minGammaSquared);
 
+                //var len = Math.Sqrt(dx * dx + dy * dy + dz * dz);
+                //dx /= len;
+                //dy /= len;
+                //dz /= len;
                 newGrid.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, gamma);
+                vfx.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dx);
+                vfy.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dy);
+                vfz.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dz);
+
                 if (gamma > newGrid.MaxVoxel.Value)
                     newGrid.MaxVoxel.Value = gamma;
                 if (gamma < newGrid.MinVoxel.Value)
                     newGrid.MinVoxel.Value = gamma;
             }
 
-            return newGrid;
+            gammaDistribution.Gamma = newGrid;
+            gammaDistribution.Vectors.X = vfx;
+            gammaDistribution.Vectors.Y = vfy;
+            gammaDistribution.Vectors.Z = vfz;
+
+            var jacobian = CreateBlank(gammaDistribution.Gamma);
+            var v = gammaDistribution.Vectors;
+            foreach(Voxel voxel in jacobian)
+            {
+                jacobian.SetVoxelByCoords(
+                    (float)voxel.Position.X, 
+                    (float)voxel.Position.Y, 
+                    (float)voxel.Position.Z, 
+                    (float)detJ(voxel.Position, v));
+            }
+            gammaDistribution.Jacobian = jacobian;
+
+            return gammaDistribution;
+        }
+
+        private double detJ(Point3d p, VectorField f)
+        {
+            var dx = 1.0; var dy = dx; var dz = dx;
+            var px = new Point3d(dx, 0, 0);
+            var py = new Point3d(0, dy, 0);
+            var pz = new Point3d(0, 0, dz);
+            Matrix3d m = new Matrix3d();
+            m.A00 = (f.X[p + px / 2] - f.X[p - px / 2]) / dx;
+            m.A01 = (f.X[p + py / 2] - f.X[p - py / 2]) / dy;
+            m.A02 = (f.X[p + pz / 2] - f.X[p - pz / 2]) / dz;
+
+            m.A10 = (f.Y[p + px / 2] - f.X[p - px / 2]) / dx;
+            m.A11 = (f.Y[p + py / 2] - f.X[p - py / 2]) / dy;
+            m.A12 = (f.Y[p + pz / 2] - f.X[p - pz / 2]) / dz;
+
+            m.A20 = (f.Z[p + px / 2] - f.X[p - px / 2]) / dx;
+            m.A21 = (f.Z[p + py / 2] - f.X[p - py / 2]) / dy;
+            m.A22 = (f.Z[p + pz / 2] - f.X[p - pz / 2]) / dz;
+
+            return m.Determinate();
         }
 
         public List<Offset> CreateOffsets(double diameterMM, double stepMM, Point3d gridSizes)

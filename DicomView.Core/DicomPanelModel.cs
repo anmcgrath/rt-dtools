@@ -33,6 +33,7 @@ namespace DicomPanel.Core
         public DoseRenderer DoseRenderer { get; set; }
         public ROIRenderer ROIRenderer { get; set; }
         public BeamRenderer BeamRenderer { get; set; }
+        public VoxelFieldRenderer VectorRenderer { get; set; }
 
         public DicomImageObject PrimaryImage { get; set; }
         public DicomImageObject SecondaryImage { get; set; }
@@ -43,6 +44,8 @@ namespace DicomPanel.Core
         private List<RegionOfInterest> ROIs { get; set; }
         private List<PointOfInterest> POIs { get; set; }
         private List<Beam> Beams { get; set; }
+
+        public List<VectorField> VectorFields;
 
         public double PrimarySecondaryImageSplitLocation = 0.5;
 
@@ -57,6 +60,7 @@ namespace DicomPanel.Core
             ImageRenderer = new ImageRenderer();
             DoseRenderer = new DoseRenderer();
             ROIRenderer = new ROIRenderer();
+            VectorRenderer = new VoxelFieldRenderer();
             ROIs = new List<RegionOfInterest>();
             POIs = new List<PointOfInterest>();
             ContouredDoses = new List<IDoseObject>();
@@ -68,6 +72,7 @@ namespace DicomPanel.Core
             Overlays.Add(new ScaleOverlay());
             SpyGlass = new Rectd(0, 0, 1, 1);
             AdditionalImages = new List<RenderableImage>();
+            VectorFields = new List<VectorField>();
         }
 
         /// <summary>
@@ -86,6 +91,11 @@ namespace DicomPanel.Core
             RenderROIs(ImageRenderContext);
             RenderBeams(ImageRenderContext);
             RenderOverlays(OverlayContext);
+
+            foreach(var vf in VectorFields)
+            {
+                VectorRenderer.Render(vf, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
+            }
 
             ImageRenderContext?.EndRender();
             DoseRenderContext?.EndRender();
