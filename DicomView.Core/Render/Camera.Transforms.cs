@@ -79,7 +79,7 @@ namespace DicomPanel.Core.Render
             screenCoords.Z = 1;
             //Convert normalised device coordinates where x:[-1,1] and y:[-1,1] to camera coords (mm) where x:[cx-FOV.X/2,cx+FOV.X/2]
             screenCoords.X = t.Ndc2x(screenCoords.X, FOV.X);
-            screenCoords.Y = t.Ndc2y(screenCoords.Y, FOV.Y); 
+            screenCoords.Y = t.Ndc2y(screenCoords.Y, FOV.Y);
             _screenToWorldMatrix.LeftMultiply(screenCoords, worldCoords);
         }
 

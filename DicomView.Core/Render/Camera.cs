@@ -35,7 +35,7 @@ namespace DicomPanel.Core.Render
         /// The camera's x and y FOV in mm
         /// </summary>
         private Point2d FOV { get; set; }
-       
+
         public double Scale { get; set; }
         public double MMPerPixel { get; set; }
 
@@ -55,7 +55,7 @@ namespace DicomPanel.Core.Render
             MMPerPixel = 1;
             SetAxial();
         }
-        
+
         private void onUpdateView()
         {
             Normal = ColDir.Cross(RowDir);
@@ -151,7 +151,7 @@ namespace DicomPanel.Core.Render
         }
         public void SetCoronal()
         {
-            SetDirections(1, 0, 0, 0, 0, - 1);
+            SetDirections(1, 0, 0, 0, 0, -1);
         }
 
         /// <summary>

@@ -1,9 +1,6 @@
 ﻿using RT.Core.DICOM;
 using RT.Core.Planning;
 using RT.Core.Utilities.RTMath;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DicomPanel.Core.Render
 {
@@ -36,7 +33,7 @@ namespace DicomPanel.Core.Render
 
             var sX1 = camera.ConvertWorldToScreenCoords(X1);
 
-            context.DrawLine(scrnSource.X, scrnSource.Y, sX1.X, sX1.Y,DicomColors.Yellow);
+            context.DrawLine(scrnSource.X, scrnSource.Y, sX1.X, sX1.Y, DicomColors.Yellow);
 
             //The v coordinates below represent the corners of the jaws projected at isocentre with gantry=couch=coll=0
             //v11 means the corner of the jaws x1 and y1
@@ -70,18 +67,19 @@ namespace DicomPanel.Core.Render
 
             //Draw the line between source and isocentre
             var line = (sourcePosn - iso);
-            
-            if(camera.Normal.Dot(line) == 0)
+
+            if (camera.Normal.Dot(line) == 0)
             {
                 var scrnIso = camera.ConvertWorldToScreenCoords(iso);
                 context.DrawLine(scrnIso.X, scrnIso.Y, scrnSource.X, scrnSource.Y, DicomColors.Yellow);
-            }else
+            }
+            else
             {
                 //var scrnIso = camera.ConvertWorldToScreenCoords(camera.Intersect(iso, sourcePosn));
                 //context.DrawLine(scrnIso.X, scrnIso.Y, scrnSource.X, scrnSource.Y, DicomColors.Yellow);
                 //context.DrawEllipse(scrnIso.X, scrnIso.Y, .02, .02, DicomColors.Yellow);
             }
-            
+
         }
 
         private Point3d calculateSourcePosition(Beam beam, RTCoordinateTransform transform)

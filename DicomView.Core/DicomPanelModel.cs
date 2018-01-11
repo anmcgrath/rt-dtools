@@ -87,7 +87,7 @@ namespace DicomPanel.Core
             OverlayContext?.BeginRender();
 
             RenderImages(ImageRenderContext);
-            RenderDoses(ImageRenderContext);
+            RenderDoses(DoseRenderContext);
             RenderROIs(ImageRenderContext);
             RenderBeams(ImageRenderContext);
             RenderOverlays(OverlayContext);

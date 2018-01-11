@@ -1,7 +1,5 @@
 ﻿using RT.Core.Utilities.RTMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DicomPanel.Core.Render
 {

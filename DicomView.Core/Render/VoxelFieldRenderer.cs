@@ -41,9 +41,9 @@ namespace DicomPanel.Core.Render
                 var ry = (rnorm * camera.RowDir.Y) * gridSpacing / camera.Scale;
                 var rz = (rnorm * camera.RowDir.Z) * gridSpacing / camera.Scale;
 
-                for (int i = 0; i < cols; i+=2)
+                for (int i = 0; i < cols; i += 2)
                 {
-                    for (int j = 0; j < rows; j+=2)
+                    for (int j = 0; j < rows; j += 2)
                     {
                         // The additional cx, rx, cy, ry etc. are because the marching squares
                         // offsets the grid during calculation... trust me future self.

@@ -78,6 +78,19 @@ namespace RTDicomViewer.ViewModel
             Workspace.Workspace.Init();
             FileOpener = fileOpener;
 
+            InitiateDicomPanelModels();
+
+            SubscribeToMessages();
+
+            Workspace.Workspace.Current.Axial = AxialPanelModel;
+            Workspace.Workspace.Current.Coronal = CoronalPanelModel;
+            Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
+
+            SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
+        }
+
+        private void InitiateDicomPanelModels()
+        {
             AxialPanelModel = new DicomPanelModel();
             AxialPanelModel.Camera.SetAxial();
             AxialPanelModel.SetToolBox(ToolBox);
@@ -96,9 +109,13 @@ namespace RTDicomViewer.ViewModel
             SagittalPanelModel.OrthogonalModels.Add(CoronalPanelModel);
             CoronalPanelModel.OrthogonalModels.Add(AxialPanelModel);
             CoronalPanelModel.OrthogonalModels.Add(SagittalPanelModel);
+        }
 
+        private void SubscribeToMessages()
+        {
             //When we load a new image, render it
-            MessengerInstance.Register<RTObjectAddedMessage<DicomImageObject>>(this, x => {
+            MessengerInstance.Register<RTObjectAddedMessage<DicomImageObject>>(this, x =>
+            {
                 AxialPanelModel.SetPrimaryImage(x.Value);
                 SagittalPanelModel.SetPrimaryImage(x.Value);
                 CoronalPanelModel.SetPrimaryImage(x.Value);
@@ -125,21 +142,15 @@ namespace RTDicomViewer.ViewModel
             });
 
             MessengerInstance.Register<NotificationMessage>(this, x =>
-             {
-                 MessageBox.Show(x.Notification);
-             });
+            {
+                MessageBox.Show(x.Notification);
+            });
 
             //When the dose render options are changed...
             MessengerInstance.Register<DoseRenderQualityChanged>(this, x =>
             {
                 ChangeDoseRenderOptions(x.Options);
             });
-
-            Workspace.Workspace.Current.Axial = AxialPanelModel;
-            Workspace.Workspace.Current.Coronal = CoronalPanelModel;
-            Workspace.Workspace.Current.Sagittal = SagittalPanelModel;
-
-            SimpleIoc.Default.GetInstance<IProgressView>().DataContext = SimpleIoc.Default.GetInstance<IProgressService>();
         }
 
         private void InvalidateAll()

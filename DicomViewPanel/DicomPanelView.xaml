@@ -24,6 +24,7 @@
         <Image Source="{Binding ImageBase}" RenderOptions.BitmapScalingMode="Fant"/>
         <!--<sgl:OpenGLControl OpenGLDraw="OpenGLControl_OpenGLDraw" DrawFPS="True"/>-->
 
+        <Image Source="{Binding ImageTop}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
         <Canvas x:Name="OverlayCanvas" IsHitTestVisible="False"/>
         <!-- Everything else -->

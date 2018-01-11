@@ -31,7 +31,7 @@ namespace DicomPanel.Core.Render
             totalCols = (int)(screenRect.Width * context.Width);
             TotalScreenRect = screenRect;
             buffer = new byte[totalRows * totalCols * bytespp];
-            
+
         }
         public void EndRender(Rectd screenRect, IRenderContext context)
         {
@@ -47,7 +47,7 @@ namespace DicomPanel.Core.Render
                 return;
 
             // Get the direction we move in each iteration from the top left of the camera
-            Rectd screenRect = camera.GetBoundingScreenRect(image.Grid.XRange,image.Grid.YRange,image.Grid.ZRange,image.ScreenRect);
+            Rectd screenRect = camera.GetBoundingScreenRect(image.Grid.XRange, image.Grid.YRange, image.Grid.ZRange, image.ScreenRect);
             //Rectd screenRect = new Rectd(0,0,1,1);
 
             if (screenRect == null)
@@ -90,12 +90,12 @@ namespace DicomPanel.Core.Render
             double val1, val2, val3;
             var norm = image.Grid.GetNormalisationAmount();
 
-            for (int r = startingRow; r < rows+startingRow; r += 1)
+            for (int r = startingRow; r < rows + startingRow; r += 1)
             {
                 dr++;
                 k = r * totalCols * bytespp + startingCol * bytespp;
                 px = ix + rx * dr; py = iy + ry * dr; pz = iz + rz * dr;
-                for (int c = startingCol; c < cols+startingCol; c += 1)
+                for (int c = startingCol; c < cols + startingCol; c += 1)
                 {
                     image.Grid.Interpolate(px, py, pz, interpolatedVoxel);
                     value = interpolatedVoxel.Value * image.Grid.Scaling;
@@ -105,7 +105,7 @@ namespace DicomPanel.Core.Render
                     green = (byte)(bgr[1]);
                     red = (byte)(bgr[2]);
 
-                    switch(image.BlendMode)
+                    switch (image.BlendMode)
                     {
                         case Blending.BlendMode.None:
                             actualRed = red;
@@ -113,8 +113,8 @@ namespace DicomPanel.Core.Render
                             actualBlue = blue; break;
                         case Blending.BlendMode.Over:
                             val1 = buffer[k] * alpha + blue * image.Alpha;
-                            val2 = buffer[k + 1] * (1-image.Alpha) + green * image.Alpha;
-                            val3 = buffer[k + 2] * (1-image.Alpha) + red * image.Alpha;
+                            val2 = buffer[k + 1] * (1 - image.Alpha) + green * image.Alpha;
+                            val3 = buffer[k + 2] * (1 - image.Alpha) + red * image.Alpha;
                             if (val1 > 255) val1 = 255;
                             if (val2 > 255) val2 = 255;
                             if (val3 > 255) val3 = 255;
@@ -132,19 +132,19 @@ namespace DicomPanel.Core.Render
                                 actualBlue = (byte)val1;
                             }
                             if (green == 0)
-                                actualGreen = buffer[k+1];
+                                actualGreen = buffer[k + 1];
                             else
                             {
-                                val2 = buffer[k+1] * alpha + green * image.Alpha;
+                                val2 = buffer[k + 1] * alpha + green * image.Alpha;
                                 if (val2 > 255) val2 = 255;
                                 actualGreen = (byte)val2;
                             }
 
                             if (red == 0)
-                                actualRed = buffer[k+2];
+                                actualRed = buffer[k + 2];
                             else
                             {
-                                val3 = buffer[k+2] * alpha + red * image.Alpha;
+                                val3 = buffer[k + 2] * alpha + red * image.Alpha;
                                 if (val3 > 255) val3 = 255;
                                 actualRed = (byte)val3;
                             }

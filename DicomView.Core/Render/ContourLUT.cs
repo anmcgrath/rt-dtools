@@ -28,7 +28,7 @@ namespace DicomPanel.Core.Render
             output[1] = green[val];
             output[2] = red[val];
         }
-        
+
 
         public void Create(List<ContourInfo> contours, float max, float norm)
         {
@@ -38,8 +38,8 @@ namespace DicomPanel.Core.Render
             {
                 for (int i = contours.Count - 1; i >= 0; i--)
                 {
-                    double thr = (double)(j * (Max/Norm)) / (bins+1);
-                    if(thr >= (contours[i].Threshold))
+                    double thr = (double)(j * (Max / Norm)) / (bins + 1);
+                    if (thr >= (contours[i].Threshold))
                     {
                         red[j] = (byte)contours[i].Color.R;
                         green[j] = (byte)contours[i].Color.G;

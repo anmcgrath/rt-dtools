@@ -22,6 +22,9 @@ namespace DicomPanel.Wpf
         public WriteableBitmap ImageBase { get { return _imageBase; } set { SetField(ref _imageBase, value); } }
         private WriteableBitmap _imageBase;
 
+        public WriteableBitmap ImageTop { get { return _imageTop; } set { SetField(ref _imageTop, value); } }
+        private WriteableBitmap _imageTop;
+
         public WriteableBitmapRenderContext ImageBaseRenderContext { get; set; }
         public WriteableBitmapRenderContext ImageTopRenderContext { get; set; }
 
@@ -39,8 +42,8 @@ namespace DicomPanel.Wpf
         {
             Model = model;
             Model.SetImageRenderContext(ImageBaseRenderContext);
-            Model.SetDoseRenderContext(ImageTopRenderContext);
-            Model.SetRoiRenderContext(ImageTopRenderContext);
+            Model.SetDoseRenderContext(ImageBaseRenderContext);
+            Model.SetRoiRenderContext(ImageBaseRenderContext);
             Model.SetOverlayContext(OverlayRenderContext);
             Model?.Invalidate();
         }
@@ -70,8 +73,9 @@ namespace DicomPanel.Wpf
             }
 
             ImageBase = new WriteableBitmap((int)Math.Round(imgWidth), (int)Math.Round(imgHeight), 96, 96, PixelFormats.Bgr32, null);
+            //ImageTop = new WriteableBitmap((int)Math.Round(width), (int)Math.Round(height),96,96,PixelFormats.Bgra32,null);
             ImageBaseRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
-            ImageTopRenderContext.Resize(ImageBase, (int)Math.Round(imgWidth), (int)Math.Round(imgHeight));
+            ImageTopRenderContext.Resize(ImageBase, (int)Math.Round(width), (int)Math.Round(height));
             OverlayRenderContext.Canvas.Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, width, height));
             OverlayRenderContext.Width = (int)width;
             OverlayRenderContext.Height = (int)height;

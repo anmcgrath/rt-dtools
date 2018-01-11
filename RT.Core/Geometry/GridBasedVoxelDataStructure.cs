@@ -229,6 +229,60 @@ namespace RT.Core.Geometry
                 }
             }
         }
+
+        /// <summary>
+        /// Returns an empty grid of the same size
+        /// </summary>
+        /// <returns></returns>
+        public GridBasedVoxelDataStructure CopyEmpty()
+        {
+            return CreateNew(XCoords.Length, YCoords.Length, ZCoords.Length);
+        }
+
+        public GridBasedVoxelDataStructure CopyWithCoords()
+        {
+            var grid = CreateNew(XCoords.Length, YCoords.Length, ZCoords.Length, XRange, YRange, ZRange);
+            GridSpacing.CopyTo(grid.GridSpacing);
+            grid.ConstantGridSpacing = ConstantGridSpacing;
+            return grid;
+        }
+
+        public static GridBasedVoxelDataStructure CreateNew(int width, int height, int depth)
+        {
+            GridBasedVoxelDataStructure newGrid = new GridBasedVoxelDataStructure();
+            newGrid.XCoords = new float[width];
+            newGrid.YCoords = new float[height];
+            newGrid.ZCoords = new float[depth];
+            newGrid.Data = new float[width * height * depth];
+            return newGrid;
+        }
+
+        /// <summary>
+        /// Returns a new grid with constant grid spacing, with coords based on the ranges
+        /// </summary>
+        /// <param name="width">The number of x coordinates</param>
+        /// <param name="height">The number of y coordinates</param>
+        /// <param name="depth">The number of z coordinates</param>
+        /// <param name="xrange"></param>
+        /// <param name="yRange"></param>
+        /// <param name="zRange"></param>
+        /// <returns></returns>
+        public static GridBasedVoxelDataStructure CreateNew(int width, int height, int depth, Range xrange, Range yRange, Range zRange)
+        {
+            GridBasedVoxelDataStructure newGrid = CreateNew(width, height, depth);
+            newGrid.XRange = new Range(xrange.Minimum, xrange.Maximum);
+            newGrid.YRange = new Range(yRange.Minimum, yRange.Maximum);
+            newGrid.ZRange = new Range(zRange.Minimum, zRange.Maximum);
+            newGrid.GridSpacing = new Point3d(xrange.Length / width, yRange.Length / height, zRange.Length / height);
+            for (int i = 0; i < newGrid.XCoords.Length; i++)
+                newGrid.XCoords[i] = (float)(xrange.Minimum + i * newGrid.GridSpacing.X);
+            for (int i = 0; i < newGrid.YCoords.Length; i++)
+                newGrid.YCoords[i] = (float)(yRange.Minimum + i * newGrid.GridSpacing.Y);
+            for (int i = 0; i < newGrid.ZRange.Length; i++)
+                newGrid.ZCoords[i] = (float)(zRange.Minimum + i * newGrid.GridSpacing.Z);
+            
+            return newGrid;
+        }
     }
 
 }
