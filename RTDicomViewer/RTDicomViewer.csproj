@@ -148,6 +148,9 @@
     <Compile Include="Message\RTObjectAddedMessage.cs" />
     <Compile Include="Message\RTObjectDeletedMessage.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
+    <Compile Include="Themes\MayaStyle.xaml.cs">
+      <DependentUpon>MayaStyle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
     <Compile Include="Utilities\DoseGridWrapper.cs" />
     <Compile Include="Utilities\DoseRenderOptions.cs" />
@@ -253,6 +256,14 @@
     <Page Include="Themes\DarkTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\MayaStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Skins\QadskDarkStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
