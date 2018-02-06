@@ -134,6 +134,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters.cs" />
     <Compile Include="Converters\BoolInverterConverter.cs" />
     <Compile Include="Converters\ContourTypeConverter.cs" />
     <Compile Include="Converters\DicomColorConverter.cs" />
