@@ -97,6 +97,15 @@ namespace DicomPanel.Core
                 VectorRenderer.Render(vf, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
             }
 
+            foreach(var orthog in OrthogonalModels)
+            {
+                var tl = orthog.Camera.GetTopLeftPosition();
+                var br = orthog.Camera.GetTopLeftPosition() + orthog.Camera.RowDir * orthog.Camera.GetFOV().Y + orthog.Camera.ColDir * orthog.Camera.GetFOV().X;
+                var tls = Camera.ConvertWorldToScreenCoords(tl);
+                var brs = Camera.ConvertWorldToScreenCoords(br);
+                ImageRenderContext.DrawLine(tls.X, tls.Y, brs.X, brs.Y, DicomColors.Yellow);
+            }
+
             ImageRenderContext?.EndRender();
             DoseRenderContext?.EndRender();
             RoiRenderContext?.EndRender();
