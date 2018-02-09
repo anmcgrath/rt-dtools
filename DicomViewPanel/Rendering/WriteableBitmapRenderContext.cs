@@ -118,5 +118,40 @@ namespace DicomPanel.Wpf.Rendering
                         }
             }
         }
+
+        public void DrawLine(Point2d p1, Point2d p2, DicomColor color)
+        {
+            DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
+        }
+
+        public void DrawArrow(Point2d p1, Point2d p2, DicomColor color)
+        {
+            DrawArrow(p1.X, p1.Y, p2.X, p2.Y, color);
+        }
+
+        public void DrawArrow(double x0, double y0, double x1, double y1, DicomColor color)
+        {
+            DrawLine(x0, y0, x1, y1, color);
+            DrawArrowHead(x0, y0, x1, y1, color);
+        }
+
+        private void DrawArrowHead(double x0, double y0, double x1, double y1, DicomColor color)
+        {
+            double dx = (x1 - x0) / 2;
+            double dy = (y1 - y0) / 2;
+            double px = x0 + dx;
+            double py = y0 + dy;
+            const double cos = 0.866;
+            const double sin = 0.500;
+            Point2d end1 = new Point2d(
+                (float)(px + (dx * cos + dy * -sin)),
+                (float)(py + (dx * sin + dy * cos)));
+            Point2d end2 = new Point2d(
+                (float)(px + (dx * cos + dy * sin)),
+                (float)(py + (dx * -sin + dy * cos)));
+
+            DrawLine(x1, y1, end1.X, end1.Y, color);
+            DrawLine(x1, y1, end2.X, end2.Y, color);
+        }
     }
 }

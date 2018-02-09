@@ -1,4 +1,5 @@
-﻿using RT.Core.Utilities.RTMath;
+﻿using RT.Core.DICOM;
+using RT.Core.Utilities.RTMath;
 using System;
 
 namespace DicomPanel.Core.Render

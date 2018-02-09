@@ -11,10 +11,10 @@ namespace RT.Core.Eval
         public GammaDistribution Gamma(IVoxelDataStructure reference, IVoxelDataStructure evaluated, IProgress<int> progress, float distTol, float doseTol, float threshold)
         {
             var gammaDistribution = new GammaDistribution();
-            VectorField vf = new VectorField();
-            var vfx = CreateBlank(reference);
-            var vfy = CreateBlank(reference);
-            var vfz = CreateBlank(reference);
+            VectorField gammaVectorField = new VectorField();
+            var xVectors = CreateBlank(reference);
+            var yVectors = CreateBlank(reference);
+            var zVectors = CreateBlank(reference);
 
             float thresholdDose = (threshold / 100) * reference.MaxVoxel.Value * reference.Scaling;
 
@@ -22,7 +22,7 @@ namespace RT.Core.Eval
 
             var newGrid = CreateBlank(reference);
             //Create a sorted list of offsets with a certain diameter and step size
-            var offsets = CreateOffsets(distTol * 3, distTol/10.0, newGrid.GridSpacing);
+            var offsets = CreateOffsets(distTol * 3, distTol / 10.0, newGrid.GridSpacing);
 
             Point3d posn = new Point3d();
             Point3d posn2 = new Point3d();
@@ -90,42 +90,53 @@ namespace RT.Core.Eval
 
                 float gamma = (float)Math.Sqrt((double)minGammaSquared);
 
-                //var len = Math.Sqrt(dx * dx + dy * dy + dz * dz);
-                //dx /= len;
-                //dy /= len;
-                //dz /= len;
-                newGrid.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, gamma);
-                vfx.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dx);
-                vfy.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dy);
-                vfz.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dz);
+                if(gamma >0 || gamma <0 || float.IsNaN(gamma) || float.IsInfinity(gamma) || float.IsNegativeInfinity(gamma))
+                {
 
-                if (gamma > newGrid.MaxVoxel.Value)
-                    newGrid.MaxVoxel.Value = gamma;
-                if (gamma < newGrid.MinVoxel.Value)
-                    newGrid.MinVoxel.Value = gamma;
+                }
+
+                newGrid.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, gamma);
+                xVectors.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dx);
+                yVectors.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dy);
+                zVectors.SetVoxelByCoords((float)posn.X, (float)posn.Y, (float)posn.Z, (float)dz);
+
+                TestAndSetMinAndMax(newGrid, gamma);
             }
 
             gammaDistribution.Gamma = newGrid;
-            gammaDistribution.Vectors.X = vfx;
-            gammaDistribution.Vectors.Y = vfy;
-            gammaDistribution.Vectors.Z = vfz;
-
-            var jacobian = CreateBlank(gammaDistribution.Gamma);
-            var v = gammaDistribution.Vectors;
-            foreach(Voxel voxel in jacobian)
-            {
-                jacobian.SetVoxelByCoords(
-                    (float)voxel.Position.X, 
-                    (float)voxel.Position.Y, 
-                    (float)voxel.Position.Z, 
-                    (float)detJ(voxel.Position, v));
-            }
-            gammaDistribution.Jacobian = jacobian;
+            gammaDistribution.Vectors.X = xVectors;
+            gammaDistribution.Vectors.Y = yVectors;
+            gammaDistribution.Vectors.Z = zVectors;
+            //gammaDistribution.Jacobian = GetJacobianMatrix(gammaDistribution);
 
             return gammaDistribution;
         }
 
-        private double detJ(Point3d p, VectorField f)
+        private static void TestAndSetMinAndMax(GridBasedVoxelDataStructure grid, float gamma)
+        {
+            if (gamma > grid.MaxVoxel.Value)
+                grid.MaxVoxel.Value = gamma;
+            if (gamma < grid.MinVoxel.Value)
+                grid.MinVoxel.Value = gamma;
+        }
+
+        private GridBasedVoxelDataStructure GetJacobianMatrix(GammaDistribution gammaDistribution)
+        {
+            var jacobian = CreateBlank(gammaDistribution.Gamma);
+            var v = gammaDistribution.Vectors;
+            foreach (Voxel voxel in jacobian)
+            {
+                jacobian.SetVoxelByCoords(
+                    (float)voxel.Position.X,
+                    (float)voxel.Position.Y,
+                    (float)voxel.Position.Z,
+                    (float)GetDeterminant(voxel.Position, v));
+            }
+
+            return jacobian;
+        }
+
+        private double GetDeterminant(Point3d p, VectorField f)
         {
             var dx = 1.0; var dy = dx; var dz = dx;
             var px = new Point3d(dx, 0, 0);
@@ -162,6 +173,7 @@ namespace RT.Core.Eval
                 }
             }
 
+            offsets.Add(new Offset() { Displacement = new Point3d(0, 0, 0) });
 
             int n = (int)((diameterMM) / stepMM);
             if (n % 2 != 0)

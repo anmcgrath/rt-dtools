@@ -14,7 +14,7 @@
         x:Class="RTDicomViewer.MainWindow"
     xmlns:cc="clr-namespace:RTDicomViewer.View.CustomControls"
         mc:Ignorable="d"
-        Title="Radiotherapy research Monte Carlo tools" Height="600" Width="800" DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Title="RT-DTools" Height="600" Width="800" DataContext="{Binding Main, Source={StaticResource Locator}}"
         Style="{StaticResource {x:Type Window}}"
          x:Name="mainWindow"
         VisualTextRenderingMode="ClearType">

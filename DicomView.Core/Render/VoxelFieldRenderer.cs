@@ -20,49 +20,70 @@ namespace DicomPanel.Core.Render
             if (boundingRect != null)
             {
                 var initPosn = camera.ConvertScreenToWorldCoords(boundingRect.Y, boundingRect.X);
-                double gridSpacing = 5;
 
-                var offX = initPosn.X % (1.0 / (gridSpacing * 2 * camera.Scale / camera.GetFOV().X));
-                var offY = initPosn.Y % (1.0 / (gridSpacing * 2 * camera.Scale / camera.GetFOV().Y));
-                initPosn.X -= offX;
-                initPosn.Y -= offY;
-
-                var rows = (int)Math.Round((boundingRect.Height * (camera.GetFOV().Y) / gridSpacing)) + 4;
-                var cols = (int)Math.Round((boundingRect.Width * (camera.GetFOV().X) / gridSpacing)) + 4;
+                double rows = 80;
+                double cols = 80;
+                double gridSpacingRows = rows / camera.GetFOV().Y;
+                double gridSpacingCols = cols / camera.GetFOV().X;
+                double gridSpacing = Math.Min(gridSpacingRows, gridSpacingCols);
 
                 var vertices = new List<double>();
 
                 var cnorm = camera.ColDir.Length();
                 var rnorm = camera.RowDir.Length();
-                var cx = (cnorm * camera.ColDir.X) * gridSpacing / camera.Scale;
-                var cy = (cnorm * camera.ColDir.Y) * gridSpacing / camera.Scale;
-                var cz = (cnorm * camera.ColDir.Z) * gridSpacing / camera.Scale;
-                var rx = (rnorm * camera.RowDir.X) * gridSpacing / camera.Scale;
-                var ry = (rnorm * camera.RowDir.Y) * gridSpacing / camera.Scale;
-                var rz = (rnorm * camera.RowDir.Z) * gridSpacing / camera.Scale;
+                var cx = (cnorm * camera.ColDir.X) * gridSpacingCols;
+                var cy = (cnorm * camera.ColDir.Y) * gridSpacingCols;
+                var cz = (cnorm * camera.ColDir.Z) * gridSpacingCols;
+                var rx = (rnorm * camera.RowDir.X) * gridSpacingRows;
+                var ry = (rnorm * camera.RowDir.Y) * gridSpacingRows;
+                var rz = (rnorm * camera.RowDir.Z) * gridSpacingRows;
 
-                for (int i = 0; i < cols; i += 2)
+                for (int i = 0; i < cols; i ++)
                 {
-                    for (int j = 0; j < rows; j += 2)
+                    for (int j = 0; j < rows; j ++)
                     {
-                        // The additional cx, rx, cy, ry etc. are because the marching squares
-                        // offsets the grid during calculation... trust me future self.
                         worldCoord.X = initPosn.X + cx * i + rx * j + cx + rx;
                         worldCoord.Y = initPosn.Y + cy * i + ry * j + cy + ry;
                         worldCoord.Z = initPosn.Z + cz * i + rz * j + cz + rz;
 
+                        var x = vectorField.X.Interpolate(worldCoord).Value;
+                        var y = vectorField.Y.Interpolate(worldCoord).Value;
+                        var z = vectorField.Z.Interpolate(worldCoord).Value;
+
+                        float len = (float)Math.Sqrt(x * x + y * y + z * z);
+
+                        if (len <= 0.01)
+                            continue;
+
+                        // The additional cx, rx, cy, ry etc. are because the marching squares
+                        // offsets the grid during calculation... trust me future self.
+
                         vertices.Add(worldCoord.X);
                         vertices.Add(worldCoord.Y);
                         vertices.Add(worldCoord.Z);
+                        
+                        x /= len;
+                        y /= len;
+                        z /= len;
 
-                        vertices.Add(vectorField.X.Interpolate(worldCoord).Value + worldCoord.X);
-                        vertices.Add(vectorField.Y.Interpolate(worldCoord).Value + worldCoord.Y);
-                        vertices.Add(vectorField.Z.Interpolate(worldCoord).Value + worldCoord.Z);
+                        vertices.Add(x*gridSpacing + worldCoord.X);
+                        vertices.Add(y*gridSpacing + worldCoord.Y);
+                        vertices.Add(z*gridSpacing + worldCoord.Z);
                     }
                 }
 
                 double[] screenVertices = getScreenVertices(vertices, camera);
-                context.DrawLines(screenVertices, DicomColors.Red);
+
+                for(int i = 0; i < screenVertices.Length; i+=4)
+                {
+                    double x0 = screenVertices[i];
+                    double y0 = screenVertices[i + 1];
+                    double x1 = screenVertices[i + 2];
+                    double y1 = screenVertices[i + 3];
+                    context.DrawArrow(x0, y0, x1, y1, DicomColors.Red);
+                    
+                }
+                //context.DrawLines(screenVertices, DicomColors.Red);
 
             }
         }

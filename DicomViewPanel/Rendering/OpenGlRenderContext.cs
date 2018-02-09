@@ -65,5 +65,20 @@ namespace DicomPanel.Wpf.Rendering
         {
             
         }
+
+        public void DrawLine(Point2d p1, Point2d p2, DicomColor color)
+        {
+            DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
+        }
+
+        public void DrawArrow(Point2d p1, Point2d p2, DicomColor color)
+        {
+            DrawArrow(p1.X, p1.Y, p2.X, p2.Y, color);
+        }
+
+        public void DrawArrow(double x0, double y0, double x1, double y1, DicomColor color)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

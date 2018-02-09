@@ -46,7 +46,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">POI:</TextBlock>
             <ComboBox SelectedItem="{Binding RenderOptions.POI}" ItemsSource="{Binding POIs}" DisplayMemberPath="Name" Grid.Row="2" Grid.Column="1" Margin="2">
                     <ComboBox.Style>
-                        <Style TargetType="ComboBox">
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                             <Setter Property="IsEnabled" Value="False"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding RenderOptions.RelativeNormalisationOption}" Value="{x:Static dose:RelativeNormalisationOption.POI}">
@@ -74,7 +74,7 @@
                     
                 </WrapPanel>
 
-                <Grid Background="#FFEBE9ED">
+                <Grid Background="#383838">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70"/>
                         <ColumnDefinition Width="2*"/>
@@ -91,7 +91,7 @@
                 <ItemsControl ItemsSource="{Binding RenderOptions.ContourInfo}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="#FFEBE9ED">
+                            <Grid Background="#333333">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="70"/>
                                     <ColumnDefinition Width="2*"/>

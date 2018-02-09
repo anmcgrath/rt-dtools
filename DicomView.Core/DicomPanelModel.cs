@@ -92,19 +92,10 @@ namespace DicomPanel.Core
             RenderBeams(ImageRenderContext);
             RenderOverlays(OverlayContext);
 
-            foreach(var vf in VectorFields)
+            /*foreach(var vf in VectorFields)
             {
                 VectorRenderer.Render(vf, Camera, ImageRenderContext, new Rectd(0, 0, 1, 1));
-            }
-
-            foreach(var orthog in OrthogonalModels)
-            {
-                var tl = orthog.Camera.GetTopLeftPosition();
-                var br = orthog.Camera.GetTopLeftPosition() + orthog.Camera.RowDir * orthog.Camera.GetFOV().Y + orthog.Camera.ColDir * orthog.Camera.GetFOV().X;
-                var tls = Camera.ConvertWorldToScreenCoords(tl);
-                var brs = Camera.ConvertWorldToScreenCoords(br);
-                ImageRenderContext.DrawLine(tls.X, tls.Y, brs.X, brs.Y, DicomColors.Yellow);
-            }
+            }*/
 
             ImageRenderContext?.EndRender();
             DoseRenderContext?.EndRender();
@@ -114,7 +105,7 @@ namespace DicomPanel.Core
             Camera.IsInvalidated = false;
             sw.Stop();
 
-            OverlayContext?.DrawString("" + sw.ElapsedMilliseconds + " ms", 0, 0, 12, DicomColors.Yellow);
+            //sOverlayContext?.DrawString("" + sw.ElapsedMilliseconds + " ms", 0, 0, 12, DicomColors.Yellow);
             
 
         }
@@ -209,11 +200,6 @@ namespace DicomPanel.Core
                 {
                     overlay.Render(this, context);
                 }
-            }
-
-            if(Camera.IsAxial)
-            {
-                context?.DrawString("Z: " + Math.Round(Camera.Position.Z, 2) + " mm", 0, .9, 12, DicomColors.Yellow);
             }
         }
 

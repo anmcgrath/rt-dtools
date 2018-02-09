@@ -67,7 +67,7 @@ namespace DicomPanel.Core
         
         public void OnResize(double width, double height)
         {
-            Camera.SetFOV(width * Camera.MMPerPixel, height * Camera.MMPerPixel);
+            Camera.SetFOV(width * Camera.MMPerPixel * Camera.Scale, height * Camera.MMPerPixel * Camera.Scale);
         }
     }
 }

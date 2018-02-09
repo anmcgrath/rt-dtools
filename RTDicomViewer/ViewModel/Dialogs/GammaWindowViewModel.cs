@@ -94,11 +94,11 @@ namespace RTDicomViewer.ViewModel.Dialogs
             });
             ProgressSerice.End(progressItem);
 
-            var dd = new DicomDoseObject();
+            /*var dd = new DicomDoseObject();
             
             dd.Grid = gamma.Jacobian;
             dd.Grid.Name = "Jacobian";
-            MessengerInstance.Send<RTObjectAddedMessage<DicomDoseObject>>(new RTObjectAddedMessage<DicomDoseObject>(dd));
+            MessengerInstance.Send<RTObjectAddedMessage<DicomDoseObject>>(new RTObjectAddedMessage<DicomDoseObject>(dd));*/
 
             Workspace.Workspace.Current.Axial.VectorFields.Add(vf);
             Workspace.Workspace.Current.Sagittal.VectorFields.Add(vf);

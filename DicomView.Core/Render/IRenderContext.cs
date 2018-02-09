@@ -19,6 +19,9 @@ namespace DicomPanel.Core.Render
         void DrawRect(double x0, double y0, double x1, double y1, DicomColor color);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color, LineType lineType);
         void DrawLine(double x0, double y0, double x1, double y1, DicomColor color);
+        void DrawLine(Point2d p1, Point2d p2, DicomColor color);
+        void DrawArrow(Point2d p1, Point2d p2, DicomColor color);
+        void DrawArrow(double x0, double y0, double x1, double y1, DicomColor color);
         /// <summary>
         /// 
         /// </summary>
@@ -30,5 +33,6 @@ namespace DicomPanel.Core.Render
         void EndRender();
         void FillRect(double x0, double y0, double x1, double y1, DicomColor fill, DicomColor stroke);
         void FillPixels(byte[] byteArray, Rectd destRect);
+
     }
 }
