@@ -16,7 +16,6 @@ namespace RT.Core.IO.Loaders
         {
             GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
             grid.Name = Path.GetFileName(fileName);
-            double max = 0;
 
             int SizeX, SizeY, SizeZ;
             using (TextReader reader = File.OpenText(fileName))

@@ -19,6 +19,7 @@ namespace RT.Core.DICOM
         public double[] PixelSpacing { get; set; }
         public string ImageType { get; set; }
         public double SliceThickness { get; set; }
+        public double SpacingBetweenSlices { get; set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
         public int BitsAllocated { get; set; }
@@ -32,37 +33,68 @@ namespace RT.Core.DICOM
 
         public PixelDataInfo(DicomFile file)
         {
-            var imgOrientationPatient = file.Dataset.Get<double[]>(DicomTag.ImageOrientationPatient, new double[] { 0, 0, 0, 0, 0, 0 });
+            var imgOrientationPatient = new double[] { 0, 0, 0, 0, 0, 0 };
+            if (file.Dataset.TryGetValues<double>(DicomTag.ImageOrientationPatient, out double[] tmp))
+            {
+                imgOrientationPatient = tmp;
+            }
+
             RowDir = new Point3d(imgOrientationPatient[0], imgOrientationPatient[1], imgOrientationPatient[2]);
             ColDir = new Point3d(imgOrientationPatient[3], imgOrientationPatient[4], imgOrientationPatient[5]);
 
-            var imgPositionPatient = file.Dataset.Get<double[]>(DicomTag.ImagePositionPatient, new double[] { 0, 0, 0 });
+            var imgPositionPatient = new double[] { 0, 0, 0 };
+            if (file.Dataset.TryGetValues<double>(DicomTag.ImagePositionPatient, out tmp))
+            {
+                imgPositionPatient = tmp;
+            }
+
             ImagePositionPatient = new Point3d(imgPositionPatient[0], imgPositionPatient[1], imgPositionPatient[2]);
 
-            SliceThickness = file.Dataset.Get<double>(DicomTag.SliceThickness, 0.0);
-            Rows = file.Dataset.Get<int>(DicomTag.Rows);
-            Columns = file.Dataset.Get<int>(DicomTag.Columns);
-            BitsAllocated = file.Dataset.Get<int>(DicomTag.BitsAllocated, 0);
-            PixelRepresentation = file.Dataset.Get<int>(DicomTag.PixelRepresentation, 0);
-            RescaleSlope = file.Dataset.Get<float>(DicomTag.RescaleSlope, 1.0f);
-            RescaleIntercept = file.Dataset.Get<float>(DicomTag.RescaleIntercept, 0.0f);
-            PixelSpacing = file.Dataset.Get<double[]>(DicomTag.PixelSpacing, new double[] {1,1,1 });
+            SliceThickness = file.Dataset.GetSingleValueOrDefault<double>(DicomTag.SliceThickness, 0.0);
+
+            //winson add 2020.9.2 - Inconsistent 'Slice Thickness' and 'Spacing Between Slices'
+            SpacingBetweenSlices = file.Dataset.GetSingleValueOrDefault<double>(DicomTag.SpacingBetweenSlices, 0.0);
+            if (SpacingBetweenSlices > 0.0)
+            {
+                SliceThickness = SpacingBetweenSlices;
+            }
+
+            Rows = file.Dataset.GetSingleValue<int>(DicomTag.Rows);
+            Columns = file.Dataset.GetSingleValue<int>(DicomTag.Columns);
+            BitsAllocated = file.Dataset.GetSingleValueOrDefault<int>(DicomTag.BitsAllocated, 0);
+            PixelRepresentation = file.Dataset.GetSingleValueOrDefault<int>(DicomTag.PixelRepresentation, 0);
+            RescaleSlope = file.Dataset.GetSingleValueOrDefault<float>(DicomTag.RescaleSlope, 1.0f);
+            RescaleIntercept = file.Dataset.GetSingleValueOrDefault<float>(DicomTag.RescaleIntercept, 0.0f);
+
+            if (file.Dataset.TryGetValues<double>(DicomTag.PixelSpacing, out tmp))
+            {
+                PixelSpacing = tmp;
+            }
+            else
+            {
+                PixelSpacing =  new double[] { 1, 1, 1 };
+            }            
 
             try
             {
-                SliceLocation = file.Dataset.Get<double>(DicomTag.SliceLocation, 0.0);
+                SliceLocation = file.Dataset.GetSingleValueOrDefault<double>(DicomTag.SliceLocation, 0.0);
                 HasSliceLocation = true;
             }
+#pragma warning disable CS0168 // The variable 'e' is declared but never used
             catch (Exception e)
+#pragma warning restore CS0168 // The variable 'e' is declared but never used
             {
                 HasSliceLocation = false;
             }
 
-            try
+            if (file.Dataset.TryGetValues<double>(DicomTag.GridFrameOffsetVector, out tmp))//All Z-offsets
             {
-                GridFrameOffsetVector = file.Dataset.Get<DicomDecimalString>(DicomTag.GridFrameOffsetVector).Get<double[]>(); //All Z-offsets
+                GridFrameOffsetVector = tmp;
             }
-            catch (Exception e) { GridFrameOffsetVector = new double[1]; };
+            else
+            {
+                GridFrameOffsetVector = new double[1];
+            }
         }
     }
 }

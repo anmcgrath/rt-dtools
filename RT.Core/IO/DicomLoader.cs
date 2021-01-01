@@ -30,7 +30,40 @@ namespace RT.Core.IO
             return await LoadDicomDoseAsync(new string[] { fileName }, progress);
         }
 
+        public static DicomDoseObject LoadDicomDoseSync(DicomFile dicomFile)
+        {
+            var loader = new DicomDoseLoader();
+            var dose = new DicomDoseObject();
+            loader.Load(dicomFile, dose, null);
+            return dose;
+        }
+
+        public static async Task<DicomPlanObject> LoadDicomPlanAsync(string[] fileNames)
+        {
+            var files = await getFilesAsync(fileNames);
+            var loader = new PlanLoader();
+            var plan = new DicomPlanObject();
+            loader.Load(files, plan);
+            return plan;
+        }
+
+        public static DicomPlanObject LoadDicomPlanAsync(DicomFile dicomFile)
+        {
+            var loader = new PlanLoader();
+            var plan = new DicomPlanObject();
+            loader.Load(dicomFile, plan);
+            return plan;
+        }
+        
+
+        public static async Task<DicomPlanObject> LoadDicomPlanAsync(string fileName)
+        {
+            return await LoadDicomPlanAsync(new string[] { fileName });
+        }
+
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public static async Task<EgsDoseObject> LoadEgsObjectAsync(string file, IProgress<double> progress)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             var loader = new EgsDoseLoader();
             var dose = new EgsDoseObject();
@@ -61,9 +94,17 @@ namespace RT.Core.IO
             return structureSet;
         }
 
-        public static async Task<DicomDoseObject> LoadStructureSetAsync(string fileName, IProgress<double> progress)
+        public static StructureSet LoadStructureSetSync(DicomFile dicomFile, IProgress<double> progress)
         {
-            return await LoadDicomDoseAsync(new string[] { fileName }, progress);
+            var loader = new ROILoader();
+            var structureSet = new StructureSet();
+            loader.Load(dicomFile, structureSet, progress);
+            return structureSet;
+        }
+
+        public static async Task<StructureSet> LoadStructureSetAsync(string fileName, IProgress<double> progress)
+        {
+            return await LoadStructureSetAsync(new string[] { fileName }, progress);
         }
 
         private static async Task<DicomFile[]> getFilesAsync(string[] fileNames)
@@ -73,7 +114,13 @@ namespace RT.Core.IO
             foreach(string fileName in fileNames)
             {
                 if (DicomFile.HasValidHeader(fileName))
+                {
                     files.Add(await DicomFile.OpenAsync(fileName));
+                }
+                else if(DicomFile.IsDICOMFile(fileName))
+                {
+                    files.Add(await DicomFile.OpenAsync(fileName));
+                }                    
             }
             return files.ToArray();
         }

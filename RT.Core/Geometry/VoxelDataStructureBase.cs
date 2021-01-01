@@ -19,6 +19,7 @@ namespace RT.Core.Geometry
         private Point3d positionCache;
         private Voxel voxelCache;
 
+        public double RxDose { get; set; }
         public double NormalisationPercent { get; set; } = 100;
         public NormalisationType NormalisationType { get; set; } = NormalisationType.Relative;
         public RelativeNormalisationOption RelativeNormalisationOption { get; set; }
@@ -92,12 +93,24 @@ namespace RT.Core.Geometry
         {
             if (NormalisationType == NormalisationType.Absolute)
                 return 1;
+
             if (NormalisationType == NormalisationType.Relative)
             {
-                if (RelativeNormalisationOption == RelativeNormalisationOption.Max)
-                    return MaxVoxel.Value * Scaling * ((float)NormalisationPercent / (100*100));
+                float value = 1.0f;
+
+                if (RelativeNormalisationOption == RelativeNormalisationOption.Rx)
+                {
+                    value = 1.0f;
+                }                
+                else if (RelativeNormalisationOption == RelativeNormalisationOption.Max)
+                {
+                    value = MaxVoxel.Value;
+                }                    
                 else if (RelativeNormalisationOption == RelativeNormalisationOption.POI && NormalisationPOI != null)
-                    return this.Interpolate(NormalisationPOI.Position).Value * Scaling * ((float)NormalisationPercent / (100* 100));
+                {
+                    value = this.Interpolate(NormalisationPOI.Position).Value;
+                }
+                return  value * Scaling * ((float)NormalisationPercent / (100* 100));
             }
             return 1;
         }

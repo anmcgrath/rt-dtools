@@ -81,73 +81,87 @@ namespace RT.Core.Geometry
             }
             else
             {
-                //float x0 = 0, x1 = 0, y0 = 0, y1 = 0, z0 = 0, z1 = 0;
-                //int ix0 = 0, ix1 = 0, iy0 = 0, iy1 = 0, iz0 = 0, iz1 = 0;
-
-                if (ConstantGridSpacing)
+                try
                 {
-                    ix0 = (int)((position.X - XCoords[0]) / GridSpacing.X);
-                    if (ix0 == XCoords.Length - 1)
-                        ix1 = ix0;
-                    else
-                        ix1 = ix0 + 1;
-                    x0 = XCoords[ix0];
-                    x1 = XCoords[ix1];
-                    iy0 = (int)((position.Y - YCoords[0]) / GridSpacing.Y);
-                    if (iy0 == YCoords.Length - 1)
-                        iy1 = iy0;
-                    else
-                        iy1 = iy0 + 1;
-                    y0 = YCoords[iy0];
-                    y1 = YCoords[iy1];
-                    if (GridSpacing.Z != 0)
+                    //float x0 = 0, x1 = 0, y0 = 0, y1 = 0, z0 = 0, z1 = 0;
+                    //int ix0 = 0, ix1 = 0, iy0 = 0, iy1 = 0, iz0 = 0, iz1 = 0;
+
+                    if (ConstantGridSpacing)
                     {
-                        iz0 = (int)((position.Z - ZCoords[0]) / GridSpacing.Z);
-                        if (iz0 == ZCoords.Length - 1)
-                            iz1 = iz0;
+                        ix0 = (int)((position.X - XCoords[0]) / GridSpacing.X);
+                        if (ix0 >= XCoords.Length - 1)
+                            ix1 = ix0 = XCoords.Length - 1;
                         else
+                            ix1 = ix0 + 1;
+                        x0 = XCoords[ix0];
+                        x1 = XCoords[ix1];
+
+                        iy0 = (int)((position.Y - YCoords[0]) / GridSpacing.Y);
+                        if (iy0 >= YCoords.Length - 1)
+                            iy1 = iy0 = YCoords.Length - 1;
+                        else
+                            iy1 = iy0 + 1;
+
+                        y0 = YCoords[iy0];
+                        y1 = YCoords[iy1];
+                        if (GridSpacing.Z != 0)
+                        {
+                            iz0 = (int)((position.Z - ZCoords[0]) / GridSpacing.Z);
                             iz1 = iz0 + 1;
-                        z0 = ZCoords[iz0];
-                        z1 = ZCoords[iz1];
+
+                            if (iz0 >= ZCoords.Length - 1)
+                                iz1 = iz0 = ZCoords.Length - 1;
+                            else
+                                iz1 = iz0 + 1;
+
+                            z0 = ZCoords[iz0];
+                            z1 = ZCoords[iz1];
+                        }
+                        else
+                        {
+                            iz0 = 0; iz1 = 0;
+                            z0 = ZCoords[iz0];
+                            z1 = ZCoords[iz1];
+                        }
                     }
                     else
                     {
-                        iz0 = 0; iz1 = 0;
-                        z0 = ZCoords[iz0];
-                        z1 = ZCoords[iz1];
+                        var xt = binarySearchForSurroundingCoords(position.X, XCoords);
+                        x0 = (float)xt.Item1;
+                        x1 = (float)xt.Item2;
+                        ix0 = xt.Item3;
+                        ix1 = xt.Item4;
+                        var yt = binarySearchForSurroundingCoords(position.Y, YCoords);
+                        y0 = (float)yt.Item1;
+                        y1 = (float)yt.Item2;
+                        iy0 = yt.Item3;
+                        iy1 = yt.Item4;
+                        var zt = binarySearchForSurroundingCoords(position.Z, ZCoords);
+                        z0 = (float)zt.Item1;
+                        z1 = (float)zt.Item2;
+                        iz0 = zt.Item3;
+                        iz1 = zt.Item4;
                     }
-                }
-                else
-                {
-                    var xt = binarySearchForSurroundingCoords(position.X, XCoords);
-                    x0 = (float)xt.Item1;
-                    x1 = (float)xt.Item2;
-                    ix0 = xt.Item3;
-                    ix1 = xt.Item4;
-                    var yt = binarySearchForSurroundingCoords(position.Y, YCoords);
-                    y0 = (float)yt.Item1;
-                    y1 = (float)yt.Item2;
-                    iy0 = yt.Item3;
-                    iy1 = yt.Item4;
-                    var zt = binarySearchForSurroundingCoords(position.Z, ZCoords);
-                    z0 = (float)zt.Item1;
-                    z1 = (float)zt.Item2;
-                    iz0 = zt.Item3;
-                    iz1 = zt.Item4;
-                }
 
-                voxel.Value = Interpolation.TrilinearInterpolate(
-                    (float)position.X, (float)position.Y, (float)position.Z,
-                    x0, y0, z0,
-                    x1, y1, z1,
-                    Data[getIndex(ix0, iy0, iz0)],
-                    Data[getIndex(ix1, iy0, iz0)],
-                    Data[getIndex(ix0, iy0, iz1)],
-                    Data[getIndex(ix1, iy0, iz1)],
-                    Data[getIndex(ix0, iy1, iz0)],
-                    Data[getIndex(ix1, iy1, iz0)],
-                    Data[getIndex(ix0, iy1, iz1)],
-                    Data[getIndex(ix1, iy1, iz1)]);
+                    voxel.Value = Interpolation.TrilinearInterpolate(
+                        (float)position.X, (float)position.Y, (float)position.Z,
+                        x0, y0, z0,
+                        x1, y1, z1,
+                        Data[getIndex(ix0, iy0, iz0)],
+                        Data[getIndex(ix1, iy0, iz0)],
+                        Data[getIndex(ix0, iy0, iz1)],
+                        Data[getIndex(ix1, iy0, iz1)],
+                        Data[getIndex(ix0, iy1, iz0)],
+                        Data[getIndex(ix1, iy1, iz0)],
+                        Data[getIndex(ix0, iy1, iz1)],
+                        Data[getIndex(ix1, iy1, iz1)]);
+                }
+#pragma warning disable CS0168 // The variable 'e' is declared but never used
+                catch(Exception e)
+#pragma warning restore CS0168 // The variable 'e' is declared but never used
+                {
+                    voxel.Value = DefaultPhysicalValue;
+                }               
             }
         }
 

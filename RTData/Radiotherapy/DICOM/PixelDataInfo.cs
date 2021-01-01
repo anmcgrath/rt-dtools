@@ -16,6 +16,7 @@ namespace RTData.Radiotherapy.DICOM
         public double[] PixelSpacing { get; set; }
         public string ImageType { get; set; }
         public double SliceThickness { get; set; }
+        public double SpacingBetweenSlices { get; set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
         public int BitsAllocated { get; set; }
@@ -37,6 +38,14 @@ namespace RTData.Radiotherapy.DICOM
             ImagePositionPatient = new Point3d(imgPositionPatient[0], imgPositionPatient[1], imgPositionPatient[2]);
 
             SliceThickness = file.Dataset.Get<double>(DicomTag.SliceThickness, 0.0);
+
+            //winson add 2020.9.2 - Inconsistent 'Slice Thickness' and 'Spacing Between Slices'
+            SpacingBetweenSlices = file.Dataset.GetSingleValueOrDefault<double>(DicomTag.SpacingBetweenSlices, 0.0);
+            if (SpacingBetweenSlices > 0.0)
+            {
+                SliceThickness = SpacingBetweenSlices;
+            }
+
             Rows = file.Dataset.Get<int>(DicomTag.Rows);
             Columns = file.Dataset.Get<int>(DicomTag.Columns);
             BitsAllocated = file.Dataset.Get<int>(DicomTag.BitsAllocated, 0);
