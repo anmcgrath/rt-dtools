@@ -13,6 +13,8 @@ namespace RT.Core.Planning
         public double SAD { get; set; } = 1000;
         public double SSD { get; set; }
         public double MU { get; set; }
+        public double DoseRateSet { get; set; }
+        public double FinalCumulativeMetersetWeight { get; set; } = 1.0;
         public string Name { get; set; }
         public List<ControlPoint> ControlPoints { get; set; }
         public string TreatmentMachineName { get; set; }
@@ -23,8 +25,9 @@ namespace RT.Core.Planning
         public Jaw XJaw { get; set; }
         public Jaw YJaw { get; set; }
         
-        public PointOfInterest Isocentre { get; set; }
+        public PointOfInterest Isocenter { get; set; }
 
+        public List<Block> Blocks { get; set; }
         public Beam()
         {
             ControlPoints = new List<ControlPoint>();
@@ -38,20 +41,20 @@ namespace RT.Core.Planning
 
         public void CalculateSSD(DicomImageObject img, float threshold)
         {
-            var p1 = new Point3d(Isocentre.Position.X, Isocentre.Position.Y - SAD, Isocentre.Position.Z);
+            var p1 = new Point3d(Isocenter.Position.X, Isocenter.Position.Y - SAD, Isocenter.Position.Z);
             RTCoordinateTransform T = new RTCoordinateTransform();
             T.CollimatorAngle = CollimatorAngle;
             T.CouchAngle = CouchAngle;
             T.GantryAngle = GantryStart;
 
             Point3d sourcePosn = new Point3d();
-            T.Transform(p1, Isocentre.Position, sourcePosn);
+            T.Transform(p1, Isocenter.Position, sourcePosn);
 
             //Unit vector in direction from source position to isocentre with a length of sampleLength mm
             double sampleLength = 2;
-            double totalLength = (Isocentre.Position - sourcePosn).Length();
+            double totalLength = (Isocenter.Position - sourcePosn).Length();
             int n = (int)totalLength / (int)sampleLength; // the number of steps to sample in the image
-            var u = sampleLength * ((Isocentre.Position - sourcePosn) / totalLength);
+            var u = sampleLength * ((Isocenter.Position - sourcePosn) / totalLength);
             double ssd = 0;
             for(int i = 0; i < n; i++)
             {

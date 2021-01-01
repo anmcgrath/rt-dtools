@@ -66,7 +66,7 @@ namespace RT.Core.IO.Loaders
         /// <returns></returns>
         private  Matrix4d getMatrixA(DicomFile firstFile, DicomFile lastFile, int N)
         {
-            double[] i = firstFile.Dataset.Get<double[]>(DicomTag.ImageOrientationPatient);
+            double[] i = firstFile.Dataset.GetValues<double>(DicomTag.ImageOrientationPatient);
             double[,] F =
             new double[,]
             {
@@ -75,9 +75,9 @@ namespace RT.Core.IO.Loaders
                 { i[5], i[2] }
             };
 
-            double[] T1 = firstFile.Dataset.Get<double[]>(DicomTag.ImagePositionPatient);
-            double[] TN = lastFile.Dataset.Get<double[]>(DicomTag.ImagePositionPatient);
-            double[] px = firstFile.Dataset.Get<double[]>(DicomTag.PixelSpacing);
+            double[] T1 = firstFile.Dataset.GetValues<double>(DicomTag.ImagePositionPatient);
+            double[] TN = lastFile.Dataset.GetValues<double>(DicomTag.ImagePositionPatient);
+            double[] px = firstFile.Dataset.GetValues<double>(DicomTag.PixelSpacing);
             double dr = px[0];
             double dc = px[1];
             double k1 = (T1[0] - TN[0]) / (1 - N);
@@ -90,7 +90,7 @@ namespace RT.Core.IO.Loaders
 
         private  Matrix4d getSingleMatrixA(DicomFile file)
         {
-            double[] i = file.Dataset.Get<double[]>(DicomTag.ImageOrientationPatient);
+            double[] i = file.Dataset.GetValues<double>(DicomTag.ImageOrientationPatient);
             double[,] F =
                 new double[,]
                 {
@@ -102,9 +102,9 @@ namespace RT.Core.IO.Loaders
             Point3d F0 = new Point3d(F[0, 0], F[1, 0], F[2, 0]);
             Point3d F1 = new Point3d(F[0, 1], F[1, 1], F[2, 1]);
             var n = F0.Cross(F1);
-            double[] T1 = file.Dataset.Get<double[]>(DicomTag.ImagePositionPatient);
-            double[] TN = file.Dataset.Get<double[]>(DicomTag.ImagePositionPatient);
-            double[] px = file.Dataset.Get<double[]>(DicomTag.PixelSpacing);
+            double[] T1 = file.Dataset.GetValues<double>(DicomTag.ImagePositionPatient);
+            double[] TN = file.Dataset.GetValues<double>(DicomTag.ImagePositionPatient);
+            double[] px = file.Dataset.GetValues<double>(DicomTag.PixelSpacing);
             double dr = px[0];
             double dc = px[1];
 
@@ -129,7 +129,7 @@ namespace RT.Core.IO.Loaders
             if (files.Length == 1)
                 return files;
 
-            if (files[0].Dataset.Get<double>(DicomTag.SliceLocation, double.MaxValue) != double.MaxValue)
+            if (files[0].Dataset.GetSingleValueOrDefault<double>(DicomTag.SliceLocation, double.MaxValue) != double.MaxValue)
             {
                 return sortBySliceLocation(files);
             }
@@ -141,8 +141,8 @@ namespace RT.Core.IO.Loaders
 
             for (int j = 0; j < files.Length; j++)
             {
-                double[] i = files[j].Dataset.Get<double[]>(DicomTag.ImageOrientationPatient);
-                double[] Tj = files[j].Dataset.Get<double[]>(DicomTag.ImagePositionPatient);
+                double[] i = files[j].Dataset.GetValues<double>(DicomTag.ImageOrientationPatient);
+                double[] Tj = files[j].Dataset.GetValues<double>(DicomTag.ImagePositionPatient);
 
                 Point3d F0 = new Point3d(i[3], i[4], i[5]);
                 Point3d F1 = new Point3d(i[0], i[1], i[2]);
@@ -210,8 +210,8 @@ namespace RT.Core.IO.Loaders
             List<DicomFile> sortedList = files.ToList();
             sortedList.Sort(delegate (DicomFile x, DicomFile y)
             {
-                var slicelocationx = x.Dataset.Get<double>(DicomTag.SliceLocation, 0.0);
-                var slicelocationy = y.Dataset.Get<double>(DicomTag.SliceLocation, 0.0);
+                var slicelocationx = x.Dataset.GetSingleValueOrDefault<double>(DicomTag.SliceLocation, 0.0);
+                var slicelocationy = y.Dataset.GetSingleValueOrDefault<double>(DicomTag.SliceLocation, 0.0);
                 if (slicelocationx == slicelocationy) return 0;
                 else if (slicelocationx < slicelocationy) return -1;
                 else if (slicelocationx > slicelocationy) return 1;
