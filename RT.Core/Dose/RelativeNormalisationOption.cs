@@ -6,6 +6,7 @@ namespace RT.Core.Dose
 {
     public enum RelativeNormalisationOption
     {
+        Rx,
         Max,
         POI,
     }

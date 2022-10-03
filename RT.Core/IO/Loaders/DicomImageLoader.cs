@@ -23,9 +23,11 @@ namespace RT.Core.IO.Loaders
 
             try
             {
-                dicomObject.LUT.Window = files[0].Dataset.Get<int>(DicomTag.WindowWidth);
-                dicomObject.LUT.Level = files[0].Dataset.Get<int>(DicomTag.WindowCenter);
+                dicomObject.LUT.Window = files[0].Dataset.GetSingleValueOrDefault<int>(DicomTag.WindowWidth,2048);
+                dicomObject.LUT.Level = files[0].Dataset.GetSingleValueOrDefault<int>(DicomTag.WindowCenter,1024);
+#pragma warning disable CS0168 // The variable 'e' is declared but never used
             }catch(Exception e)
+#pragma warning restore CS0168 // The variable 'e' is declared but never used
             {
                 //Here we should try to set to the median pixel or something
             }

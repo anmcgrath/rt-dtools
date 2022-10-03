@@ -36,6 +36,7 @@ namespace RT.Core.IO.Loaders
             {
                 DicomPixelData dicomPixelData = DicomPixelData.Create(files[i].Dataset);
                 PixelDataInfo tempHeaderInfo = new PixelDataInfo(files[i]);
+
                 for (int j = 0; j < tempHeaderInfo.GridFrameOffsetVector.Length; j++)
                 {
                     byte[] framePixelData = dicomPixelData.GetFrame(j).Data;
@@ -83,6 +84,71 @@ namespace RT.Core.IO.Loaders
             return grid;
         }
 
+        public GridBasedVoxelDataStructure Load(DicomFile dicomFile)
+        {
+            GridBasedVoxelDataStructure grid = new GridBasedVoxelDataStructure();
+            PixelDataInfo DicomHeader = new PixelDataInfo(dicomFile);
+            Point3d size = GetSize(dicomFile);
+
+            grid.ConstantGridSpacing = true;
+            grid.GridSpacing = GetSpacing(dicomFile);
+            grid.XCoords = GetCoords(dicomFile, (int)size.X, DicomHeader.RowDir.X, DicomHeader.ColDir.X, DicomHeader.ImagePositionPatient.X, 1);
+            grid.YCoords = GetCoords(dicomFile, (int)size.Y, DicomHeader.RowDir.Y, DicomHeader.ColDir.Y, DicomHeader.ImagePositionPatient.Y, 1);
+            grid.ZCoords = GetCoords(dicomFile, (int)size.Z, DicomHeader.RowDir.Z, DicomHeader.ColDir.Z, DicomHeader.ImagePositionPatient.Z, 1);
+
+            grid.Data = new float[(int)size.X * (int)size.Y * (int)size.Z];
+
+            int currYIndex = 0;
+            int currZIndex = 0;
+            int currXIndex = 0;
+
+            DicomPixelData dicomPixelData = DicomPixelData.Create(dicomFile.Dataset);
+            PixelDataInfo tempHeaderInfo = new PixelDataInfo(dicomFile);
+
+            for (int j = 0; j < tempHeaderInfo.GridFrameOffsetVector.Length; j++)
+            {
+                byte[] framePixelData = dicomPixelData.GetFrame(j).Data;
+                float[] dataArray = GetDataArray(framePixelData, tempHeaderInfo.BitsAllocated, tempHeaderInfo.PixelRepresentation);
+                for (int k = 0; k < dataArray.Length; k++)
+                {
+                    int currRow = k % tempHeaderInfo.Columns;
+                    int currCol = (int)Math.Floor((double)(k / (tempHeaderInfo.Columns)));
+                    currXIndex = (int)Math.Abs(tempHeaderInfo.RowDir.X) * currRow + (int)Math.Abs(tempHeaderInfo.ColDir.X) * currCol
+                        + (1 - (int)Math.Abs(tempHeaderInfo.RowDir.X) - (int)Math.Abs(tempHeaderInfo.ColDir.X)) * (j); ;
+                    currYIndex = (int)Math.Abs(tempHeaderInfo.RowDir.Y) * currRow + (int)Math.Abs(tempHeaderInfo.ColDir.Y) * currCol
+                        + (1 - (int)Math.Abs(tempHeaderInfo.RowDir.Y) - (int)Math.Abs(tempHeaderInfo.ColDir.Y)) * (j); ;
+                    currZIndex = (int)Math.Abs(tempHeaderInfo.RowDir.Z) * currRow + (int)Math.Abs(tempHeaderInfo.ColDir.Z) * currCol
+                        + (1 - (int)Math.Abs(tempHeaderInfo.RowDir.Z) - (int)Math.Abs(tempHeaderInfo.ColDir.Z)) * (j);
+
+                    //Rescale back to actual HUs
+                    dataArray[k] = dataArray[k] * tempHeaderInfo.RescaleSlope + tempHeaderInfo.RescaleIntercept;
+                    grid.SetVoxelByIndices(currXIndex, currYIndex, currZIndex, dataArray[k]);
+
+                    if (dataArray[k] > grid.MaxVoxel.Value)
+                    {
+                        grid.MaxVoxel.Value = dataArray[k];
+                        grid.MaxVoxel.Position.X = grid.XCoords[currXIndex];
+                        grid.MaxVoxel.Position.Y = grid.YCoords[currYIndex];
+                        grid.MaxVoxel.Position.Z = grid.ZCoords[currZIndex];
+                    }
+                    if (dataArray[k] < grid.MinVoxel.Value)
+                    {
+                        grid.MinVoxel.Value = dataArray[k];
+                        grid.MinVoxel.Position.X = grid.XCoords[currXIndex];
+                        grid.MinVoxel.Position.Y = grid.YCoords[currYIndex];
+                        grid.MinVoxel.Position.Z = grid.ZCoords[currZIndex];
+                    }
+
+                }
+            }
+
+            grid.XRange = new Range(grid.XCoords[0], grid.XCoords[grid.XCoords.Length - 1]);
+            grid.YRange = new Range(grid.YCoords[0], grid.YCoords[grid.YCoords.Length - 1]);
+            grid.ZRange = new Range(grid.ZCoords[0], grid.ZCoords[grid.ZCoords.Length - 1]);
+
+            //grid.ComputeMax();
+            return grid;
+        }
         private  float[] GetDataArray(byte[] bytes, int bitsAllocated, int pixelRepresentation)
         {
             float[] dataArray = new float[bytes.Length / (bitsAllocated / 8)];
@@ -106,6 +172,40 @@ namespace RT.Core.IO.Loaders
             return dataArray;
         }
 
+        private float[] GetCoords(DicomFile file, int size, double rowDir, double colDir, double position, int scale)
+        {
+            PixelDataInfo tempHeader = new PixelDataInfo(file);
+            float[] coords = new float[size];
+            if (rowDir != 0 || colDir != 0)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    coords[i] = (float)(position + i * rowDir * tempHeader.PixelSpacing[1] + i * colDir * tempHeader.PixelSpacing[0]);
+                }
+            }
+            else
+            {
+                if (tempHeader.GridFrameOffsetVector.Length > 1)
+                {
+                    for (int i = 0; i < size; i++)
+                    {
+                        coords[i] = (float)(position + tempHeader.GridFrameOffsetVector[i]);
+                    }
+                }
+                else
+                {
+                    if (tempHeader.SliceThickness == 0)
+                    {
+                        tempHeader.SliceThickness = 1.0;
+                    }
+
+                    coords[0] = (float)(position);
+                }
+
+            }
+            return coords;
+        }
+
         private float[] GetCoords(DicomFile[] files, int size, double rowDir, double colDir, double position, int scale)
         {
             PixelDataInfo tempHeader = new PixelDataInfo(files[0]);
@@ -126,10 +226,31 @@ namespace RT.Core.IO.Loaders
                         coords[i] = (float)(position + tempHeader.GridFrameOffsetVector[i]);
                     }
                 }
-                for (int i = 0; i < files.Length; i++)
+                else 
                 {
-                    coords[i] = (float)(position + i * tempHeader.SliceThickness);
+                    if (tempHeader.SliceThickness == 0)
+                    {
+                        if (files.Length > 3)
+                        {
+                            tempHeader.SliceThickness = Math.Abs((new PixelDataInfo(files[3])).SliceLocation - (new PixelDataInfo(files[2])).SliceLocation);
+                        }
+                        else
+                        {
+                            tempHeader.SliceThickness = 1.0;
+                        }
+
+                    }
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        coords[i] = (float)(position + i * tempHeader.SliceThickness);
+                    }
+
+                    //for (int i = 0; i < files.Length; i++)
+                    //{
+                    //    coords[i] = (float)((new PixelDataInfo(files[i])).SliceLocation);
+                    //}
                 }
+
             }
             return coords;
         }
@@ -178,6 +299,14 @@ namespace RT.Core.IO.Loaders
                     thirdDimension = fileHeader.SliceThickness;
                 else if (fileHeader.GridFrameOffsetVector.Length > 1)
                     thirdDimension = fileHeader.GridFrameOffsetVector[1] - fileHeader.GridFrameOffsetVector[0];
+                else
+                {
+                    if (files.Length > 3)
+                    {
+                        thirdDimension = Math.Abs((new PixelDataInfo(files[3])).SliceLocation - (new PixelDataInfo(files[2])).SliceLocation);
+                    }
+                }
+                    
 
                 spacing.X += Math.Abs(fileHeader.RowDir.X) * fileHeader.PixelSpacing[1] + Math.Abs(fileHeader.ColDir.X) * fileHeader.PixelSpacing[0];
                 spacing.Y += Math.Abs(fileHeader.RowDir.Y) * fileHeader.PixelSpacing[1] + Math.Abs(fileHeader.ColDir.Y) * fileHeader.PixelSpacing[0];
@@ -222,8 +351,8 @@ namespace RT.Core.IO.Loaders
                 swapped = false;
                 for (int i = 1; i < files.Length; i++)
                 {
-                    if (files[i - 1].Dataset.Get<double[]>(DicomTag.ImagePositionPatient)[2] >
-                        files[i].Dataset.Get<double[]>(DicomTag.ImagePositionPatient)[2])
+                    if (files[i - 1].Dataset.GetValues<double>(DicomTag.ImagePositionPatient)[2] >
+                        files[i].Dataset.GetValues<double>(DicomTag.ImagePositionPatient)[2])
                     {
                         swapped = true;
                         DicomFile temp = files[i];
